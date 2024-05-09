@@ -1,3 +1,6 @@
+# mine
+docs/*.ipynb
+
 # Ours
 key*.json
 results
