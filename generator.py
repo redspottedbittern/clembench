@@ -124,7 +124,10 @@ def match_cards_to_players(players_dict):
     return result
 
 def is_wizard(card):
-    return re.fullmatch(r'Z\s*\d+', user_input)
+    return re.fullmatch(r'Z\s*\d+', card[0])
+
+def is_jester(card):
+    return re.fullmatch(r'Z\s*\d+', card[0])
 
 def is_trump(card, trump_color):
     return re.fullmatch(card[0], trump_color)
@@ -139,11 +142,11 @@ def is_higher_trump(current_winner, challenger, trump_color):
         return challenger_has_higher_number(current_winner, challenger)
     return False
 
-def follow_suit(card, suit):
+def same_color(card, suit):
     return re.fullmatch(card[0], suit)
     
 def is_higher_suit(current_winner, challenger, trump_color):
-    if follow_suit(current_winner) and follow_suit(challenger):
+    if same_color(current_winner, trump_color) and same_color(challenger, trump_color):
         return challenger_has_higher_number(current_winner, challenger)
     return False
 
@@ -166,6 +169,16 @@ def evaluate_trick(cards_played, trump_color, suit):
         if challenger_is_higher(current_winner[1], card[1], trump_color, suit):
             current_winner = card  
     return current_winner
+
+def card_allowed(first_card_played, card_played, player_hand):
+    if same_color(first_card_played, card_played):
+        return True
+    if is_wizard(card_played) or is_jester(player):
+        return True
+    for card in player_hand:
+        if same_color(first_card_played, card):
+            return False
+    return True
 
 
 
@@ -265,7 +278,7 @@ You've been dealt the following cards: {players_dict[player]['Cards_dealt']}.
 {larger_text if skip_predictions is False else ''} 
 What's your prediction?
 
-Important! Predictions are made in the format "PREDICTION: number".
+Important! Answer exclusively like this: "PREDICTION: number".
 ############################################
 """
         user_input = input(initial_prompt)
@@ -299,7 +312,7 @@ Your current hand is: {current_hand}
 {larger_text if skip_predictions is False else ''} 
 Which card from your hand do you play?
 
-Important! Remember to use the format "PLAYED: color + number".
+Important! Answer exclusively like this: "PLAYED: color + number".
 ############################################
 """
             user_input = input(second_prompt)
