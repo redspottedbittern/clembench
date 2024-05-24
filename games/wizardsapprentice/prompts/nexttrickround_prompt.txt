@@ -1,0 +1,9 @@
+############################################
+Next round:
+Each player gets 6 cards, and the rest stay in the deck. I've shuffled the cards. 
+The trump card is B11 with the color B.
+
+You've been dealt the following cards: ['R9', 'G5']. 
+
+What's your prediction?
+############################################

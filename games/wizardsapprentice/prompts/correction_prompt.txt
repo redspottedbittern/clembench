@@ -1,0 +1,7 @@
+############################################
+[1. invalid:] Your response was not valid. Your answer has to have this structure: “regex”
+
+[2. invalid:] You can’t play that card. The card you play must still be in your hand.
+
+[3. invalid:] You can’t play that card. You must follow suit.
+############################################

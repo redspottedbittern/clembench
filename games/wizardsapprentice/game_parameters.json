@@ -1,0 +1,9 @@
+{
+  "colors": ["G", "B", "R", "Y"],
+  "cards_per_color": 13,
+  "special_cards": ["Z", "J"],
+  "special_cards_num": 4,
+  "num_players": 4,
+  "num_rounds": -1,
+  "start_round": 1
+}

@@ -1,0 +1,15 @@
+############################################
+Time to play your cards!
+
+You're playing with {len(players_dict)-1} other players, and you're player number {player}. 
+The trump card is {str(trump_card)} with the color {deck_dict[str(trump_card)]["color"]}.
+
+You've been dealt: {players_dict[player]['Cards_dealt']}. 
+
+Your current hand is: {current_hand}
+
+{larger_text if skip_predictions is False else ''} 
+Which card from your hand do you play?
+
+Important! Answer exclusively like this: "PLAYED: color + number".
+############################################
