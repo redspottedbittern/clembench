@@ -3,35 +3,7 @@ import random
 import re
 import os
 import json
-from string import Template
-
-
-def load_prompts(text_files):
-    """
-    Loader function for text prompts.
-
-    The text for the different prompts is saved in seperate txt files. This
-    function reads them in and
-
-    Returns: A Template object for every prompt.
-    """
-    # get the path of the current file
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    prompt_dir = os.path.join(script_dir, 'prompts')
-
-    # create a dictionary to hold the different prompt templates
-    prompts = {}
-
-    for filename in text_files:
-        # Construct the full file path
-        full_path = os.path.join(prompt_dir, filename)
-
-        # load the text and save it as a Template
-        with open(full_path, 'r') as f:
-            text = f.read()
-            prompts[filename.split('_')[0]] = Template(text)
-
-    return prompts
+from utils.promptcontainer import PromptContainer
 
 
 def load_game_parameters(json_file):
@@ -224,7 +196,7 @@ def summarize_last_predictions(player, table):
     """
     skip_predictions = False
     # Skip the first player as there are no predictions so far
-    if player == 1 and table[player]["Prediction"] == None:
+    if player == 1 and table[player]["Prediction"] is None:
         skip_predictions = True
         return skip_predictions, None
     else:
@@ -242,67 +214,140 @@ def summarize_last_predictions(player, table):
 
 
 def match_cards_to_players(table):
+    """
+    Create a list of player numbers and last played cards.
+
+    Returns:
+        result: list of tuples of player number and the last card they played.
+    """
+    # loop through table and extract the last played card of every player
     result = []
     for index, player in enumerate(table):
         last_card_played = table[player]['Cards_played'][-1]
         result.append((index, last_card_played))
+
     return result
 
+
 def is_wizard(card):
+    """Check if a card is a wizard."""
     return re.fullmatch(r'Z\s*\d+', card[0])
 
+
 def is_jester(card):
+    """Check if a card is a jester."""
     return re.fullmatch(r'J\s*\d+', card[0])
 
+
 def is_trump(card, trump_color):
+    """Check if a card is of the trump color."""
     return re.fullmatch(card[0], trump_color)
 
+
 def challenger_has_higher_number(current_winner, challenger):
+    """Check if a card has a higher number than another."""
     return int(current_winner[1:]) < int(challenger[1:])
 
+
 def is_higher_trump(current_winner, challenger, trump_color):
-    if not (is_trump(current_winner)) and  is_trump(challenger):
+    """
+    Check if a card beats the one before with trumps.
+
+    Returns:
+        True: if a trump card is beats the card played before
+        False: if it isn't a trump card or doesn't beat the card before
+    """
+    # a trump card beats a non-trump card
+    if not is_trump(current_winner) and is_trump(challenger):
         return True
+
+    # if both are trump cards, check which one is higher
     if is_trump(current_winner) and is_trump(challenger):
         return challenger_has_higher_number(current_winner, challenger)
+
     return False
 
+
 def same_color(card, suit):
+    """Check if a card has a certain suit."""
     return re.fullmatch(card[0], suit)
-    
+
+
 def is_higher_suit(current_winner, challenger, trump_color):
-    if same_color(current_winner, trump_color) and same_color(challenger, trump_color):
+    """Check if a card beats another card of the same color."""
+    if (same_color(current_winner, trump_color) and
+            same_color(challenger, trump_color)):
         return challenger_has_higher_number(current_winner, challenger)
+
     return False
 
 
 def challenger_is_higher(current_winner, challenger, trump_color, suit):
+    """
+    Check if a card is better then a card played before.
+
+    Returns False if none of three conditions are met:
+        - a second wizard beats the first
+        - a higher trump card beats the first
+        - a higher same-suit-card beats the first
+    """
     if is_wizard(challenger):
         return True
+
     if is_higher_trump(current_winner, challenger, trump_color):
         return True
+
     if is_higher_suit(current_winner, challenger, suit):
         return True
+
     return False
-    
+
+
 def evaluate_trick(cards_played, trump_color, suit):
+    """
+    Determine who wins a trick.
+
+    Returns:
+        current_winner: card, that wins the trick
+    """
     current_winner = cards_played[0]
 
+    # loop through played cards and determine current_winner
+    # if card beats the card before
     for card in cards_played:
         if card == current_winner:
-            next
+            continue
         if challenger_is_higher(current_winner[1], card[1], trump_color, suit):
-            current_winner = card  
+            current_winner = card
+
     return current_winner
 
+
 def card_allowed(first_card_played, card_played, player_hand):
+    """
+    Check game rules.
+
+    This function controls, if a played card follows the rules and is
+    admissible.
+
+    Returns:
+        True: if card follows suit, is special or doesn't has to follow suit.
+        False: if card is not same color, but player has same color cards in
+        hand.
+    """
+    # The card follows suit
     if same_color(first_card_played, card_played):
         return True
-    if is_wizard(card_played) or is_jester(player):
+
+    # special cards don't need to follow suit
+    if is_wizard(card_played) or is_jester(card_played):
         return True
+
+    # if players hasn't played the same color, but still has it, return false
     for card in player_hand:
         if same_color(first_card_played, card):
             return False
+
     return True
 
 
@@ -334,14 +379,17 @@ def game_loop(deck, table, cards_per_round, num_players, prompts):
 
             initial_subs = {
                 'num_players': num_players,
-                'player_order': player,
+                'player_position': player,
                 'num_cards': cards_per_round[int(round)]["num_cards"],
                 'trump_card': trump_card,
                 'trump_color': deck[str(trump_card)]["color"],
                 'player_hand': table[player]['Cards_dealt'],
-                'prediction_text': ''
+                'player_predictions': ''
             }
-            initial_prompt = prompts['initial'].substitute(initial_subs)
+
+            rules_prompt = prompts.substitute('rules', None)
+            first_round_prompt = prompts.substitute('round_start', initial_subs)
+            initial_prompt = rules_prompt + first_round_prompt
             user_input = input(initial_prompt)
 
             if re.fullmatch(r'PREDICTION:\s*\d+', user_input):
@@ -361,17 +409,19 @@ def game_loop(deck, table, cards_per_round, num_players, prompts):
                                 if card not in table[player]['Cards_played']]
 
 
-                first_subs = {
+                trick_subs = {
                     'num_players': num_players,
-                    'player_order': player,
+                    'player_position': player,
                     'num_cards': cards_per_round[int(round)]["num_cards"],
                     'trump_card': trump_card,
                     'trump_color': deck[str(trump_card)]["color"],
                     'player_hand': table[player]['Cards_dealt'],
                     'current_hand': current_hand,
-                    'prediction_text': ''
+                    'cards_played': '',
+                    'player_hand_current': '',
+                    'player_predictions': ''
                 }
-                second_prompt = prompts['firsttrickround'].substitute(first_subs)
+                second_prompt = prompts.substitute('trick_start', trick_subs)
                 user_input = input(second_prompt)
 
                 # Check if the input matches the expected format
@@ -411,15 +461,7 @@ if __name__ == '__main__':
     parameters_file = 'game_parameters.json'
     parameters = load_game_parameters(parameters_file)
 
-    # List the names of the prompt files
-    text_files = [
-        'initial_prompt.txt',
-        'firsttrickround_prompt.txt',
-        'nexttrickround_prompt.txt',
-        'lasttrickround_prompt.txt',
-        'correction_prompt.txt'
-    ]
-    prompts = load_prompts(text_files)
+    prompts = PromptContainer()
 
     # initialize important game objects
     deck = create_deck(**parameters)

@@ -1,0 +1,15 @@
+It's your turn to play a card in the current trick!
+
+You're playing with $num_players other players, and you're player number $player_position. 
+Each player has $num_cards cards. The trump card is $trump_card, thereby the trump color is $trump_color.
+
+These are the players predictions: $player_predictions.
+
+You've been dealt the following cards: $player_hand. 
+
+Your current hand is: $player_hand_current
+
+These cards have been played in this trick already in this order: $cards_played
+
+Now you have to play a card from your current hand. Which card do you play?
+Answer in this format: "PLAYED: color + number" Omit any other text.
