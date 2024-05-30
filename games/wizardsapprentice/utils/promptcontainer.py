@@ -35,15 +35,15 @@ class PromptContainer():
         """
         # this are the filenames of the different prompts
         self.prompt_texts = [
-            "rules.txt",
-            "round_start.txt",
-            "trick_start.txt",
-            "trick_end.txt",
-            "round_end.txt",
-            "game_end.txt",
-            "correction_suit.txt",
-            "correction_hand.txt",
-            "correction_regex.txt"
+            "rules.template",
+            "round_start.template",
+            "trick_start.template",
+            "trick_end.template",
+            "round_end.template",
+            "game_end.template",
+            "correction_suit.template",
+            "correction_hand.template",
+            "correction_regex.template"
         ]
 
         # load the texts and save them in a dictionary
@@ -61,7 +61,7 @@ class PromptContainer():
         # get the path of the current file
         script_dir = os.path.dirname(os.path.abspath(__file__))
         script_dir = script_dir.rsplit('/', 1)[0]
-        prompt_dir = os.path.join(script_dir, 'prompts')
+        prompt_dir = os.path.join(script_dir, 'ressources')
 
         # create a dictionary to hold the different prompt templates
         prompts = {}
