@@ -1,10 +1,10 @@
 """Container class for all prompts."""
 
-import os
+from clemgame.clemgame import GameResourceLocator
 from string import Template
 
 
-class PromptContainer():
+class PromptContainer(GameResourceLocator):
     """
     Container class for all prompts.
 
@@ -34,22 +34,22 @@ class PromptContainer():
         keywords if needed.
         """
         # this are the filenames of the different prompts
-        self.prompt_texts = [
-            "rules.template",
-            "round_start.template",
-            "trick_start.template",
-            "trick_end.template",
-            "round_end.template",
-            "game_end.template",
-            "correction_suit.template",
-            "correction_hand.template",
-            "correction_regex.template"
+        self.prompt_names = [
+            "rules",
+            "round_start",
+            "trick_start",
+            "trick_end",
+            "round_end",
+            "game_end",
+            "correction_suit",
+            "correction_hand",
+            "correction_regex"
         ]
 
         # load the texts and save them in a dictionary
-        self.prompts = self.load_prompts(self.prompt_texts)
+        self.prompts = self.load_prompts(self.prompt_names)
 
-    def load_prompts(self, text_files):
+    def load_prompts(self, prompt_names):
         """
         Loader function for text prompts.
 
@@ -58,22 +58,21 @@ class PromptContainer():
 
         Returns: A Template object for every prompt.
         """
-        # get the path of the current file
-        script_dir = os.path.dirname(os.path.abspath(__file__))
-        script_dir = script_dir.rsplit('/', 1)[0]
-        prompt_dir = os.path.join(script_dir, 'ressources')
+        # set the path of the current file
+        folder = 'ressources/'
 
         # create a dictionary to hold the different prompt templates
         prompts = {}
 
-        for filename in text_files:
+        for name in prompt_names:
             # Construct the full file path
-            full_path = os.path.join(prompt_dir, filename)
+            full_path = folder + name
 
-            # load the text and save it as a Template
-            with open(full_path, 'r') as f:
-                text = f.read()
-                prompts[filename.split('.')[0]] = Template(text)
+            # use the parent classes loader function
+            text = self.load_file(full_path, file_ending='.template')
+
+            # save as a template in the dictionary
+            prompts[name] = Template(text)
 
         return prompts
 
