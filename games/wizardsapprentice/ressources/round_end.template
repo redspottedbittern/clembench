@@ -6,5 +6,5 @@ $player_predictions_last_round
 This is, how many tricks every player won:
 $player_tricks
 
-Because of the difference of predictions and tricks, every player gets points. The point table looks as follows:
+Because of the difference of predictions and tricks, every player receives points. The point table looks as follows:
 $point_table
