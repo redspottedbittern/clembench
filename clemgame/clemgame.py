@@ -752,6 +752,7 @@ class GameBenchmark(GameResourceLocator):
             dialogue_partners: List[List[Model]] = []
 
             if player_models:  # favor runtime argument over experiment config
+                print(player_models)
                 dialogue_partners = [player_models]
             elif "dialogue_partners" in experiment:  # edge-case when names are given in experiment config
                 for dialogue_pair_names in experiment["dialogue_partners"]:

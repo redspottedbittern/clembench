@@ -1,7 +1,7 @@
 In the last trick, these cards were played:
-$cards_played_last_trick
+$CARDS_PLAYED_LAST_TRICK$
 
-Thereby this player has won the trick: $winner_last_trick
+Thereby this player has won the trick: $WINNER_LAST_TRICK$
 
 This is, how many tricks every player has:
-$player_tricks
+$LEADERBOARD_TRICK_ROUND$
