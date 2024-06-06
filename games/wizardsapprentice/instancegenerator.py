@@ -9,7 +9,7 @@ from games.wizardsapprentice.utils.utils import *
 
 GAME_NAME = "Wizard's Apprentice"
 SEED = 123
-NUM_ROUNDS = -1
+NUM_ROUNDS = 9
 START_ROUND = 1
 PLAYERS = 2
 COLORS =  ["G", "B", "R", "Y"],
@@ -52,8 +52,8 @@ class WizardsApprenticeInstanceGenerator(GameInstanceGenerator):
         experiment["deck"] = create_deck(COLORS, CARDS_PER_COLOR, SPECIAL_CARDS, SPECIAL_CARDS_NUM)
         experiment["player_positions"] = get_players_by_order(experiment["table"])
         for round in range(START_ROUND, self.rounds_to_be_played(len(experiment["deck"]), PLAYERS, NUM_ROUNDS)):
-            game_instance["game_deck"] = experiment["deck"].copy()
             game_instance = self.add_game_instance(experiment, round)
+            game_instance["game_deck"] = experiment["deck"].copy()
             game_instance["players_position"] = get_players_by_order(experiment["table"])
             game_instance["player_cards"] = {}
             for player in game_instance["players_position"]:
@@ -61,7 +61,7 @@ class WizardsApprenticeInstanceGenerator(GameInstanceGenerator):
                 game_instance["player_cards"][player] = dealt_cards
 
             # Get random trump card and color for the round
-            game_instance["trump_card"] = get_random_trump_card(self.deck)
+            game_instance["trump_card"] = get_random_trump_card(game_instance["game_deck"])
             # Finds keys with same trump color for the round
             keys_with_trump_color = [key for key, value in game_instance["game_deck"].items() if value.get("color") == game_instance["game_deck"][str(game_instance["trump_card"])]["color"]]
             # Sets the trump attribute to True for cards with the same color as the trump card for the round
@@ -72,10 +72,10 @@ class WizardsApprenticeInstanceGenerator(GameInstanceGenerator):
         if rounds_suggested == -1:
             if not number_of_cards % number_of_players == 0:
                 raise Exception('Deck needs to be divisible by players')
-            return number_of_cards / number_of_players
+            return number_of_cards // number_of_players
         else:
             return rounds_suggested
         
 if __name__ == '__main__':
-    random.seed(SEED)
+    #random.seed(SEED)
     WizardsApprenticeInstanceGenerator().generate()

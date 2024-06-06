@@ -36,23 +36,25 @@ def create_deck(colors, cards_per_color, special_cards, special_cards_num,
     # Create a dictionary to represent a deck of cards
     deck = {}
     for color in colors:
-        for number in range(1, cards_per_color+1):
-            # Fill the deck with cards and their properties
-            card_key = f"{color}{number}"
-            card_properties = {"color": color, "dealt": False, "trump": False}
-            deck[card_key] = card_properties
+        for actual_color in color:
+            max = cards_per_color[0] + 1
+            for number in range(1, max):
+                # Fill the deck with cards and their properties
+                card_key = actual_color + str(number)
+                card_properties = {"color": color, "dealt": False, "trump": False}
+                deck[card_key] = card_properties
 
     # Extend the deck dictionary to include Wizards and Jesters
     # Only if they are wanted
     if special_cards_num > 0:
         # They do not have a color or trump attribute
         deck.update({f"{kind}{number}": {"dealt": False}
-                    for kind in special_cards
+                    for kind in special_cards[0]
                     for number in range(1, special_cards_num+1)})
 
     return deck
 
-def get_random_undealt_cards(deck, n):
+def get_random_undealt_cards(deck, n=0):
     """
     Get random undealt cards from the deck.
 
@@ -70,9 +72,10 @@ def get_random_undealt_cards(deck, n):
     undealt_keys = [key for key, value in deck.items()
                     if not value["dealt"]]
 
+    undealt_cards_count = len(undealt_keys)
     # Check if there are enough undealt cards available
-    if len(undealt_keys) < n:
-        raise ValueError("Not enough unplayed cards to select from.")
+    if undealt_cards_count < n:
+        raise ValueError(f"Not enough unplayed cards to select from. Undealt Cards: {undealt_cards_count}, Round: {n}")
 
     # Randomly select n undealt cards
     selected_keys = random.sample(undealt_keys, n)
@@ -214,7 +217,7 @@ def same_color(card, suit):
     return card['color'] == suit
 
 def is_wizard(card):
-    return re.fullmatch(r'Z\s*\d+', card[])
+    return re.fullmatch(r'Z\s*\d+', card[0])
 
 def is_jester(card):
     return re.fullmatch(r'Z\s*\d+', card[0])
