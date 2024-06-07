@@ -1,26 +1,7 @@
-import os
 import random
-import json
 import pprint
+import re
 
-def load_game_parameters(json_file):
-    """
-    Load function for the game parameters.
-
-    The parameters of the game (e.g. cards and colors) are specified in a
-    seperate json file.
-
-    Returns:
-        dict: containing the parameters of the game
-    """
-    # get the path of the current file
-    script_dir = os.path.dirname(os.path.abspath(__file__))
-    full_path = os.path.join(script_dir, json_file)
-
-    with open(full_path, 'r') as f:
-        parameters = json.load(f)
-
-    return parameters
 
 def create_deck(colors, cards_per_color, special_cards, special_cards_num,
                 **kwargs):
@@ -36,23 +17,74 @@ def create_deck(colors, cards_per_color, special_cards, special_cards_num,
     # Create a dictionary to represent a deck of cards
     deck = {}
     for color in colors:
-        for actual_color in color:
-            max = cards_per_color[0] + 1
-            for number in range(1, max):
-                # Fill the deck with cards and their properties
-                card_key = actual_color + str(number)
-                card_properties = {"color": color, "dealt": False, "trump": False}
-                deck[card_key] = card_properties
+        for number in range(1, cards_per_color + 1):
+            # Fill the deck with cards and their properties
+            card_key = color + str(number)
+            card_properties = {"color": color, "dealt": False, "trump": False}
+            deck[card_key] = card_properties
 
     # Extend the deck dictionary to include Wizards and Jesters
     # Only if they are wanted
     if special_cards_num > 0:
         # They do not have a color or trump attribute
         deck.update({f"{kind}{number}": {"dealt": False}
-                    for kind in special_cards[0]
+                    for kind in special_cards
                     for number in range(1, special_cards_num+1)})
 
     return deck
+
+
+def create_table(num_players):
+    """
+    Initialize dictionary of all players with default values.
+
+    A player is represented by their prediction, by their hand, by the cards
+    played, the position they sit in, and by the points they accumulated.
+    """
+    # get a random order of players
+    order_list = [*range(1, num_players+1)]
+    random.shuffle(order_list)
+
+    # Create dictionary of players and populate
+    table = {
+        i: {
+            # Each player's position to play
+            "Order": order_list[i-1],
+            # Each player's prediction for the number of tricks they will take
+            "Prediction": None,
+            # List to store the cards dealt to each player
+            "Cards_dealt": [],
+            # List to store the cards each player has played
+            "Cards_played": [],
+            # Each player's points
+            "Points": 0,
+            # Tricks won
+            "Tricks_won": 0
+        }
+        for i in range(1, num_players + 1)
+    }
+
+    return table
+
+
+def get_seating_order(table):
+    """Return an ordered list of the players positions at the table."""
+    order_dict = {}
+    for key, nested_dict in table.items():
+        order = nested_dict.get('Order')
+        if order is not None:
+            if order not in order_dict:
+                order_dict[order] = []
+            order_dict[order].append(key)
+
+    sorted_orders = sorted(order_dict.keys())
+    sorted_keys = []
+
+    for order in sorted_orders:
+        sorted_keys.extend(order_dict[order])
+
+    return sorted_keys
+
 
 def get_random_undealt_cards(deck, n=0):
     """
@@ -85,62 +117,10 @@ def get_random_undealt_cards(deck, n=0):
 
     return selected_keys
 
+
 def print_table(tab):
     return pprint.pp(tab)
 
-def create_table(num_players):
-    """
-    Initialize all players with default values.
-
-    A player is represented by their prediction, by their hand, by the cards
-    played, and by the points they accumulated.
-
-    Parameters:
-        num_players (int): number of players in the game
-
-    Returns:
-    dict: Dictionary for all players in the game.
-    """
-    order_list = [*range(1, num_players+1)]
-    random.shuffle(order_list)
-
-    # Create dictionary of players and populate
-    table = {
-        i: {
-            # Each player's prediction for the number of tricks they will take
-            "Prediction": None,
-            # List to store the cards each player has played
-            "Cards_played": [],
-            # List to store the cards dealt to each player
-            "Cards_dealt": [],
-            # Each player's points
-            "Points": 0,
-            # Each player's position to play
-            "Order": order_list[i-1],
-            # Tricks won
-            "Tricks_won": 0
-        }
-        for i in range(1, num_players + 1)
-    }
-
-    return table
-
-def get_players_by_order(table):
-    order_dict = {}
-    for key, nested_dict in table.items():
-        order = nested_dict.get('Order')
-        if order is not None:
-            if order not in order_dict:
-                order_dict[order] = []
-            order_dict[order].append(key)
-
-    sorted_orders = sorted(order_dict.keys())
-    sorted_keys = []
-
-    for order in sorted_orders:
-        sorted_keys.extend(order_dict[order])
-
-    return sorted_keys
 
 def get_random_trump_card(deck):
     """
@@ -169,6 +149,7 @@ def get_random_trump_card(deck):
 
     return selected_keys[0]
 
+
 def summarize_predictions(player, table):
     """
     Summarize the last players' predictions.
@@ -189,9 +170,10 @@ def summarize_predictions(player, table):
     prediction_sentence = prediction_sentence.strip()
     # Construct the larger text with the summary sentence
     larger_text = f"\n\nAfter careful consideration, here are the players' predictions: {prediction_sentence}\n"
-    
+
     return larger_text
     # TODO: make it more customizable (e.g. "You selected ... Player 2 selected... Etc.")
+
 
 def summarize_trick_round(table):
     pred_list = []
@@ -203,6 +185,7 @@ def summarize_trick_round(table):
     predictions_text = " ".join(pred_list)
     return predictions_text
 
+
 def remove_card(table, player, value):
     cards_dealt = list(table[player]["Cards_dealt"])
     cards_dealt.remove(value)
@@ -213,26 +196,31 @@ def remove_card(table, player, value):
     table[player]["Cards_played"] = cards_played
     return None
 
+
 def same_color(card, suit):
     return card['color'] == suit
+
 
 def is_wizard(card):
     return re.fullmatch(r'Z\s*\d+', card[0])
 
+
 def is_jester(card):
     return re.fullmatch(r'Z\s*\d+', card[0])
-    
+
+
 def card_allowed(first_card_played, card_played, player_hand):
     """
     Check game rules.
 
     This function controls, if a played card follows the rules and is
     admissible.
-        Returns:
-            True: if card follows suit, is special or doesn't has to follow suit.
-            False: if card is not same color, but player has same color cards in
-            hand.
-        """
+
+    Returns:
+        True: if card follows suit, is special or doesn't has to follow suit.
+        False: if card is not same color, but player has same color cards in
+        hand.
+    """
     # The card follows suit
     if same_color(first_card_played, card_played):
         return True
@@ -245,6 +233,7 @@ def card_allowed(first_card_played, card_played, player_hand):
     for card in player_hand:
         if same_color(first_card_played, card):
             return False
+
 
 def get_ordered_played_cards(table):
     sorted_players = sorted(table.items(), key=lambda item: item[1]["Order"])
