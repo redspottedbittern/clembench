@@ -5,11 +5,11 @@ Main Game class for the Wizard's Apprentice.
 from backends import Model, CustomResponseModel
 from clemgame.clemgame import GameMaster, GameBenchmark, Player, DialogueGameMaster
 from clemgame import get_logger
-from games.wizardsapprentice.utils import *
+from games.wizardsapprentice.utils.utils import *
+from games.wizardsapprentice.instancegenerator import GAME_NAME
 
 logger = get_logger(__name__)
 
-GAME_NAME = "wizardsapprentice"
 
 class Apprentice(Player):
     def __init__(self, name):
