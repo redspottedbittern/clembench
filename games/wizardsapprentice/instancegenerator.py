@@ -5,23 +5,24 @@ For new experiments change the game parameters below and also change the seed.
 """
 
 import random
+from string import Template
 from clemgame.clemgame import GameInstanceGenerator
-from games.wizardsapprentice.utils.utils import (
+from games.wizardsapprentice.utils.instantiation import (
+    deal_cards_for_round,
     create_deck,
-    create_table,
-    get_seating_order,
-    get_random_undealt_cards,
-    get_random_trump_card
+    create_seating_order
 )
 
 # define constants
 GAME_NAME = "wizardsapprentice"
+EXPERIMENT_NAME = "full_game_4p"
 SEED = 123
+N_INSTANCES = 4
 
 # parameters for the game
-NUM_ROUNDS = 9
 START_ROUND = 1
-PLAYERS = 2
+END_ROUND = -1
+PLAYERS = 4
 
 # parameters for the cards
 COLORS = ["G", "B", "R", "Y"]
@@ -44,6 +45,10 @@ PROMPT_NAMES = [
 
 
 class WizardsApprenticeInstanceGenerator(GameInstanceGenerator):
+    """Create an experiment.
+
+    It contains cards dealt for the whole game, prompts and regexe.
+    """
 
     def load_prompts(self):
         """Use base method to load prompt texts."""
@@ -59,49 +64,69 @@ class WizardsApprenticeInstanceGenerator(GameInstanceGenerator):
             # save in the dictionary
             self.prompts[name + '_prompt'] = text
 
+    def prepare_rules_prompt(self):
+        """Fill rules prompt with information avaible only in instantiation."""
+        rules_template = Template(self.prompts['rules_prompt'])
+        num_cards = (len(COLORS) * CARDS_PER_COLOR +
+                     len(SPECIAL_CARDS) * SPECIAL_CARDS_NUM)
+        # get strings for colors
+        all_colors = {'G': 'green', 'B': 'blue', 'R': 'red', 'Y': 'yellow'}
+        used_colors = str([all_colors[key] for key in COLORS])[1:-1]
+
+        # get strings for special cards
+        all_special = {'Z': 'Wizard', 'J': 'Jester'}
+        used_special = str([all_special[key] for key in SPECIAL_CARDS])[1:-1]
+
+        subs = {
+            'CARDS_PER_COLOR': CARDS_PER_COLOR,
+            'NUM_CARDS': num_cards,
+            'SPECIAL_CARDS': used_special,
+            'SPECIAL_CARDS_NUM': SPECIAL_CARDS_NUM,
+            'LEN_COLORS': len(COLORS),
+            'COLORS': used_colors
+        }
+
+        self.prompts['rules_prompt'] = rules_template.substitute(subs)
+
     def on_generate(self):
-        """
-        We have to build this method ourselves.
-
-        - you must implement the on_generate method, which should call
-        self.add_experiment() to add experiments and self.add_game_instance()
-        to add instances. Populate the game instance with keys and values.
-        """
-        experiment = self.add_experiment(SEED)
-
-        # put all prompts in the experiment
+        """We have to build this method ourselves."""
+        # load prompts and fill in rules
         self.load_prompts()
+        self.prepare_rules_prompt()
+
+        # create experiment
+        experiment = self.add_experiment(EXPERIMENT_NAME)
         experiment.update(self.prompts)
 
-        # create the deck, table, and positions for the game
-        experiment["deck"] = create_deck(COLORS, CARDS_PER_COLOR,
-                                         SPECIAL_CARDS, SPECIAL_CARDS_NUM)
-        experiment["table"] = create_table(PLAYERS-1)
-        experiment["player_positions"] = get_seating_order(experiment["table"])
+        # create deck and check number of rounds
+        deck = create_deck(COLORS, CARDS_PER_COLOR, SPECIAL_CARDS,
+                           SPECIAL_CARDS_NUM)
+        end_round = self.rounds_to_be_played(len(deck), PLAYERS, END_ROUND)
 
-        # eine instance entspricht gerade einer Runde, soll es aber nicht
-        for round in range(START_ROUND, self.rounds_to_be_played(len(experiment["deck"]), PLAYERS, NUM_ROUNDS)):
-            game_instance = self.add_game_instance(experiment, round)
-            game_instance["game_deck"] = experiment["deck"].copy()
-            game_instance["player_positions"] = experiment['player_positions']
-            game_instance["player_cards"] = {}
-            for player in game_instance["player_positions"]:
-                dealt_cards = get_random_undealt_cards(game_instance["game_deck"], round)
-                game_instance["player_cards"][player] = dealt_cards
+        # create the target number of instances
+        for n in range(N_INSTANCES):
+            # create instance with id
+            game_id = str(EXPERIMENT_NAME) + '_i' + str(n)
+            game_instance = self.add_game_instance(experiment, game_id)
 
-            # Get random trump card and color for the round
-            game_instance["trump_card"] = get_random_trump_card(game_instance["game_deck"])
-            # Finds keys with same trump color for the round
-            keys_with_trump_color = [key for key, value in game_instance["game_deck"].items() if value.get("color") == game_instance["game_deck"][str(game_instance["trump_card"])]["color"]]
-            # Sets the trump attribute to True for cards with the same color as the trump card for the round
-            for key in keys_with_trump_color:
-                game_instance["game_deck"]["trump"] = True
+            # create a seating order for this instance
+            seating_order = create_seating_order(PLAYERS)
 
-    def rounds_to_be_played(self, number_of_cards, number_of_players, rounds_suggested):
+            # for every round deal cards to each player
+            dealt_cards = {}
+            for round in range(START_ROUND, end_round + 1):
+                dealt_cards[round] = deal_cards_for_round(round, deck,
+                                                          seating_order)
+
+            game_instance['seating_order'] = seating_order
+            game_instance['dealt_cards'] = dealt_cards
+
+    def rounds_to_be_played(self, num_cards, num_players, rounds_suggested):
+        """Check what the maximum number of rounds can be."""
         if rounds_suggested == -1:
-            if not number_of_cards % number_of_players == 0:
-                raise Exception('Deck needs to be divisible by players')
-            return number_of_cards // number_of_players
+            return num_cards // num_players
+        elif rounds_suggested > num_cards // num_players:
+            raise Exception("End round is too high for number of players.")
         else:
             return rounds_suggested
 
