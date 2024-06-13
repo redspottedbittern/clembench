@@ -88,15 +88,74 @@ class WizardsApprenticeInstanceGenerator(GameInstanceGenerator):
 
         self.prompts['rules_prompt'] = rules_template.substitute(subs)
 
+    def prepare_regex(self):
+        """
+        Prepare language sensitive Regular Expressions.
+
+        In dependence of the set global variables regex are created:
+            - 'card_played': to check the answer when a card should be played
+            - 'prediction': to check the answer when a prediction was made
+            - 'is_wizard' and 'is_jester'
+        """
+        # create a dictionary for the regex
+        self.regex = {}
+
+        # get regex strings for the colors
+        colors = "".join(COLORS)
+
+        # get regex strings for the numbers for the colors
+        if CARDS_PER_COLOR < 10:
+            part_1 = list(map(str, range(1, CARDS_PER_COLOR+1)))
+            cards_per_color = "[" + "".join(part_1) + "]"
+        elif CARDS_PER_COLOR < 20:
+            part_1 = list(map(str, range(1, 10)))
+            part_2 = list(map(str, range(CARDS_PER_COLOR-9)))
+            cards_per_color = "[" + "".join(part_1) + "]|1[" +\
+                "".join(part_2) + "]"
+
+        # only get regex for special cards if there are more than 0 in the deck
+        if SPECIAL_CARDS_NUM > 0:
+            # get regex strings for the special cards
+            s_cards = "ZJ"
+            s_cards = "|[" + s_cards + "]"
+
+            # get regex string for the number of special cards
+            num_s_cards = list(map(str, range(SPECIAL_CARDS_NUM+1)))
+            num_s_cards = "[" + "".join(num_s_cards) + "]"
+        else:
+            s_cards = ""
+            num_s_cards = ""
+
+        # finally fill all string together in the full regex
+        self.regex['card_played'] = f"^I PLAY: ([{colors}]({cards_per_color}){s_cards}{num_s_cards})$"
+
+        # determine the right letters for the special cards
+        self.regex['wizard'] = ""
+        self.regex['jester'] = ""
+        for letter in SPECIAL_CARDS:
+            if letter == "Z":
+                self.regex['is_wizard'] = "Z"
+            elif letter == "W":
+                self.regex['is_wizard'] = "W"
+            elif letter == "J":
+                self.regex['is_jester'] = "J"
+
+        # prepare the regex for the prediction prompt
+        self.regex['prediction'] = "PREDICTION: ([0-9]{1,2})$"
+
     def on_generate(self):
         """We have to build this method ourselves."""
         # load prompts and fill in rules
         self.load_prompts()
         self.prepare_rules_prompt()
 
+        # prepare regex patterns
+        self.prepare_regex()
+
         # create experiment
         experiment = self.add_experiment(EXPERIMENT_NAME)
         experiment.update(self.prompts)
+        experiment.update(self.regex)
 
         # create deck and check number of rounds
         deck = create_deck(COLORS, CARDS_PER_COLOR, SPECIAL_CARDS,
