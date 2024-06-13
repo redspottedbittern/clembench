@@ -7,6 +7,7 @@ from clemgame.clemgame import GameMaster, GameBenchmark, Player, DialogueGameMas
 from clemgame import get_logger
 from games.wizardsapprentice.utils.utils import *
 from games.wizardsapprentice.instancegenerator import GAME_NAME
+from games.wizardsapprentice.utils.parser_utils import Parser
 
 logger = get_logger(__name__)
 
@@ -19,6 +20,9 @@ class Apprentice(Player):
 class WizardsApprenticeGameMaster(DialogueGameMaster):
     def __init__(self, experiment: dict, player_backends: list[str]):
         super().__init__(GAME_NAME, experiment, player_backends)
+
+        # initialize the Parser with the regex strings
+        self.parser = Parser(self.experiment['regex'])
 
         # Defines models TODO: How do we add a third model?
         self.model_a = player_backends[0]
@@ -62,7 +66,7 @@ class WizardsApprenticeGameMaster(DialogueGameMaster):
         # Sets the trump attribute to True for cards with the same color as the trump card for the round
         for key in keys_with_trump_color:
             self.deck[key]["trump"] = True
-            
+
         # Create the players TODO: How do we add a third model?
         self.apprentince1 = Apprentice(self.model_a)
         self.apprentince2 = Apprentice(self.model_b)
@@ -138,19 +142,50 @@ class WizardsApprenticeGameMaster(DialogueGameMaster):
         rend_prompt = self.round_end_prompt.replace("$PLAYER_PREDICTIONS$", str(summarize_trick_round(self.table)))
         print(rend_prompt)
 
-    def parse_answer(self, answer):
+    def parse_card(self, answer, hand, trick):
         """
-        Parse the answer from the LLM.
+        Parse the answer from an LLM when a card is expected.
 
         This function takes the answer from the LLM, checks if it is a viable
-        answer, that follows the move rules.
+        answer, that follows the move rules:
+            - is in players hand
+            - follows suit correctly
 
-        Returns:
-            - if predction: int
-            - if card: str and int
+        Returns the card
         """
-        r"^I PLAY:\s([GBRY]([1-9]|1[0123])|[ZJ])$"
-        pass
+        if self.parser.is_comprehensible_card(answer):
+            card = self.parser.extract_card(answer)
+        else:
+            # TODO The correction template must be included here
+            pass
+
+        if not self.parser.is_in_hand(card, hand):
+            pass  # TODO The correction template must be included here
+
+        if not self.parser.follows_suit(card, hand, trick):
+            pass  # TODO The correction template must be included here
+
+        return card
+
+    def parse_prediction(self, answer, round):
+        """
+        Parse the answer from an LLM when a prediction is expected.
+
+        This function takes the answer from the LLM, checks if it is a viable
+        answer, that follows the move rules:
+            - prediction is in range of total cards this round
+
+        Returns prediction as an int.
+        """
+        if self.parser.is_comprehensible_prediction(answer):
+            prediction = self.parser.extract_prediction(answer)
+        else:
+            pass  # TODO correction template
+
+        if not self.parser.is_possible_prediction(prediction, round):
+            pass  # TODO correction template
+
+        return int(prediction)
 
 
 class WizardsApprenticeGameBenchmark(GameBenchmark):

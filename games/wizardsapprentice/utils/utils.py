@@ -106,44 +106,6 @@ def remove_card(table, player, value):
     return None
 
 
-def same_color(card, suit):
-    return card['color'] == suit
-
-
-def is_wizard(card):
-    return re.fullmatch(r'Z\s*\d+', card[0])
-
-
-def is_jester(card):
-    return re.fullmatch(r'Z\s*\d+', card[0])
-
-
-def card_allowed(first_card_played, card_played, player_hand):
-    """
-    Check game rules.
-
-    This function controls, if a played card follows the rules and is
-    admissible.
-
-    Returns:
-        True: if card follows suit, is special or doesn't has to follow suit.
-        False: if card is not same color, but player has same color cards in
-        hand.
-    """
-    # The card follows suit
-    if same_color(first_card_played, card_played):
-        return True
-
-    # special cards don't need to follow suit
-    if is_wizard(card_played) or is_jester(card_played):
-        return True
-
-    # if players hasn't played the same color, but still has it, return false
-    for card in player_hand:
-        if same_color(first_card_played, card):
-            return False
-
-
 def get_ordered_played_cards(table):
     sorted_players = sorted(table.items(), key=lambda item: item[1]["Order"])
 
