@@ -7,7 +7,7 @@ For new experiments change the game parameters below and also change the seed.
 import random
 from string import Template
 from clemgame.clemgame import GameInstanceGenerator
-from games.wizardsapprentice.utils.instantiation import (
+from games.wizardsapprentice.utils.instantiation_utils import (
     deal_cards_for_round,
     create_deck,
     create_seating_order
