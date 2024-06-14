@@ -4,4 +4,4 @@ $CARDS_PLAYED_LAST_TRICK$
 Thereby this player has won the trick: $WINNER_LAST_TRICK$
 
 This is, how many tricks every player has:
-$LEADERBOARD_TRICK_ROUND$
+$LEADERBOARD_TRICKS$

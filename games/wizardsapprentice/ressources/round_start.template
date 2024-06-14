@@ -3,7 +3,7 @@ A new round starts with one additional card.
 Let us start:
 You're playing with $NUM_OTHER_PLAYERS$ other players, and you're player number $PLAYER_POSITION$. 
 Each player gets $NUM_CARDS$ cards, and the rest stay in the deck. I've shuffled the cards. 
-The trump card is $TRUMP_CARD$, thereby the trump color is $TRUMP_COLOR$.
+The trump card is $TRUMP_CARD$, thereby all cards with the color $TRUMP_COLOR are trumps.
 
 You've been dealt the following cards: $PLAYER_HAND$. 
 
