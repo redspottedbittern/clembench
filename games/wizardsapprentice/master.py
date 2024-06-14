@@ -8,6 +8,7 @@ from clemgame import get_logger
 from games.wizardsapprentice.utils.utils import *
 from games.wizardsapprentice.instancegenerator import GAME_NAME
 from games.wizardsapprentice.utils.parser_utils import Parser
+from games.wizardsapprentice.utils.trick_utils import evaluate_trick
 
 logger = get_logger(__name__)
 
