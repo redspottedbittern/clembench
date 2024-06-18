@@ -1,9 +1,7 @@
-"""
-Main Game class for the Wizard's Apprentice.
-"""
+from typing import List, Tuple, Dict
 
-from backends import Model, CustomResponseModel
-from clemgame.clemgame import GameMaster, GameBenchmark, Player, DialogueGameMaster
+from backends import Model
+from clemgame.clemgame import GameMaster, GameBenchmark, Player
 from clemgame import get_logger
 from games.wizardsapprentice.utils.utils import *
 from games.wizardsapprentice.instancegenerator import GAME_NAME
@@ -14,95 +12,92 @@ logger = get_logger(__name__)
 
 
 class Apprentice(Player):
-    def __init__(self, name):
-        super().__init__(CustomResponseModel())
-        self.name = name
+    def __init__(self, model: Model):
+        super().__init__(model)
 
-class WizardsApprenticeGameMaster(DialogueGameMaster):
-    def __init__(self, experiment: dict, player_backends: list[str]):
+
+class WizardsApprenticeGameMaster(GameMaster):
+    def __init__(self, experiment: Dict, player_backends: List[Model]):
         super().__init__(GAME_NAME, experiment, player_backends)
+        self.config = experiment
+        self.player_model_names = [
+            player_model.get_name() for player_model in player_backends
+        ]
 
-        # initialize the Parser with the regex strings
-        self.parser = Parser(self.experiment['regex'])
+        # Import prompts
+        self.name = self.config["name"]
+        self.rules_prompt = self.config["rules_prompt"]
+        self.round_start_prompt = self.config["round_start_prompt"]
+        self.trick_start_prompt = self.config["trick_start_prompt"]
+        self.trick_end_prompt = self.config["trick_end_prompt"]
+        self.round_end_prompt = self.config["round_end_prompt"]
+        self.game_end_prompt = self.config["game_end_prompt"]
+        self.correction_suit_prompt = self.config["correction_suit_prompt"]
+        self.correction_hand_prompt = self.config["correction_hand_prompt"]
+        self.correction_regex_prompt = self.config["correction_regex_prompt"]
+        self.card_played = self.config["card_played"]
+        self.wizard = self.config["wizard"]
+        self.jester = self.config["jester"]
+        self.is_wizard = self.config["is_wizard"]
+        self.is_jester = self.config["is_jester"]
+        self.prediction = self.config["prediction"]
 
-        # Defines models TODO: How do we add a third model?
+        # Defines models 
         self.model_a = player_backends[0]
         self.model_b = player_backends[1]
 
-        # Import prompts from instance
-        self.rules_prompt = self.experiment["rules_prompt"]
-        self.round_start_prompt = self.experiment["round_start_prompt"]
-        self.round_start_prompt = self.round_start_prompt.replace("$NUM_OTHER_PLAYERS$", str(self.experiment["NUM_OTHER_PLAYERS"]-1)) # TODO: When 3 players, erase -1
-        self.trick_start_prompt = self.experiment["trick_start_prompt"]
-        self.trick_start_prompt = self.trick_start_prompt.replace("$NUM_OTHER_PLAYERS$", str(self.experiment["NUM_OTHER_PLAYERS"]-1)) # TODO: When 3 players, erase -1
-        self.trick_end_prompt = self.experiment["trick_end_prompt"]
-        self.round_end_prompt = self.experiment["round_end_prompt"]
-        # Create table for the round
-        self.table = create_table(self.experiment["NUM_PLAYERS"]-1) # TODO: When 3 players, erase -1
+    def setup(self, **game_instance):
+        logger.info("SETUP")
 
-        # Create deck for the round (with randomized order for players)
-        self.deck = create_deck(self.experiment["colors"], self.experiment["cards_per_color"], self.experiment["special_cards"], self.experiment["special_cards_num"])
+        # Import game instances
+        self.game_instance = game_instance
+        self.game_id = self.game_instance["game_id"]
+        self.seating_order = self.game_instance["seating_order"]
+        self.dealt_cards = dict(self.game_instance["dealt_cards"])
 
-    def setup(self, **game_parameters):
-        """
-        Mandatatory function.
-
-        This takes all the keys and values from the instanciation.
-        """
-        logger.info("setup")
-
-        # Imports instance parameters (in this case only number of cards necessary)
-        self.game_parameters = game_parameters
-
-        # Deal cards based on order in table for the round
-        self.players_position = get_players_by_order(self.table)
-        for player in self.players_position:
-            self.dealt_cards = get_random_undealt_cards(self.deck, self.game_parameters["NUM_CARDS"])
-            self.table[player]['Cards_dealt'] = self.dealt_cards
-
-        # Get random trump card and color for the round
-        self.trump_card = get_random_trump_card(self.deck)
-        # Finds keys with same trump color for the round
-        keys_with_trump_color = [key for key, value in self.deck.items() if value.get("color") == self.deck[str(self.trump_card)]["color"]]
-        # Sets the trump attribute to True for cards with the same color as the trump card for the round
-        for key in keys_with_trump_color:
-            self.deck[key]["trump"] = True
-
-        # Create the players TODO: How do we add a third model?
+        # Create the players
         self.apprentince1 = Apprentice(self.model_a)
         self.apprentince2 = Apprentice(self.model_b)
 
-        # Add the players: these will be logged to the records interactions.json
-        # Note: During game play the players will be called in the order added here
-        # TODO: How do we make the game comply to order of table? 
-        # Correction: Really doesnt matter as play() already deals succesfully. 
-        # LLMs are being tested to understand which num of player they are, even if in a different order, e.g. Order:3 PlayerN:2.
-        self.add_player(self.apprentince1)
-        self.add_player(self.apprentince2)
-
-
     def play(self):
-        """
-        Mandatory function.
 
-        Main function for the game.
-        """
+        # Loops through trick rounds
+        for trick_round_number in self.dealt_cards.keys():
+            trick_round_cards = dict(self.dealt_cards[str(trick_round_number)])
+            trick_round_trump = trick_round_cards["trump"]
 
+            # Loops through the players considering their seating order
+            for seating in range(1, len(self.seating_order)+1):
+                player_cards = list(trick_round_cards[str(seating)])
+                print(player_cards)
+
+        return None
+
+        '''
         # TODO: Include prompt to explain rules
-
         # Prompt round start template
+
         for idx, val in enumerate(self.players_position):
-            start_prompt = self.round_start_prompt.replace("$PLAYER_POSITION$", str(val)) #Notice we do not want to update the original round_start_prompt from the setup
-            start_prompt = start_prompt.replace("$NUM_CARDS$", str(self.game_parameters["NUM_CARDS"])) 
-            start_prompt = start_prompt.replace("$TRUMP_CARD$", str(self.trump_card)) 
-            start_prompt = start_prompt.replace("$TRUMP_COLOR$", str(self.deck[str(self.trump_card)]["color"])) 
-            start_prompt = start_prompt.replace("$PLAYER_HAND$", str(self.table[int(val)]["Cards_dealt"]))
+            # Notice we do not want to update the original round_start_prompt from the setup
+            start_prompt = self.round_start_prompt.replace(
+                "$PLAYER_POSITION$", str(val))
+            start_prompt = start_prompt.replace(
+                "$NUM_CARDS$", str(self.game_parameters["NUM_CARDS"]))
+            start_prompt = start_prompt.replace(
+                "$TRUMP_CARD$", str(self.trump_card))
+            start_prompt = start_prompt.replace(
+                "$TRUMP_COLOR$", str(self.deck[str(self.trump_card)]["color"]))
+            start_prompt = start_prompt.replace(
+                "$PLAYER_HAND$", str(self.table[int(val)]["Cards_dealt"]))
 
             if idx == 0:
-                start_prompt = start_prompt.replace("$PLAYER_PREDICTIONS$"," You are the first one to play, so there are no predictions so far.")
-                self.table[val]['Prediction'] = "TEST" # TODO: Remove when players are ready. Only for testing.
+                start_prompt = start_prompt.replace(
+                    "$PLAYER_PREDICTIONS$", " You are the first one to play, so there are no predictions so far.")
+                # TODO: Remove when players are ready. Only for testing.
+                self.table[val]['Prediction'] = "TEST"
             else:
-                start_prompt = start_prompt.replace("$PLAYER_PREDICTIONS$", str(summarize_trick_round(self.table)))
+                start_prompt = start_prompt.replace(
+                    "$PLAYER_PREDICTIONS$", str(summarize_trick_round(self.table)))
 
         # Loop through trick rounds
         for trick_round in range(1, int(self.game_parameters["NUM_CARDS"]+1)):
@@ -110,38 +105,53 @@ class WizardsApprenticeGameMaster(DialogueGameMaster):
             # Loop through players in the correct order to let them play
             for val in self.players_position:
                 # Start trick prompt:
-                trick_prompt = self.trick_start_prompt.replace("$PLAYER_POSITION$", str(val)) #Notice we do not want to update the original round_start_prompt from the setup
-                trick_prompt = trick_prompt.replace("$NUM_CARDS$", str(self.game_parameters["NUM_CARDS"]))
-                trick_prompt = trick_prompt.replace("$TRUMP_CARD$", str(self.trump_card)) 
-                trick_prompt = trick_prompt.replace("$TRUMP_COLOR$", str(self.deck[str(self.trump_card)]["color"])) 
-                trick_prompt = trick_prompt.replace("$PLAYER_HAND$", str(self.table[int(val)]["Cards_dealt"]))
+                # Notice we do not want to update the original round_start_prompt from the setup
+                trick_prompt = self.trick_start_prompt.replace(
+                    "$PLAYER_POSITION$", str(val))
+                trick_prompt = trick_prompt.replace(
+                    "$NUM_CARDS$", str(self.game_parameters["NUM_CARDS"]))
+                trick_prompt = trick_prompt.replace(
+                    "$TRUMP_CARD$", str(self.trump_card))
+                trick_prompt = trick_prompt.replace(
+                    "$TRUMP_COLOR$", str(self.deck[str(self.trump_card)]["color"]))
+                trick_prompt = trick_prompt.replace(
+                    "$PLAYER_HAND$", str(self.table[int(val)]["Cards_dealt"]))
 
                 # In case its the first play in the first trick round
                 if trick_round == 1 and idx == 0:
-                    trick_prompt = trick_prompt.replace("$PLAYER_PREDICTIONS$","You are the first one to play, so there are no predictions so far")
-                    trick_prompt = trick_prompt.replace("$CARDS_PLAYED$", "")                    
-                    self.table[val]['Prediction'] = "TEST" # TODO: Remove when players are ready. Only for testing.
-                else: # If not the first play, repeats predictions of other players and cards played so far
-                    trick_prompt = trick_prompt.replace("$PLAYER_PREDICTIONS$", str("\nAfter careful consideration, the players' predictions are as follows: " + summarize_trick_round(self.table)))
-                    trick_prompt = trick_prompt.replace("$CARDS_PLAYED$", str("\n\nThese cards have been played in this trick already in this order: " + get_ordered_played_cards(self.table)))
+                    trick_prompt = trick_prompt.replace(
+                        "$PLAYER_PREDICTIONS$", "You are the first one to play, so there are no predictions so far")
+                    trick_prompt = trick_prompt.replace("$CARDS_PLAYED$", "")
+                    # TODO: Remove when players are ready. Only for testing.
+                    self.table[val]['Prediction'] = "TEST"
+                else:  # If not the first play, repeats predictions of other players and cards played so far
+                    trick_prompt = trick_prompt.replace("$PLAYER_PREDICTIONS$", str(
+                        "\nAfter careful consideration, the players' predictions are as follows: " + summarize_trick_round(self.table)))
+                    trick_prompt = trick_prompt.replace("$CARDS_PLAYED$", str(
+                        "\n\nThese cards have been played in this trick already in this order: " + get_ordered_played_cards(self.table)))
 
                 print(trick_prompt)
 
-                test = input() # TODO: Remove when players are ready. Only for testing.
+                # TODO: Remove when players are ready. Only for testing.
+                test = input()
                 # TODO: Accepts or denies input of player
-                remove_card(self.table, val, str(test)) # Removes played card and updates the table
+                # Removes played card and updates the table
+                remove_card(self.table, val, str(test))
 
                 idx += 1
 
             # Prompts results for trick round
             # TODO: Decide winner (use utils.py), update table (see "Tricks_won"), generate text with won tricks by each player, similar to summarize_trick_round()
-            tend_prompt = self.trick_end_prompt.replace("$CARDS_PLAYED_LAST_TRICK$", get_ordered_played_cards(self.table))
+            tend_prompt = self.trick_end_prompt.replace(
+                "$CARDS_PLAYED_LAST_TRICK$", get_ordered_played_cards(self.table))
             print(tend_prompt)
 
         # TODO: Calculate score so far
-        # TODO: Generate leaderboard for round 
-        rend_prompt = self.round_end_prompt.replace("$PLAYER_PREDICTIONS$", str(summarize_trick_round(self.table)))
+        # TODO: Generate leaderboard for round
+        rend_prompt = self.round_end_prompt.replace(
+            "$PLAYER_PREDICTIONS$", str(summarize_trick_round(self.table)))
         print(rend_prompt)
+        '''
 
     def parse_card(self, answer, hand, trick):
         """
