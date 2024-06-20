@@ -38,8 +38,6 @@ class WizardsApprenticeGameMaster(GameMaster):
         self.card_played = self.config["card_played"]
         self.wizard = self.config["wizard"]
         self.jester = self.config["jester"]
-        self.is_wizard = self.config["is_wizard"]
-        self.is_jester = self.config["is_jester"]
         self.prediction = self.config["prediction"]
 
         # Defines models 

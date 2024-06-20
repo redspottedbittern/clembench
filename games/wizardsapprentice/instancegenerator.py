@@ -95,7 +95,7 @@ class WizardsApprenticeInstanceGenerator(GameInstanceGenerator):
         In dependence of the set global variables regex are created:
             - 'card_played': to check the answer when a card should be played
             - 'prediction': to check the answer when a prediction was made
-            - 'is_wizard' and 'is_jester'
+            - 'wizard' and 'jester'
         """
         # create a dictionary for the regex
         self.regex = {}
@@ -134,11 +134,11 @@ class WizardsApprenticeInstanceGenerator(GameInstanceGenerator):
         self.regex['jester'] = ""
         for letter in SPECIAL_CARDS:
             if letter == "Z":
-                self.regex['is_wizard'] = "Z"
+                self.regex['wizard'] = "Z"
             elif letter == "W":
-                self.regex['is_wizard'] = "W"
+                self.regex['wizard'] = "W"
             elif letter == "J":
-                self.regex['is_jester'] = "J"
+                self.regex['jester'] = "J"
 
         # prepare the regex for the prediction prompt
         self.regex['prediction'] = "PREDICTION: ([0-9]{1,2})$"
