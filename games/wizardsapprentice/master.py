@@ -58,16 +58,38 @@ class WizardsApprenticeGameMaster(GameMaster):
         self.apprentince2 = Apprentice(self.model_b)
 
     def play(self):
+        round_start_prompt = self.round_start_prompt.replace("$NUM_OTHER_PLAYERS$", str(len(self.seating_order)-1))
 
         # Loops through trick rounds
         for trick_round_number in self.dealt_cards.keys():
+
             trick_round_cards = dict(self.dealt_cards[str(trick_round_number)])
+            print(trick_round_cards)
             trick_round_trump = trick_round_cards["trump"]
+
+            round_start_prompt = round_start_prompt.replace("$NUM_CARDS$", str(trick_round_number))
+            round_start_prompt = round_start_prompt.replace("$TRUMP_CARD$", str(trick_round_trump))
+            try:
+                round_start_prompt = round_start_prompt.replace("$TRUMP_CARD$", str(trick_round_trump)[0])
+            except:
+                pass
+
 
             # Loops through the players considering their seating order
             for seating in range(1, len(self.seating_order)+1):
+                round_start_prompt = round_start_prompt.replace("$PLAYER_POSITION$", str(seating))
                 player_cards = list(trick_round_cards[str(seating)])
                 print(player_cards)
+                round_start_prompt = round_start_prompt.replace("$PLAYER_HAND$", str(player_cards))
+
+                if seating == 1:
+                    round_start_prompt = round_start_prompt.replace("$PLAYER_PREDICTIONS$", " You are the first one to play, so there are no predictions so far.")
+                else:
+                    pass
+
+                print(round_start_prompt)
+
+                # TODO: 
 
         return None
 
