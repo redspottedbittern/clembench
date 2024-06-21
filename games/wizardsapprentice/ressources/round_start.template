@@ -1,13 +1,13 @@
 A new round starts with one additional card.
 
 Let us start:
-You're playing with $NUM_OTHER_PLAYERS$ other players, and you're player number $PLAYER_POSITION$. 
-Each player gets $NUM_CARDS$ cards, and the rest stay in the deck. I've shuffled the cards. 
-The trump card is $TRUMP_CARD$, thereby all cards with the color $TRUMP_COLOR are trumps.
+You are playing with $NUM_OTHER_PLAYERS other players, and you are player number $PLAYER_POSITION. 
+Each player gets $NUM_CARDS cards, and the rest stay in the deck. I have shuffled the cards. 
+The trump card is $TRUMP_CARD, thereby all cards with the color $TRUMP_COLOR are trumps.
 
-You've been dealt the following cards: $PLAYER_HAND$. 
+You've been dealt the following cards: $PLAYER_HAND. 
 
-These predictions of other players have already been made: $PLAYER_PREDICTIONS$
+These predictions of other players have already been made: $PLAYER_PREDICTIONS
 
 Now you have to predict how many tricks you will get. What's your prediction?
 Anwer only in this format: "PREDICTION: number". Omit any other text.

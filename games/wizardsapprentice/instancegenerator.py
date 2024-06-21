@@ -17,7 +17,7 @@ from games.wizardsapprentice.utils.instantiation_utils import (
 GAME_NAME = "wizardsapprentice"
 EXPERIMENT_NAME = "full_game_4p"
 SEED = 123
-N_INSTANCES = 4
+N_INSTANCES = 1
 
 # parameters for the game
 START_ROUND = 1
@@ -155,7 +155,8 @@ class WizardsApprenticeInstanceGenerator(GameInstanceGenerator):
         # create experiment
         experiment = self.add_experiment(EXPERIMENT_NAME)
         experiment.update(self.prompts)
-        experiment.update(self.regex)
+        experiment['regex'] = self.regex
+        # experiment.update(self.regex)
 
         # create deck and check number of rounds
         deck = create_deck(COLORS, CARDS_PER_COLOR, SPECIAL_CARDS,

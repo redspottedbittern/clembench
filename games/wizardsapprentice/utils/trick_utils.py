@@ -112,3 +112,18 @@ def evaluate_trick(trick, trump_color):
             current_winner = card
 
     return current_winner
+
+
+def shift_to_winner(liste, target):
+    """Shift the seating order to the winner for next trick round."""
+    idx = liste.index(target)
+    shifted_list = liste[idx:] + liste[:idx]
+    return shifted_list
+
+
+def evaluate_round(prediction, tricks):
+    """Calculate how many points a player earns."""
+    if prediction == tricks:
+        return (10*tricks)+20
+    else:
+        return -(abs(prediction-tricks)*10)
