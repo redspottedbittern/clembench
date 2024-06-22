@@ -1,35 +1,33 @@
-
 import random
+from typing import List
 from clemgame.clemgame import Player
 
-
-class CardPlayer(Player):
-
+class Apprentice(Player):
     def __init__(self, model_name: str, player: str):
-        # always initialise the Player class with the model_name argument
-        # if the player is a program and you don't want to make API calls to
-        # LLMS, use model_name="programmatic"
+        """
+        Initialize an Apprentice object.
+
+        :param model_name: The name of the model.
+        :param player: The name of the player.
+        """
         super().__init__(model_name)
         self.player: str = player
 
-        # a list to keep the dialogue history
-        self.history: list = []
+        # A list to keep the dialogue history
+        self.history: List = []
 
     def _custom_response(self, messages, turn_idx) -> str:
         """
-        Give a programmatic response without a API call to a model.
+        Give a programmatic response without an API call to a model.
 
         This function searches for keywords in the given message:
-            - if it is aksed for predictions, the hand size must be determined
-            and a random number returned
-            - if it is asked for a card, the current hand must be determined
-            and a random card returned
+        - If asked for predictions, determines the hand size and returns a random number.
+        - If asked for a card, determines the current hand and returns a random card.
 
-        Returns:
-            - int: a random number in range of num_cards (for PREDICTION)
-            - str: a card from the current hand (for CARD)
+        :param messages: List of messages in the dialogue.
+        :param turn_idx: Index of the current turn.
+        :return: A programmatic response based on the prompt.
         """
-        # is this correct=
         prompt = messages[-1]
 
         if "PREDICTION: number" in prompt:
