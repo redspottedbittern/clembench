@@ -1,5 +1,6 @@
 from typing import List, Tuple, Dict
 from string import Template
+import collections
 
 from backends import Model
 from clemgame.clemgame import GameMaster, GameBenchmark, Player
@@ -17,8 +18,12 @@ logger = get_logger(__name__)
 
 
 class Apprentice(Player):
-    def __init__(self, model: Model):
-        super().__init__(model)
+    def __init__(self, model_name: str, player: str):
+        super().__init__(model_name)
+        self.player: str = player
+
+        # a list to keep the dialogue history
+        self.history: List = []
 
 
 class WizardsApprenticeGameMaster(GameMaster):
@@ -28,6 +33,9 @@ class WizardsApprenticeGameMaster(GameMaster):
         self.player_model_names = [
             player_model.get_name() for player_model in player_backends
         ]
+        self.messages_by_names: Dict[str, List] = dict()
+        self.players_by_names: Dict[str, Player] = collections.OrderedDict()
+
 
         # Import prompts
         self.name = self.config["name"]
@@ -63,8 +71,57 @@ class WizardsApprenticeGameMaster(GameMaster):
         self.dealt_cards = self.game_instance["dealt_cards"]
 
         # Create the players
-        self.apprentince1 = Apprentice(self.model_a)
-        self.apprentince2 = Apprentice(self.model_b)
+        self.apprentice1 = Apprentice(self.model_a, 1)
+        self.apprentice2 = Apprentice(self.model_b, 2)
+
+        self.add_player(self.apprentice1)
+        self.add_player(self.apprentice2)
+
+
+    def add_message(self, player: Player, utterance: str, role: str):
+        message = {"role": role, "content": utterance}
+        history = self.messages_by_names[player.descriptor]
+        history.append(message)
+
+    def add_user_message(self, player: Player, utterance: str):
+        self.add_message(player, utterance, role="user")
+
+    def add_player(self, player: Player):
+        """
+        Add a player to the game.
+
+        Note: The players will be called in the same order as added!
+
+        :param player: to be added to the game
+        """
+        idx = len(self.players_by_names)
+        player.descriptor = f"Player {idx + 1}"
+        self.players_by_names[player.descriptor] = player
+        self.messages_by_names[player.descriptor] = []
+
+    def prompt(self, player: Player, is_reprompt=False):
+        # GM -> Player
+        history = self.messages_by_names[player.descriptor]
+        assert history, f"messages history must not be empty for {player.descriptor}"
+
+        last_entry = history[-1]
+        assert last_entry["role"] != "assistant", "Last entry should not be assistant " \
+                                                  "b.c. this would be the role of the current player"
+        message = last_entry["content"]
+
+        action_type = 'send message' if not is_reprompt else 'send message (reprompt)'
+        action = {'type': action_type, 'content': message}
+        #self.log_event(from_='GM', to=player.descriptor, action=action)
+
+        _prompt, _response, response_message = player(history, 1)
+        print(response_message)
+
+        # Player -> GM
+        action = {'type': 'get message', 'content': response_message}
+        #self.log_event(from_=player.descriptor, to="GM", action=action, call=(_prompt, _response))
+
+        # GM -> GM
+        #self.__validate_parse_and_add_player_response(player, response_message)
 
     def play(self):
         """
@@ -73,6 +130,15 @@ class WizardsApprenticeGameMaster(GameMaster):
         current_hands: dict to manipulate current hand during one round
         playing_order = list to manipulate the current order of play
         """
+
+        print(self.apprentice1.get_description())
+
+        self.add_user_message(self.apprentice1, "Tell me a joke!")
+        print(self.apprentice1.history)
+        print(self.messages_by_names)
+        self.prompt(self.apprentice1)
+
+        #prompt, raw_answer, answer = self.apprentince1.__call__(self.apprentince1.history, 1)
 
         # create a leaderboard to calculate the score
         leaderboard = {}
@@ -284,6 +350,9 @@ class WizardsApprenticeGameMaster(GameMaster):
             return  # TODO correction template
 
         return int(prediction)
+    
+    def compute_scores():
+        return None
 
 
 class WizardsApprenticeGameBenchmark(GameBenchmark):
