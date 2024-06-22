@@ -40,7 +40,8 @@ class WizardsApprenticeGameMaster(GameMaster):
         self.players_by_names: Dict[str, Player] = collections.OrderedDict()
 
         # Initialise attributes that will be used for the evaluation scores
-        self.aborted: bool = False
+        # TODO: What other attributes should be used?
+        self.aborted: bool = False # Boolean to stop game if parsing is incorrect
         self.leaderboard = {}
 
         # Import prompts
@@ -92,8 +93,29 @@ class WizardsApprenticeGameMaster(GameMaster):
         action = {'type': 'get message', 'content': answer}
         self.log_event(from_=str(self.players_by_names[str(
             player)]), to='GM', action=action, call=(copy.deepcopy(prompt), raw_answer))
-        player.history = [] # TODO: Figure out how to deal with this. Let's ask Hakimov.
+        # TODO: Figure out how to deal with this. Let's ask Hakimov.
+        player.history = []
         return answer
+    
+    def parse_prediction(self, answer, round):
+        """
+        Parse the answer from an LLM when a prediction is expected.
+
+        This function takes the answer from the LLM, checks if it is a viable
+        answer, that follows the move rules:
+            - prediction is in range of total cards this round
+
+        Returns prediction as an int.
+        """
+        if self.parser.is_comprehensible_prediction(answer):
+            prediction = self.parser.extract_prediction(answer)
+        else:
+            return  # TODO correction template
+
+        if not self.parser.is_possible_prediction(prediction, round):
+            return  # TODO correction template
+
+        return int(prediction)
 
     def parse_card(self, answer, hand, trick):
         """
@@ -120,26 +142,6 @@ class WizardsApprenticeGameMaster(GameMaster):
 
         return card
 
-    def parse_prediction(self, answer, round):
-        """
-        Parse the answer from an LLM when a prediction is expected.
-
-        This function takes the answer from the LLM, checks if it is a viable
-        answer, that follows the move rules:
-            - prediction is in range of total cards this round
-
-        Returns prediction as an int.
-        """
-        if self.parser.is_comprehensible_prediction(answer):
-            prediction = self.parser.extract_prediction(answer)
-        else:
-            return  # TODO correction template
-
-        if not self.parser.is_possible_prediction(prediction, round):
-            return  # TODO correction template
-
-        return int(prediction)
-
     def setup(self, **game_instance) -> None:
         """
         Set up the game with the provided game instance configuration.
@@ -156,9 +158,9 @@ class WizardsApprenticeGameMaster(GameMaster):
 
         # Create the players
         self.apprentice1 = Apprentice(self.model_a, "Gandalf")
-        self.apprentice2 = Apprentice(self.model_b, "Merlin")
+        #self.apprentice2 = Apprentice(self.model_b, "Merlin")
         self.add_player(self.apprentice1)
-        self.add_player(self.apprentice2)
+        #self.add_player(self.apprentice2)
 
     def play(self) -> None:
         """
@@ -166,7 +168,7 @@ class WizardsApprenticeGameMaster(GameMaster):
 
         The play method orchestrates the flow of the game by managing the turns,
         handling player interactions, and evaluating the game state. Key elements include:
-        
+
         - info: dict that contains information for the string substitution.
         - current_hands: dict to manipulate current hand during one round.
         - playing_order: list to manipulate the current order of play.
@@ -174,7 +176,7 @@ class WizardsApprenticeGameMaster(GameMaster):
 
         # Declare info dict to substitute the prompts later
         info = {}
-        # extract how many players there are and the total number of cards
+        # Extract how many players there are and the total number of cards
         info['NUM_OTHER_PLAYERS'] = len(self.dealt_cards["1"]) - 2
         info['NUM_CARDS'] = len(self.dealt_cards)
 
@@ -223,6 +225,8 @@ class WizardsApprenticeGameMaster(GameMaster):
                     self.add_message(self.apprentice1, next_prompt)
                     prediction = self.get_answer(self.apprentice1)
 
+                    #TODO: Parse answer
+
                     # Append answer to player predictions
                     info['PLAYER_PREDICTIONS'] += str(prediction)
                     # Update the leaderboard
@@ -240,7 +244,6 @@ class WizardsApprenticeGameMaster(GameMaster):
                 for trick_round in range(1, int(round)+1):
                     # Declare trick
                     info['CARDS_PLAYED'] = []
-                    
 
                     # Let every player play a card
                     for position, player in enumerate(playing_order):
@@ -257,9 +260,9 @@ class WizardsApprenticeGameMaster(GameMaster):
                         self.add_message(self.apprentice1, next_prompt)
                         answer = self.get_answer(self.apprentice1)
 
-                        # card = self.parse_prediction(answer, round)
-                        # TODO: actually send that to a model and delete the next lines
-                        answer = ''
+                        #TODO: Parse answer
+
+                        answer = '' # card = self.parse_prediction(answer, round)
                         card = current_hands[player][0]
 
                         # Add card to trick
@@ -284,28 +287,25 @@ class WizardsApprenticeGameMaster(GameMaster):
                 # Shift seating order to winner
                 playing_order = shift_to_winner(self.seating_order, winner)
 
-                # TIDY UP after the trick is finished
+                # TIDY UP after the trick is finished 
+                # TODO: This part is not working as the loop is out of control
                 # Declare last_trick by copying trick
                 info['CARDS_PLAYED_LAST_TRICK'] = info['CARDS_PLAYED'].copy()
                 # Clear trick
                 info['CARDS_PLAYED'] = []
                 # Add trick_end prompt
                 next_prompt = self.trick_end_prompt + self.trick_start_prompt
-                # Finish game
-                self.aborted = True
+
+                # Log a message informing that the trick round was successfuly played
+                action = {'type': 'info', 'content': 'Trick round successful'}
+                self.log_event(from_='GM', to='GM', action=action)
+                
+                self.aborted = True # Forcing the end. TODO: Remove when loop is working
 
         logger.info("Game is finished!")
-
-        # Log a message informing that the game was successfuly played
-        action = {'type': 'info', 'content': 'game successful'}
-        self.log_event(from_='GM', to='GM', action=action)
-
-        # Log a final message saying that the game did came to an end
+        # Log a final message saying that the game did come to an end
         action = {'type': 'info', 'content': 'end game'}
         self.log_event(from_='GM', to='GM', action=action)
-
-        # TODO: log all temporary game variables that are needed for evaluation
-        # self.log_eval_assets()
 
         # NEXT calculate points for all player
         for player in self.seating_order:
@@ -329,7 +329,7 @@ class WizardsApprenticeGameMaster(GameMaster):
                       self.leaderboard[str(len(self.dealt_cards))].items()]
         info['WINNER_GAME'] = max(end_points)[1]
 
-        # PROMPT for end game
+        # PROMPT for end game TODO: Do we need this?
         next_prompt += self.game_end_prompt
         next_prompt = Template(next_prompt)
         next_prompt = next_prompt.substitute(info)

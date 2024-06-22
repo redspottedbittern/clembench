@@ -2,6 +2,7 @@ import random
 from typing import List
 from clemgame.clemgame import Player
 
+
 class Apprentice(Player):
     def __init__(self, model_name: str, player: str):
         """
