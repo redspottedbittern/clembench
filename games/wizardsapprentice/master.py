@@ -97,7 +97,7 @@ class WizardsApprenticeGameMaster(GameMaster):
         player.history = []
         return answer
     
-    def parse_prediction(self, answer, round):
+    def parse_prediction(self, player, answer, round, rec_anchor=0):
         """
         Parse the answer from an LLM when a prediction is expected.
 
@@ -107,13 +107,21 @@ class WizardsApprenticeGameMaster(GameMaster):
 
         Returns prediction as an int.
         """
+        if rec_anchor > 2:
+            return "PLAYER FAILED TO PROVIDE INPUT"
         if self.parser.is_comprehensible_prediction(answer):
             prediction = self.parser.extract_prediction(answer)
         else:
-            return  # TODO correction template
+            self.add_message(player, self.correction_hand_prompt)
+            prediction = self.get_answer(player)
+            return self.parse_prediction(player, prediction, round, rec_anchor + 1) # TODO correction template
 
         if not self.parser.is_possible_prediction(prediction, round):
-            return  # TODO correction template
+            self.add_message(player, self.correction_hand_prompt)
+            prediction = self.get_answer(player)
+            return self.parse_prediction(player, prediction, round, rec_anchor + 1)  
+        
+        # TODO correction template
 
         return int(prediction)
 
@@ -158,9 +166,9 @@ class WizardsApprenticeGameMaster(GameMaster):
 
         # Create the players
         self.apprentice1 = Apprentice(self.model_a, "Gandalf")
-        #self.apprentice2 = Apprentice(self.model_b, "Merlin")
+        self.apprentice2 = Apprentice(self.model_b, "Merlin")
         self.add_player(self.apprentice1)
-        #self.add_player(self.apprentice2)
+        self.add_player(self.apprentice2)
 
     def play(self) -> None:
         """
@@ -222,8 +230,12 @@ class WizardsApprenticeGameMaster(GameMaster):
                     # Prompt player for prediction
                     next_prompt = Template(next_prompt)
                     next_prompt = next_prompt.substitute(info)
-                    self.add_message(self.apprentice1, next_prompt)
-                    prediction = self.get_answer(self.apprentice1)
+                    if player == 0:
+                        self.add_message(self.apprentice1, next_prompt)
+                        prediction = self.get_answer(self.apprentice1)
+                    else:
+                        self.add_message(self.apprentice2, next_prompt)
+                        prediction = self.get_answer(self.apprentice2)
 
                     #TODO: Parse answer
 
@@ -257,13 +269,18 @@ class WizardsApprenticeGameMaster(GameMaster):
                         # PROMPT player for card
                         next_prompt = Template(next_prompt)
                         next_prompt = next_prompt.substitute(info)
-                        self.add_message(self.apprentice1, next_prompt)
-                        answer = self.get_answer(self.apprentice1)
+                        if player == 0:
+                            clem_player = self.apprentice1
+                        else:
+                            clem_player = self.apprentice2
 
                         #TODO: Parse answer
-
-                        answer = '' # card = self.parse_prediction(answer, round)
-                        card = current_hands[player][0]
+                        self.add_message(clem_player, next_prompt)
+                        answer = self.get_answer(clem_player)
+                        
+                        card = self.parse_prediction(clem_player, answer, round)
+                        # answer = '' # card = self.parse_prediction(answer, round)
+                        # card = current_hands[player][0]
 
                         # Add card to trick
                         info['CARDS_PLAYED'].append(card)
