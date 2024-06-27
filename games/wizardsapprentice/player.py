@@ -15,7 +15,7 @@ class Apprentice(Player):
         self.player: str = player
 
         # A list to keep the dialogue history
-        self.history: List = []
+        self.history: List = [] # TODO: make it a dict with turns
 
     def _custom_response(self, messages, turn_idx) -> str:
         """

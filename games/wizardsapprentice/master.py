@@ -89,12 +89,11 @@ class WizardsApprenticeGameMaster(GameMaster):
         :param player: Player object.
         :return: Answer string.
         """
-        prompt, raw_answer, answer = player(player.history, self.current_turn)
+        prompt, raw_answer, answer = player(player.history, self.current_turn) # TODO: FIX THIS!
         action = {'type': 'get message', 'content': answer}
         self.log_event(from_=str(self.players_by_names[str(
             player)]), to='GM', action=action, call=(copy.deepcopy(prompt), raw_answer))
-        # TODO: Figure out how to deal with this. Let's ask Hakimov.
-        player.history = []
+        player.history = [] # TODO: Figure out how to deal with this. Let's ask Hakimov.
         return answer
     
     def parse_prediction(self, answer, round):
