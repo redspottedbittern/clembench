@@ -14,9 +14,9 @@ def deal_cards_for_round(round, deck, seating_order):
         dealt_cards[player] = hand
 
     # determine a trump color
-    dealt_cards['trump'] = get_random_trump_card(deck)
+    trump_card = get_random_trump_card(deck)
 
-    return dealt_cards
+    return dealt_cards, trump_card
 
 
 def get_random_undealt_cards(deck, n=0):

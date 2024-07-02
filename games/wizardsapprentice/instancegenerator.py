@@ -174,12 +174,15 @@ class WizardsApprenticeInstanceGenerator(GameInstanceGenerator):
 
             # for every round deal cards to each player
             dealt_cards = {}
+            trump_cards = {}
             for round in range(START_ROUND, end_round + 1):
-                dealt_cards[round] = deal_cards_for_round(round, deck,
-                                                          seating_order)
+                dealt_cards[round], trump_cards[round] = (
+                    deal_cards_for_round(round, deck, seating_order)
+                )
 
             game_instance['seating_order'] = seating_order
             game_instance['dealt_cards'] = dealt_cards
+            game_instance['trump_cards'] = trump_cards
 
     def rounds_to_be_played(self, num_cards, num_players, rounds_suggested):
         """Check what the maximum number of rounds can be."""

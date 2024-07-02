@@ -9,6 +9,10 @@ from clemgame import get_logger
 from games.wizardsapprentice.utils.utils import *
 from games.wizardsapprentice.instancegenerator import GAME_NAME
 from games.wizardsapprentice.utils.parser_utils import Parser
+from games.wizardsapprentice.utils.utils import (
+    get_current_hand,
+    get_current_trick
+)
 from games.wizardsapprentice.utils.trick_utils import (
     evaluate_trick,
     shift_to_winner,
@@ -42,7 +46,6 @@ class WizardsApprenticeGameMaster(GameMaster):
         # Initialise attributes that will be used for the evaluation scores
         # TODO: What other attributes should be used?
         self.aborted: bool = False # Boolean to stop game if parsing is incorrect
-        self.leaderboard = {}
 
         # Import prompts
         self.rules_prompt = self.config["rules_prompt"]
@@ -96,7 +99,7 @@ class WizardsApprenticeGameMaster(GameMaster):
         # TODO: Figure out how to deal with this. Let's ask Hakimov.
         player.history = []
         return answer
-    
+
     def parse_prediction(self, player, answer, round, rec_anchor=0):
         """
         Parse the answer from an LLM when a prediction is expected.
@@ -119,8 +122,8 @@ class WizardsApprenticeGameMaster(GameMaster):
         if not self.parser.is_possible_prediction(prediction, round):
             self.add_message(player, self.correction_hand_prompt)
             prediction = self.get_answer(player)
-            return self.parse_prediction(player, prediction, round, rec_anchor + 1)  
-        
+            return self.parse_prediction(player, prediction, round, rec_anchor + 1)
+
         # TODO correction template
 
         return int(prediction)
@@ -163,6 +166,32 @@ class WizardsApprenticeGameMaster(GameMaster):
         self.game_id = self.game_instance["game_id"]
         self.seating_order = self.game_instance["seating_order"]
         self.dealt_cards = self.game_instance["dealt_cards"]
+        self.trump_cards = self.game_instance["trump_cards"]
+
+        # create dictionarys for the leaderboard
+        # dict[round][player] = int
+        self.points = {
+            d: dict.fromkeys(self.seating_order, 0)
+            for d in self.dealt_cards.keys()
+        }
+        self.predictions = self.points.copy()
+        self.tricks_per_player = self.points.copy()
+
+        # create a dictionary to save played card
+        # played_cards[round][trick_round][player] = card
+        self.played_cards = {
+            d: {dd: dict.fromkeys(self.seating_order)
+                for dd in range(1, int(d)+1)}
+            for d in self.dealt_cards.keys()
+        }
+
+        # create a dictionarry to save the seating order at a certain point
+        # playing_order[round][trick_round] = list
+        self.playing_order = {
+            d: {dd: {}
+                for dd in range(1, int(d)+1)}
+            for d in self.dealt_cards.keys()
+        }
 
         # Create the players
         self.apprentice1 = Apprentice(self.model_a, "Gandalf")
@@ -182,18 +211,11 @@ class WizardsApprenticeGameMaster(GameMaster):
         - playing_order: list to manipulate the current order of play.
         """
 
-        # Declare info dict to substitute the prompts later
-        info = {}
-        # Extract how many players there are and the total number of cards
-        info['NUM_OTHER_PLAYERS'] = len(self.dealt_cards["1"]) - 2
-        info['NUM_CARDS'] = len(self.dealt_cards)
+        # TODO fix playing order and how to do this
+        self.playing_order[round][1] = self.seating_order
+        # fix how to prepare the prompts
 
-        # Add rules to next prompt
-        next_prompt = self.rules_prompt
-        # Declare seating_order
-        playing_order = self.seating_order
-
-        while self.aborted == False:
+        while self.aborted is False:
             for round, round_cards in self.dealt_cards.items():
                 logger.info("Trick round " + str(round))
                 print("Trick round " + str(round))
@@ -201,31 +223,11 @@ class WizardsApprenticeGameMaster(GameMaster):
                 self.current_turn += 1
                 self.log_next_turn()
 
-                # Initialize leaderboard for the round
-                self.leaderboard[round] = {}
-
-                # Initialize current player hands
-                current_hands = {}
-
-                # Declare trump card for the round
-                info['TRUMP_CARD'] = str(round_cards['trump'])
-                # Declare trump color for the round
-                info['TRUMP_COLOR'] = (
-                    info['TRUMP_CARD'][0] if info['TRUMP_CARD'] != "None" else str(None))
-                # Initialize player predictions
-                info['PLAYER_PREDICTIONS'] = ''
-
-                # Add round_start to next prompt
-                next_prompt += self.round_start_prompt
-
                 # FIRST: Get predictions of players in playing order
                 for position, player in enumerate(playing_order):
-                    # Declare player hand
-                    info['PLAYER_HAND'] = round_cards[str(player)]
-                    # Declare current player hand
-                    info['CURRENT_PLAYER_HAND'] = info['PLAYER_HAND'].copy()
-                    # Declare player position
-                    info['PLAYER_POSITION'] = position + 1
+
+                    # TODO CALL the prompt preperator
+                    # prediction(player, position)
 
                     # Prompt player for prediction
                     next_prompt = Template(next_prompt)
@@ -239,32 +241,20 @@ class WizardsApprenticeGameMaster(GameMaster):
 
                     #TODO: Parse answer
 
-                    # Append answer to player predictions
-                    info['PLAYER_PREDICTIONS'] += str(prediction)
-                    # Update the leaderboard
-                    self.leaderboard[round][player] = {}
-                    self.leaderboard[round][player]['tricks'] = 0
-                    self.leaderboard[round][player]['points'] = 0
-                    self.leaderboard[round][player]['prediction'] = prediction
-                    # Fill current_hands
-                    current_hands[player] = info['CURRENT_PLAYER_HAND'].copy()
+                    # save players prediction
+                    self.predictions[round][player] = prediction
 
                 # clear next prompt and add trick_start to next prompt
                 next_prompt = self.trick_start_prompt
 
                 # NEXT: play the tricks
                 for trick_round in range(1, int(round)+1):
-                    # Declare trick
-                    info['CARDS_PLAYED'] = []
 
                     # Let every player play a card
                     for position, player in enumerate(playing_order):
-                        # Declare player hand
-                        info['PLAYER_HAND'] = round_cards[str(player)]
-                        # Declare current player hand
-                        info['CURRENT_PLAYER_HAND'] = current_hands[player]
-                        # Declare player position
-                        info['PLAYER_POSITION'] = position + 1
+
+                        # TODO call the prompt preperator
+                        # player, position, played_cards
 
                         # PROMPT player for card
                         next_prompt = Template(next_prompt)
@@ -274,79 +264,70 @@ class WizardsApprenticeGameMaster(GameMaster):
                         else:
                             clem_player = self.apprentice2
 
-                        #TODO: Parse answer
                         self.add_message(clem_player, next_prompt)
                         answer = self.get_answer(clem_player)
-                        
-                        card = self.parse_prediction(clem_player, answer, round)
-                        # answer = '' # card = self.parse_prediction(answer, round)
-                        # card = current_hands[player][0]
 
-                        # Add card to trick
-                        info['CARDS_PLAYED'].append(card)
-                        # Substract card from current player hand
-                        current_hands[player].remove(card)
+                        # TODO: Parse answer
+                        print(answer)
+                        card = self.parse_card(clem_player, answer, round)
 
-                # FINALLY evaluate trick
-                best_card = evaluate_trick(
-                    info['CARDS_PLAYED'], info['TRUMP_COLOR'])
-                # Check which player played the best_card
-                winner = [player for player in self.seating_order if best_card
-                          in round_cards[str(player)]][0]
-                winner = int(winner)
-                # Declare winner
-                info['WINNER_LAST_TRICK'] = winner
-                # Update leaderboard_tricks
-                self.leaderboard[round][winner]['tricks'] += 1
-                info['LEADERBOARD_TRICKS'] = [
-                    (player, value['tricks']) for player, value in self.leaderboard[round].items()]
+                        # save the played card
+                        self.played_cards[round][trick_round][player] = card
 
-                # Shift seating order to winner
-                playing_order = shift_to_winner(self.seating_order, winner)
 
-                # TIDY UP after the trick is finished 
-                # TODO: This part is not working as the loop is out of control
-                # Declare last_trick by copying trick
-                info['CARDS_PLAYED_LAST_TRICK'] = info['CARDS_PLAYED'].copy()
-                # Clear trick
-                info['CARDS_PLAYED'] = []
-                # Add trick_end prompt
-                next_prompt = self.trick_end_prompt + self.trick_start_prompt
+                    # FINALLY evaluate trick
+                    trick = get_current_trick(round, trick_round,
+                                              self.played_cards, playing_order)
+                    trump = self.trump_cards[round][0]
+                    best_card = evaluate_trick(trick, trump)
+
+                    # Check which player played the best_card
+                    for player, card in self.played_cards[round][trick_round].items():
+                        if best_card == card:
+                            winner = int(player)
+
+                    # Update leaderboard
+                    self.tricks_per_player[round][player] += 1
+
+                    # Shift seating order to winner
+                    current_order = shift_to_winner(self.seating_order, winner)
+
+                    # TIDY UP after the trick is finished
+                    # TODO: This part is not working as the loop is out of control
+                    # Add trick_end prompt
+                    next_prompt = self.trick_end_prompt + self.trick_start_prompt
 
                 # Log a message informing that the trick round was successfuly played
                 action = {'type': 'info', 'content': 'Trick round successful'}
                 self.log_event(from_='GM', to='GM', action=action)
-                
-                self.aborted = True # Forcing the end. TODO: Remove when loop is working
 
-        logger.info("Game is finished!")
-        # Log a final message saying that the game did come to an end
-        action = {'type': 'info', 'content': 'end game'}
-        self.log_event(from_='GM', to='GM', action=action)
+                # Forcing the end. TODO: Remove when loop is working
+                self.aborted = True
 
-        # NEXT calculate points for all player
-        for player in self.seating_order:
-            d = self.leaderboard[round][player]
-            d['points'] = evaluate_round(d['prediction'], d['tricks'])
+        # logger.info("Game is finished!")
+        # # Log a final message saying that the game did come to an end
+        # action = {'type': 'info', 'content': 'end game'}
+        # self.log_event(from_='GM', to='GM', action=action)
 
-        # Declare last_predictios by copying predictions
-        info['PLAYER_PREDICTIONS_LAST_ROUND'] = info['PLAYER_PREDICTIONS']
-        # Clear predictions
-        info['PLAYER_PREDICTIONS'] = ''
-        # Declare leaderboard points
-        info['LEADERBOARD_POINTS'] = [
-            (player, value['points']) for player, value in self.leaderboard[round].items()]
-        # Shift original seating_order by one
-        self.seating_order = (self.seating_order[1:] + self.seating_order[:1])
-        # Add round end to next prompt
-        next_prompt = self.trick_end_prompt + self.round_end_prompt
+            # NEXT calculate points for all player
+            for player in self.seating_order:
+                self.points[round][player] = evaluate_round(
+                   self.predictions[round][player], self.tricks_per_player[round][player]
+                )
 
+            # Shift original seating_order by one
+            self.seating_order = (self.seating_order[1:] + self.seating_order[:1])
+            # Add round end to next prompt
+            next_prompt = self.trick_end_prompt + self.round_end_prompt
+
+
+        # TODO DO WE NEED TO TELL THE MODLS WHO WINS?
         # Declare winner_game
         end_points = [(values['points'], player) for player, values in
                       self.leaderboard[str(len(self.dealt_cards))].items()]
         info['WINNER_GAME'] = max(end_points)[1]
 
-        # PROMPT for end game TODO: Do we need this?
+        # PROMPT for end game
         next_prompt += self.game_end_prompt
         next_prompt = Template(next_prompt)
         next_prompt = next_prompt.substitute(info)
