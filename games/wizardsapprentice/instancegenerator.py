@@ -31,6 +31,8 @@ SPECIAL_CARDS = ["Z", "J"]
 SPECIAL_CARDS_NUM = 4
 
 # prompts
+LIBERAL_MODE = True
+ATTEMPTS = 3
 PROMPT_NAMES = [
     "rules",
     "round_start",
@@ -40,6 +42,7 @@ PROMPT_NAMES = [
     "game_end",
     "correction_suit",
     "correction_hand",
+    "correction_prediction",
     "correction_regex"
 ]
 
@@ -156,7 +159,10 @@ class WizardsApprenticeInstanceGenerator(GameInstanceGenerator):
         experiment = self.add_experiment(EXPERIMENT_NAME)
         experiment.update(self.prompts)
         experiment['regex'] = self.regex
-        # experiment.update(self.regex)
+
+        # fill general info about remprompting
+        experiment['liberal_mode'] = LIBERAL_MODE
+        experiment['attempts'] = ATTEMPTS
 
         # create deck and check number of rounds
         deck = create_deck(COLORS, CARDS_PER_COLOR, SPECIAL_CARDS,

@@ -1,26 +1,5 @@
 import random
 import pprint
-import re
-
-
-def get_current_hand(round, player, start_hand, played_cards):
-    """Extract a certain players current hand."""
-    old_cards = [trick_round[player] for trick_round in
-                 played_cards[round].values()]
-
-    current_hand = [card for card in start_hand if card not in old_cards]
-
-    return current_hand
-
-
-def get_current_trick(round, trick_round, played_cards, playing_order):
-    """Extract the current trick in the correct order of played cards."""
-    current_trick = []
-    for player in playing_order:
-        current_trick.append(played_cards[round][trick_round][player])
-
-    return current_trick
-
 
 
 def create_table(num_players):
