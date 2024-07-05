@@ -2,9 +2,11 @@ from typing import List, Tuple, Dict
 from string import Template
 import collections
 import copy
+import numpy as np
 
 from backends import Model
-from clemgame.clemgame import GameMaster, GameBenchmark, Player
+from clemgame.clemgame import GameMaster, GameBenchmark, Player, GameScorer
+import clemgame.metrics as metrics
 from clemgame import get_logger
 from games.wizardsapprentice.utils.utils import *
 from games.wizardsapprentice.instancegenerator import GAME_NAME
@@ -96,6 +98,17 @@ class WizardsApprenticeGameMaster(GameMaster):
         # TODO: Figure out how to deal with this. Let's ask Hakimov.
         player.history = []
         return answer
+    
+    def _log_metadata_single_content(self, data, data_for_computation=None):
+        if not data_for_computation:
+            action = {"type": "metadata", "content": data}
+        else:
+            action = {
+                "type": "metadata",
+                "content": data,
+                "data_for_computation": data_for_computation,
+            }
+        self.log_event(from_="GM", to="GM", action=action)
     
     def parse_prediction(self, player, answer, round, rec_anchor=0):
         """
@@ -345,6 +358,9 @@ class WizardsApprenticeGameMaster(GameMaster):
         end_points = [(values['points'], player) for player, values in
                       self.leaderboard[str(len(self.dealt_cards))].items()]
         info['WINNER_GAME'] = max(end_points)[1]
+        data_for_computation = {}
+        data_for_computation['LEADERBOARD_POINTS'] = info['LEADERBOARD_POINTS']
+        self._log_metadata_single_content(info, data_for_computation)
 
         # PROMPT for end game TODO: Do we need this?
         next_prompt += self.game_end_prompt
@@ -353,6 +369,62 @@ class WizardsApprenticeGameMaster(GameMaster):
         self.add_message(self.apprentice1, next_prompt)
         answer = self.get_answer(self.apprentice1)
         print(answer)
+        
+        
+class WordleGameScorer(GameScorer):
+    def __init__(self, game_name: str, experiment: Dict, game_instance: Dict):
+        super().__init__(game_name, experiment, game_instance)
+
+    def compute_scores(self, episode_interactions: Dict) -> None:
+        for key, val in episode_interactions.items():
+            if key == "turns":
+                # Look for last turn data and in that 'action' key
+                if (
+                    val
+                    and val[-1]
+                    and "action" in val[-1][-1]
+                    and "data_for_computation" in val[-1][-1]["action"]
+                ):
+                    data_to_compute_scores = val[-1][-1]["action"][
+                        "data_for_computation"
+                    ]
+                    if data_to_compute_scores:
+                        aborted, loss = self._compute_game_status(
+                            data_to_compute_scores["game_final_status"]
+                        )
+                        
+                        self._compute_game_specific_metrics(
+                            aborted,
+                            loss,
+                            data_to_compute_scores["turns_guess_feedback"],
+                            data_to_compute_scores["use_critic"],
+                            data_to_compute_scores["critic_guesses_change"],
+                            data_to_compute_scores["target_word_difficulty"],
+                        )
+                        return
+
+    def _compute_game_specific_metrics(
+        self,
+        aborted,
+        loss,
+        player,
+        points_received
+    ):
+        if aborted:
+            episode_score = np.nan
+            # Turn-scores can be logged even for aborted scenario
+            # turn_score = [np.nan]
+            # turn_strategy_score = [np.nan]
+            speed = np.nan
+            repeats_guess = np.nan
+            num_guess_repeats = np.nan
+        else:
+            points = 0
+            for point_pair in points_received:
+                if point_pair[0] == player:
+                    points += point_pair[1]
+                    
+        self.log_episode_score(metrics.BENCH_SCORE, speed)
 
 
 class WizardsApprenticeGameBenchmark(GameBenchmark):
