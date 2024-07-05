@@ -55,6 +55,7 @@ class Parser():
     def which_suit_to_follow(self, trick):
         """Return the color that reigns a trick at a certain point."""
         # if no cards were played so far, no suit must be followed
+        trick = [card for card in trick if card]
         if not trick:
             return None
 
@@ -98,7 +99,7 @@ class Parser():
 
     def is_possible_prediction(self, prediction, round):
         """Check if the prediction if possible."""
-        return prediction in range(1, round+1)
+        return prediction in range(0, round+1)
 
     def validate_card(self, answer, hand, trick):
         """Return True if a card is valid."""

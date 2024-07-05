@@ -8,11 +8,7 @@ from clemgame.clemgame import GameMaster, GameBenchmark, Player
 from clemgame import get_logger
 from games.wizardsapprentice.instancegenerator import GAME_NAME
 from games.wizardsapprentice.utils.parser_utils import Parser
-# from games.wizardsapprentice.utils.utils import *
-# from games.wizardsapprentice.utils.utils import (
-#     get_current_hand,
-#     get_current_trick
-# )
+from games.wizardsapprentice.utils.instantiation_utils import convert_keys_to_int
 from games.wizardsapprentice.utils.trick_utils import (
     evaluate_trick,
     shift_to_winner,
@@ -61,7 +57,8 @@ class WizardsApprenticeGameMaster(GameMaster):
         self.correction_suit_prompt = self.config["correction_suit_prompt"]
         self.correction_hand_prompt = self.config["correction_hand_prompt"]
         self.correction_prediction_prompt = self.config["correction_prediction_prompt"]
-        self.correction_regex_prompt = self.config["correction_regex_prompt"]
+        self.correction_card_structure_prompt = self.config["correction_card_structure_prompt"]
+        self.correction_prediction_structure_prompt = self.config["correction_prediction_structure_prompt"]
         self.regex = self.config['regex']
 
         # Define parser
@@ -99,7 +96,7 @@ class WizardsApprenticeGameMaster(GameMaster):
             if card == best_card
         ]
 
-        return winner
+        return winner[0]
 
     def calculate_points(self, round, player):
         """Calculate points for a player in relation to last round."""
@@ -166,7 +163,7 @@ class WizardsApprenticeGameMaster(GameMaster):
         if self.parser.is_comprehensible_prediction(answer):
             prediction = self.parser.extract_prediction(answer)
         else:
-            return self.correction_regex_prompt  # TODO make right prompt
+            return self.correction_prediction_structure_prompt
 
         if not self.parser.is_possible_prediction(prediction, round):
             return self.correction_prediction_prompt
@@ -187,7 +184,7 @@ class WizardsApprenticeGameMaster(GameMaster):
         if self.parser.is_comprehensible_card(answer):
             card = self.parser.extract_card(answer)
         else:
-            return self.correction_regex_prompt  # TODO make right prompt
+            return self.correction_card_structure_prompt
 
         if not self.parser.is_in_hand(card, hand):
             return self.correction_hand_prompt
@@ -223,11 +220,12 @@ class WizardsApprenticeGameMaster(GameMaster):
             if self.parser.validate_card(answer, hand, trick):
                 return parse
 
-        if self.liberal_mode and (rec_anchor > self.attempts):
+        if self.liberal_mode and (rec_anchor < self.attempts):
             return self.prompt_model(parse, receiver, expect, round, hand,
                                      trick, rec_anchor+1)
         else:
             self.aborted = True
+            return "Z1"
 
     def setup(self, **game_instance) -> None:
         """
@@ -243,6 +241,8 @@ class WizardsApprenticeGameMaster(GameMaster):
         self.seating_order = self.game_instance["seating_order"]
         self.dealt_cards = self.game_instance["dealt_cards"]
         self.trump_cards = self.game_instance["trump_cards"]
+        self.dealt_cards = convert_keys_to_int(self.dealt_cards)
+        self.trump_cards = convert_keys_to_int(self.trump_cards)
 
         # create dictionarys for the leaderboard
         # dict[round][player] = int
@@ -272,7 +272,7 @@ class WizardsApprenticeGameMaster(GameMaster):
             for d in self.dealt_cards.keys()
         }
         # Set the first seating order
-        self.playing_order[list(self.dealt_cards.keys())][1] = self.seating_order
+        self.playing_order[list(self.dealt_cards.keys())[0]][1] = self.seating_order
 
         # Create the info dictionary to feed the prompt templates
         self.info = {}
@@ -292,7 +292,7 @@ class WizardsApprenticeGameMaster(GameMaster):
         of the prompts. This method gathers and formats these information.
         """
         # General true for the whole game
-        self.info['NUM_OTHER_PLAYERS'] = len(self.dealt_cards["1"]) - 2
+        self.info['NUM_OTHER_PLAYERS'] = len(self.dealt_cards[1]) - 2
         self.info['NUM_CARDS'] = len(self.dealt_cards)
 
         if round and player:
@@ -301,10 +301,10 @@ class WizardsApprenticeGameMaster(GameMaster):
             self.info['TRUMP_COLOR'] = (self.info['TRUMP_CARD'][0]
                                         if self.info['TRUMP_CARD'] != "None"
                                         else str(None)
-                                       )
+                                        )
             self.info['HAND_SIZE'] = round
             # Declare current and full player hand
-            self.info['PLAYER_HAND'] = self.dealt_cards[round][str(player)]
+            self.info['PLAYER_HAND'] = self.dealt_cards[round][player]
             self.info['CURRENT_PLAYER_HAND'] = (
                 self.get_current_hand(round, player)
             )
@@ -350,7 +350,7 @@ class WizardsApprenticeGameMaster(GameMaster):
             else:
                 if (round-1) in self.played_cards.keys():
                     self.info['CARDS_PLAYED_LAST_TRICK'] = (
-                        self.get_current_trick(round-1, round))
+                        self.get_current_trick(round-1, round-1))
                 else:
                     self.info['CARDS_PLAYED_LAST_TRICK'] = ''
 
@@ -373,7 +373,6 @@ class WizardsApprenticeGameMaster(GameMaster):
         - points: total game points at a certain round
         - tricks_per_player: tricks a player won in a certain round
         """
-
         while self.aborted is False:
 
             # Set a local variable to track the order of play
@@ -382,8 +381,8 @@ class WizardsApprenticeGameMaster(GameMaster):
             # START round
             next_prompt = self.rules_prompt
             for round in self.dealt_cards:
-                logger.info("Trick round " + str(round))
-                print("Trick round " + str(round))
+                logger.info("Round " + str(round))
+                print("Round " + str(round))
                 # Logs new trick round
                 self.current_turn += 1
                 self.log_next_turn()
@@ -403,7 +402,8 @@ class WizardsApprenticeGameMaster(GameMaster):
 
                 # START trick round
                 next_prompt = self.trick_start_prompt
-                for trick_round in range(1, int(round)+1):
+                for trick_round in range(1, round+1):
+                    print("- Trick: " + str(trick_round))
                     # GET CARDS
                     for player in current_order:
                         # Gather and update information for the prompting
@@ -412,7 +412,7 @@ class WizardsApprenticeGameMaster(GameMaster):
                         trick = self.get_current_trick(round, trick_round)
                         hand = self.get_current_hand(round, player)
                         # Prompt the model
-                        prediction = self.prompt_model(
+                        card = self.prompt_model(
                             next_prompt, receiver, "card", round, hand, trick
                         )
                         # save the played card
@@ -430,24 +430,21 @@ class WizardsApprenticeGameMaster(GameMaster):
                     # Set new next prompt template
                     next_prompt = self.trick_end_prompt + self.trick_start_prompt
 
-            # END OF ROUND
-            # calculate points for all player
-            for player in self.seating_order:
-                self.points[round][player] = self.calculate_points(round,
-                                                                   player)
-            # Shift original seating_order by one and save it
-            current_order = (self.playing_order[round][1][1:] +
-                             self.playing_order[round][1][:1])
-            self.playing_order[round+1][1] = current_order
-            # Add round end to next prompt
-            next_prompt = self.trick_end_prompt + self.round_end_prompt
+                # END OF ROUND
+                # calculate points for all player
+                for player in self.seating_order:
+                    self.points[round][player] = self.calculate_points(round,
+                                                                       player)
+                # Shift original seating_order by one and save it
+                current_order = (self.playing_order[round][1][1:] +
+                                 self.playing_order[round][1][:1])
+                self.playing_order[round+1][1] = current_order
+                # Add round end to next prompt
+                next_prompt = self.trick_end_prompt + self.round_end_prompt
 
                 # # Log a message informing that the trick round was successfuly played
                 # action = {'type': 'info', 'content': 'Trick round successful'}
                 # self.log_event(from_='GM', to='GM', action=action)
-
-                # # Forcing the end. TODO: Remove when loop is working
-                # self.aborted = True
 
         # logger.info("Game is finished!")
         # # Log a final message saying that the game did come to an end

@@ -43,7 +43,8 @@ PROMPT_NAMES = [
     "correction_suit",
     "correction_hand",
     "correction_prediction",
-    "correction_regex"
+    "correction_card_structure",
+    "correction_prediction_structure"
 ]
 
 

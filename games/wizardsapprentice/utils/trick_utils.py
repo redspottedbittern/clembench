@@ -126,4 +126,4 @@ def evaluate_round(prediction, tricks):
     if prediction == tricks:
         return (10*tricks)+20
     else:
-        return -(abs(int(prediction[-1])-tricks)*10)
+        return -(abs(prediction-tricks)*10)
