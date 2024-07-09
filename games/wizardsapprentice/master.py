@@ -1,4 +1,5 @@
-from typing import List, Tuple, Dict
+"""Main game class for the game The Wizard's Apprentice."""
+from typing import List, Dict
 from string import Template
 import collections
 import copy
@@ -37,7 +38,7 @@ class WizardsApprenticeGameMaster(GameMaster):
         self.current_turn: int = 0
         self.model_a = player_backends[0]
         self.model_b = player_backends[1]
-        self.players_by_names: Dict[str, Player] = collections.OrderedDict()
+        self.players_by_number: Dict[str, Player] = collections.OrderedDict()
 
         # Initialise attributes that will be used for the evaluation scores
         # TODO: What other attributes should be used?
@@ -112,15 +113,16 @@ class WizardsApprenticeGameMaster(GameMaster):
 
         return points
 
-    def add_player(self, player: Player):
+    def add_player(self, model, number):
         """
         Add a player to the game.
 
         :param player: Player object to be added.
         """
-        idx = len(self.players_by_names)
-        player.descriptor = f"Player {idx + 1}"
-        self.players_by_names[str(player)] = player.descriptor
+        name = "Player " + str(number)
+        apprentice = Apprentice(self.model_a, name)
+        apprentice.descriptor = number
+        self.players_by_number[apprentice.descriptor] = apprentice
 
     def add_message(self, player: Player, utterance: str, role="user") -> None:
         """
@@ -132,8 +134,11 @@ class WizardsApprenticeGameMaster(GameMaster):
         """
         player.history.append({'role': role, 'content': utterance})
         action = {'type': 'send message', 'content': utterance}
-        self.log_event(from_='GM', to=str(
-            self.players_by_names[str(player)]), action=action)
+        self.log_event(from_='GM',
+                       to=str(player.player),
+                       # to=str(self.players_by_names[str(player)]),
+                       action=action
+                       )
 
     def get_answer(self, player: Player) -> str:
         """
@@ -144,8 +149,13 @@ class WizardsApprenticeGameMaster(GameMaster):
         """
         prompt, raw_answer, answer = player(player.history, self.current_turn)
         action = {'type': 'get message', 'content': answer}
-        self.log_event(from_=str(self.players_by_names[str(
-            player)]), to='GM', action=action, call=(copy.deepcopy(prompt), raw_answer))
+        self.log_event(
+            # from_=str(self.players_by_names[str(player)]),
+            from_=str(player.player),
+            to='GM',
+            action=action,
+            call=(copy.deepcopy(prompt), raw_answer)
+        )
         # TODO: Figure out how to deal with this. Let's ask Hakimov.
         player.history = []
         return answer
@@ -220,6 +230,7 @@ class WizardsApprenticeGameMaster(GameMaster):
             if self.parser.validate_card(answer, hand, trick):
                 return parse
 
+        # reprompt if the answer was not correctly parsed
         if self.liberal_mode and (rec_anchor < self.attempts):
             return self.prompt_model(parse, receiver, expect, round, hand,
                                      trick, rec_anchor+1)
@@ -278,10 +289,16 @@ class WizardsApprenticeGameMaster(GameMaster):
         self.info = {}
 
         # Create the players
-        self.apprentice1 = Apprentice(self.model_a, "Gandalf")
-        self.apprentice2 = Apprentice(self.model_b, "Merlin")
-        self.add_player(self.apprentice1)
-        self.add_player(self.apprentice2)
+        # TODO if we want to have a focused player or something, we have to
+        # change the creation at this point and in self.add_player
+        for number in self.seating_order:
+            self.add_player(self.model_a, number)
+
+        # Log all the players
+        self.log_players({
+            apprentice.player: f'{apprentice.player}: {apprentice.model}'
+            for apprentice in self.players_by_number.values()
+        })
 
     def update_info(self, round, player, trick_round, winner=None):
         """
@@ -292,7 +309,8 @@ class WizardsApprenticeGameMaster(GameMaster):
         of the prompts. This method gathers and formats these information.
         """
         # General true for the whole game
-        self.info['NUM_OTHER_PLAYERS'] = len(self.dealt_cards[1]) - 2
+        first_round = list(self.dealt_cards.keys())[0]
+        self.info['NUM_OTHER_PLAYERS'] = len(self.dealt_cards[first_round])-1
         self.info['NUM_CARDS'] = len(self.dealt_cards)
 
         if round and player:
@@ -392,7 +410,7 @@ class WizardsApprenticeGameMaster(GameMaster):
                 for player in current_order:
                     # Gather and update information for the prompting
                     self.update_info(round, player, None)
-                    receiver = self.apprentice1 if player == 0 else self.apprentice2  # TODO Why are we doing this?
+                    receiver = self.players_by_number[player]
                     # Prompt the model
                     prediction = self.prompt_model(
                         next_prompt, receiver, "prediction", round, None, None
@@ -408,7 +426,7 @@ class WizardsApprenticeGameMaster(GameMaster):
                     for player in current_order:
                         # Gather and update information for the prompting
                         self.update_info(round, player, trick_round)
-                        receiver = self.apprentice1 if player == 0 else self.apprentice2  # TODO Why are we doing this?
+                        receiver = self.players_by_number[player]
                         trick = self.get_current_trick(round, trick_round)
                         hand = self.get_current_hand(round, player)
                         # Prompt the model
@@ -438,7 +456,10 @@ class WizardsApprenticeGameMaster(GameMaster):
                 # Shift original seating_order by one and save it
                 current_order = (self.playing_order[round][1][1:] +
                                  self.playing_order[round][1][:1])
-                self.playing_order[round+1][1] = current_order
+                try:
+                    self.playing_order[round+1][1] = current_order
+                except KeyError:
+                    pass
                 # Add round end to next prompt
                 next_prompt = self.trick_end_prompt + self.round_end_prompt
 

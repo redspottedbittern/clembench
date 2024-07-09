@@ -20,9 +20,9 @@ SEED = 123
 N_INSTANCES = 1
 
 # parameters for the game
-START_ROUND = 1
-END_ROUND = -1
-PLAYERS = 4
+START_ROUND = 2
+END_ROUND = 4
+PLAYERS = 3
 
 # parameters for the cards
 COLORS = ["G", "B", "R", "Y"]
