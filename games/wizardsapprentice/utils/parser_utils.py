@@ -127,3 +127,8 @@ class Parser():
             return False
         
         return True
+
+
+class InvalidAnswerError(Exception):
+    """This Error is used to report if here were too many invalid answers."""
+    pass

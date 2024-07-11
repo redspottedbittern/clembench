@@ -8,7 +8,10 @@ from backends import Model
 from clemgame.clemgame import GameMaster, GameBenchmark, Player
 from clemgame import get_logger
 from games.wizardsapprentice.instancegenerator import GAME_NAME
-from games.wizardsapprentice.utils.parser_utils import Parser
+from games.wizardsapprentice.utils.parser_utils import (
+    Parser,
+    InvalidAnswerError
+)
 from games.wizardsapprentice.utils.instantiation_utils import convert_keys_to_int
 from games.wizardsapprentice.utils.trick_utils import (
     evaluate_trick,
@@ -236,7 +239,11 @@ class WizardsApprenticeGameMaster(GameMaster):
                                      trick, rec_anchor+1)
         else:
             self.aborted = True
-            return "Z1"
+            # log the abortion event
+            action = {'type': 'invalid format', 'content': 'abort'}
+            self.log_event(from_='GM', to='GM', action=action)
+
+            raise InvalidAnswerError
 
     def setup(self, **game_instance) -> None:
         """
@@ -412,9 +419,12 @@ class WizardsApprenticeGameMaster(GameMaster):
                     self.update_info(round, player, None)
                     receiver = self.players_by_number[player]
                     # Prompt the model
-                    prediction = self.prompt_model(
-                        next_prompt, receiver, "prediction", round, None, None
-                    )
+                    try:
+                        prediction = self.prompt_model(
+                            next_prompt, receiver, "prediction", round, None, None
+                        )
+                    except InvalidAnswerError:
+                        return
                     # save players prediction
                     self.predictions[round][player] = prediction
 
@@ -430,9 +440,12 @@ class WizardsApprenticeGameMaster(GameMaster):
                         trick = self.get_current_trick(round, trick_round)
                         hand = self.get_current_hand(round, player)
                         # Prompt the model
-                        card = self.prompt_model(
-                            next_prompt, receiver, "card", round, hand, trick
-                        )
+                        try:
+                            card = self.prompt_model(
+                                next_prompt, receiver, "card", round, hand, trick
+                            )
+                        except InvalidAnswerError:
+                            return
                         # save the played card
                         self.played_cards[round][trick_round][player] = card
 
@@ -456,6 +469,8 @@ class WizardsApprenticeGameMaster(GameMaster):
                 # Shift original seating_order by one and save it
                 current_order = (self.playing_order[round][1][1:] +
                                  self.playing_order[round][1][:1])
+                # a bit of a unclean hack. In the last round, there are no keys
+                # left
                 try:
                     self.playing_order[round+1][1] = current_order
                 except KeyError:
@@ -463,14 +478,14 @@ class WizardsApprenticeGameMaster(GameMaster):
                 # Add round end to next prompt
                 next_prompt = self.trick_end_prompt + self.round_end_prompt
 
-                # # Log a message informing that the trick round was successfuly played
-                # action = {'type': 'info', 'content': 'Trick round successful'}
-                # self.log_event(from_='GM', to='GM', action=action)
+            # Log a message informing that the trick round was successfuly played
+            action = {'type': 'info', 'content': 'Round successful'}
+            self.log_event(from_='GM', to='GM', action=action)
 
-        # logger.info("Game is finished!")
-        # # Log a final message saying that the game did come to an end
-        # action = {'type': 'info', 'content': 'end game'}
-        # self.log_event(from_='GM', to='GM', action=action)
+        logger.info("Game is finished!")  # TODO What is this logger for?
+        # Log a final message saying that the game did come to an end
+        action = {'type': 'info', 'content': 'end game'}
+        self.log_event(from_='GM', to='GM', action=action)
 
 
 class WizardsApprenticeGameBenchmark(GameBenchmark):

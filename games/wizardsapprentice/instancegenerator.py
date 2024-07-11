@@ -32,7 +32,7 @@ SPECIAL_CARDS_NUM = 4
 
 # prompts
 LIBERAL_MODE = True
-ATTEMPTS = 3
+ATTEMPTS = 5
 PROMPT_NAMES = [
     "rules",
     "round_start",
