@@ -398,85 +398,82 @@ class WizardsApprenticeGameMaster(GameMaster):
         - points: total game points at a certain round
         - tricks_per_player: tricks a player won in a certain round
         """
-        while self.aborted is False:
+        # Set a local variable to track the order of play
+        current_order = self.seating_order
 
-            # Set a local variable to track the order of play
-            current_order = self.seating_order
+        # START round
+        next_prompt = self.rules_prompt
+        for round in self.dealt_cards:
+            print("Round " + str(round))
+            logger.info("Round " + str(round))
+            # Logs new round
+            self.log_next_turn()
 
-            # START round
-            next_prompt = self.rules_prompt
-            for round in self.dealt_cards:
-                logger.info("Round " + str(round))
-                print("Round " + str(round))
-                # Logs new trick round
-                self.current_turn += 1
-                self.log_next_turn()
+            # GET PREDICTIONS
+            next_prompt += self.round_start_prompt
+            for player in current_order:
+                # Gather and update information for the prompting
+                self.update_info(round, player, None)
+                receiver = self.players_by_number[player]
+                # Prompt the model
+                try:
+                    prediction = self.prompt_model(
+                        next_prompt, receiver, "prediction", round, None, None
+                    )
+                except InvalidAnswerError:
+                    return
+                # save players prediction
+                self.predictions[round][player] = prediction
 
-                # GET PREDICTIONS
-                next_prompt += self.round_start_prompt
+            # START trick round
+            next_prompt = self.trick_start_prompt
+            for trick_round in range(1, round+1):
+                print("- Trick: " + str(trick_round))
+                # GET CARDS
                 for player in current_order:
                     # Gather and update information for the prompting
-                    self.update_info(round, player, None)
+                    self.update_info(round, player, trick_round)
                     receiver = self.players_by_number[player]
+                    trick = self.get_current_trick(round, trick_round)
+                    hand = self.get_current_hand(round, player)
                     # Prompt the model
                     try:
-                        prediction = self.prompt_model(
-                            next_prompt, receiver, "prediction", round, None, None
+                        card = self.prompt_model(
+                            next_prompt, receiver, "card", round, hand, trick
                         )
                     except InvalidAnswerError:
                         return
-                    # save players prediction
-                    self.predictions[round][player] = prediction
+                    # save the played card
+                    self.played_cards[round][trick_round][player] = card
 
-                # START trick round
-                next_prompt = self.trick_start_prompt
-                for trick_round in range(1, round+1):
-                    print("- Trick: " + str(trick_round))
-                    # GET CARDS
-                    for player in current_order:
-                        # Gather and update information for the prompting
-                        self.update_info(round, player, trick_round)
-                        receiver = self.players_by_number[player]
-                        trick = self.get_current_trick(round, trick_round)
-                        hand = self.get_current_hand(round, player)
-                        # Prompt the model
-                        try:
-                            card = self.prompt_model(
-                                next_prompt, receiver, "card", round, hand, trick
-                            )
-                        except InvalidAnswerError:
-                            return
-                        # save the played card
-                        self.played_cards[round][trick_round][player] = card
+                # END OF TRICK
+                # Determine the winner of the trick
+                winner = self.determine_trick_winner(round, trick_round)
+                # Update info and leaderboard
+                self.update_info(None, None, None, winner=winner)
+                self.tricks_per_player[round][winner] += 1
+                # Shift seating order to winner and save the new order
+                current_order = shift_to_winner(current_order, winner)
+                self.playing_order[round][trick_round + 1] = current_order
+                # Set new next prompt template
+                next_prompt = self.trick_end_prompt + self.trick_start_prompt
 
-                    # END OF TRICK
-                    # Determine the winner of the trick
-                    winner = self.determine_trick_winner(round, trick_round)
-                    # Update info and leaderboard
-                    self.update_info(None, None, None, winner=winner)
-                    self.tricks_per_player[round][winner] += 1
-                    # Shift seating order to winner and save the new order
-                    current_order = shift_to_winner(current_order, winner)
-                    self.playing_order[round][trick_round + 1] = current_order
-                    # Set new next prompt template
-                    next_prompt = self.trick_end_prompt + self.trick_start_prompt
-
-                # END OF ROUND
-                # calculate points for all player
-                for player in self.seating_order:
-                    self.points[round][player] = self.calculate_points(round,
-                                                                       player)
-                # Shift original seating_order by one and save it
-                current_order = (self.playing_order[round][1][1:] +
-                                 self.playing_order[round][1][:1])
-                # a bit of a unclean hack. In the last round, there are no keys
-                # left
-                try:
-                    self.playing_order[round+1][1] = current_order
-                except KeyError:
-                    pass
-                # Add round end to next prompt
-                next_prompt = self.trick_end_prompt + self.round_end_prompt
+            # END OF ROUND
+            # calculate points for all player
+            for player in self.seating_order:
+                self.points[round][player] = self.calculate_points(round,
+                                                                   player)
+            # Shift original seating_order by one and save it
+            current_order = (self.playing_order[round][1][1:] +
+                             self.playing_order[round][1][:1])
+            # a bit of a unclean hack. In the last round, there are no keys
+            # left
+            try:
+                self.playing_order[round+1][1] = current_order
+            except KeyError:
+                pass
+            # Add round end to next prompt
+            next_prompt = self.trick_end_prompt + self.round_end_prompt
 
             # Log a message informing that the trick round was successfuly played
             action = {'type': 'info', 'content': 'Round successful'}
@@ -486,6 +483,7 @@ class WizardsApprenticeGameMaster(GameMaster):
         # Log a final message saying that the game did come to an end
         action = {'type': 'info', 'content': 'end game'}
         self.log_event(from_='GM', to='GM', action=action)
+        return
 
 
 class WizardsApprenticeGameBenchmark(GameBenchmark):
