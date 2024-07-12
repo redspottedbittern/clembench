@@ -42,6 +42,7 @@ class WizardsApprenticeGameMaster(GameMaster):
         self.model_a = player_backends[0]
         self.model_b = player_backends[1]
         self.players_by_number: Dict[str, Player] = collections.OrderedDict()
+        self.messages_by_names: Dict[str, List] = dict()
 
         # Initialise attributes that will be used for the evaluation scores
         # TODO: What other attributes should be used?
@@ -126,6 +127,7 @@ class WizardsApprenticeGameMaster(GameMaster):
         apprentice = Apprentice(self.model_a, name)
         apprentice.descriptor = number
         self.players_by_number[apprentice.descriptor] = apprentice
+        self.messages_by_names[apprentice.descriptor] = []
 
     def add_message(self, player: Player, utterance: str, role="user") -> None:
         """
@@ -135,7 +137,10 @@ class WizardsApprenticeGameMaster(GameMaster):
         :param utterance: Message content.
         :param role: Role of the message sender (default is "user").
         """
-        player.history.append({'role': role, 'content': utterance})
+        message = {"role": role, "content": utterance}
+        history = self.messages_by_names[player.descriptor]
+        history.append(message)
+        
         action = {'type': 'send message', 'content': utterance}
         self.log_event(from_='GM',
                        to=str(player.player),
@@ -150,7 +155,8 @@ class WizardsApprenticeGameMaster(GameMaster):
         :param player: Player object.
         :return: Answer string.
         """
-        prompt, raw_answer, answer = player(player.history, self.current_turn)
+        history = self.messages_by_names[player.descriptor]
+        prompt, raw_answer, answer = player(history, self.current_turn)
         action = {'type': 'get message', 'content': answer}
         self.log_event(
             # from_=str(self.players_by_names[str(player)]),
@@ -159,8 +165,6 @@ class WizardsApprenticeGameMaster(GameMaster):
             action=action,
             call=(copy.deepcopy(prompt), raw_answer)
         )
-        # TODO: Figure out how to deal with this. Let's ask Hakimov.
-        player.history = []
         return answer
 
     def parse_prediction(self, answer, round):
@@ -221,7 +225,9 @@ class WizardsApprenticeGameMaster(GameMaster):
         prompt = prompt.substitute(self.info)
         # Send it to the LLM and parse the answer
         self.add_message(receiver, prompt)
+        #print(prompt)
         answer = self.get_answer(receiver)
+        #print(answer)
 
         # Get an answer depending on the exectation and return if valid
         if expect == "prediction":
