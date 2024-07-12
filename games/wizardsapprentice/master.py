@@ -157,6 +157,11 @@ class WizardsApprenticeGameMaster(GameMaster):
         """
         history = self.messages_by_names[player.descriptor]
         prompt, raw_answer, answer = player(history, self.current_turn)
+        self.messages_by_names[player.descriptor] = [] # Reset history after message has been sent
+        print()
+        print(prompt[0]['content'])
+        print(answer)
+        print()
         action = {'type': 'get message', 'content': answer}
         self.log_event(
             # from_=str(self.players_by_names[str(player)]),
@@ -324,7 +329,10 @@ class WizardsApprenticeGameMaster(GameMaster):
         # General true for the whole game
         first_round = list(self.dealt_cards.keys())[0]
         self.info['NUM_OTHER_PLAYERS'] = len(self.dealt_cards[first_round])-1
-        self.info['NUM_CARDS'] = len(self.dealt_cards)
+
+        # Fixes issue with number of cards in the trick round:
+        if round is not None:
+            self.info['NUM_CARDS'] = int(round)
 
         if round and player:
             # Declare trump color
@@ -432,7 +440,8 @@ class WizardsApprenticeGameMaster(GameMaster):
                 self.predictions[round][player] = prediction
 
             # START trick round
-            next_prompt = self.trick_start_prompt
+            next_prompt = self.rules_prompt
+            next_prompt += self.trick_start_prompt
             for trick_round in range(1, round+1):
                 print("- Trick: " + str(trick_round))
                 # GET CARDS
@@ -462,7 +471,8 @@ class WizardsApprenticeGameMaster(GameMaster):
                 current_order = shift_to_winner(current_order, winner)
                 self.playing_order[round][trick_round + 1] = current_order
                 # Set new next prompt template
-                next_prompt = self.trick_end_prompt + self.trick_start_prompt
+                next_prompt = self.rules_prompt
+                next_prompt += self.trick_end_prompt + self.trick_start_prompt
 
             # END OF ROUND
             # calculate points for all player
@@ -479,7 +489,8 @@ class WizardsApprenticeGameMaster(GameMaster):
             except KeyError:
                 pass
             # Add round end to next prompt
-            next_prompt = self.trick_end_prompt + self.round_end_prompt
+            next_prompt = self.rules_prompt
+            next_prompt += self.trick_end_prompt + self.round_end_prompt
 
             # Log a message informing that the trick round was successfuly played
             action = {'type': 'info', 'content': 'Round successful'}
