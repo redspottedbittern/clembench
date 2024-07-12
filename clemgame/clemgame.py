@@ -66,7 +66,7 @@ class Player(abc.ABC):
         latest_response = "Nothing has been said yet."
         if messages:
             latest_response = messages[-1]["content"]
-        #print(f"\n{latest_response}")
+        print(f"\n{latest_response}")
         user_input = input(f"Your response as {self.__class__.__name__} (turn: {turn_idx}):\n")
         return user_input
 
