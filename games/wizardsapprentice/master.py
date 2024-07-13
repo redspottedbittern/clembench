@@ -18,7 +18,7 @@ from games.wizardsapprentice.utils.trick_utils import (
     shift_to_winner,
     evaluate_round
 )
-from games.wizardsapprentice.player import Apprentice
+from games.wizardsapprentice.apprentice import Apprentice
 
 logger = get_logger(__name__)
 
@@ -124,7 +124,7 @@ class WizardsApprenticeGameMaster(GameMaster):
         :param player: Player object to be added.
         """
         name = "Player " + str(number)
-        apprentice = Apprentice(self.model_a, name)
+        apprentice = Apprentice(model, name)
         apprentice.descriptor = number
         self.players_by_number[apprentice.descriptor] = apprentice
         self.messages_by_names[apprentice.descriptor] = []
@@ -310,7 +310,10 @@ class WizardsApprenticeGameMaster(GameMaster):
         # TODO if we want to have a focused player or something, we have to
         # change the creation at this point and in self.add_player
         for number in self.seating_order:
-            self.add_player(self.model_a, number)
+            if number % 2 == 0:
+                self.add_player(self.model_b, number)
+            else:
+                self.add_player(self.model_a, number)
 
         # Log all the players
         self.log_players({
