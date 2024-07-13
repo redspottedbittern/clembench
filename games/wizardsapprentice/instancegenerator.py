@@ -17,12 +17,12 @@ from games.wizardsapprentice.utils.instantiation_utils import (
 GAME_NAME = "wizardsapprentice"
 EXPERIMENT_NAME = "full_game_4p"
 SEED = 123
-N_INSTANCES = 4
+N_INSTANCES = 1
 
 # parameters for the game
-START_ROUND = 1
-END_ROUND = -1
-PLAYERS = 4
+START_ROUND = 2
+END_ROUND = 4
+PLAYERS = 3
 
 # parameters for the cards
 COLORS = ["G", "B", "R", "Y"]
@@ -31,6 +31,8 @@ SPECIAL_CARDS = ["Z", "J"]
 SPECIAL_CARDS_NUM = 4
 
 # prompts
+LIBERAL_MODE = True
+ATTEMPTS = 5
 PROMPT_NAMES = [
     "rules",
     "round_start",
@@ -40,7 +42,9 @@ PROMPT_NAMES = [
     "game_end",
     "correction_suit",
     "correction_hand",
-    "correction_regex"
+    "correction_prediction",
+    "correction_card_structure",
+    "correction_prediction_structure"
 ]
 
 
@@ -155,7 +159,11 @@ class WizardsApprenticeInstanceGenerator(GameInstanceGenerator):
         # create experiment
         experiment = self.add_experiment(EXPERIMENT_NAME)
         experiment.update(self.prompts)
-        experiment.update(self.regex)
+        experiment['regex'] = self.regex
+
+        # fill general info about remprompting
+        experiment['liberal_mode'] = LIBERAL_MODE
+        experiment['attempts'] = ATTEMPTS
 
         # create deck and check number of rounds
         deck = create_deck(COLORS, CARDS_PER_COLOR, SPECIAL_CARDS,
@@ -173,12 +181,15 @@ class WizardsApprenticeInstanceGenerator(GameInstanceGenerator):
 
             # for every round deal cards to each player
             dealt_cards = {}
+            trump_cards = {}
             for round in range(START_ROUND, end_round + 1):
-                dealt_cards[round] = deal_cards_for_round(round, deck,
-                                                          seating_order)
+                dealt_cards[round], trump_cards[round] = (
+                    deal_cards_for_round(round, deck, seating_order)
+                )
 
             game_instance['seating_order'] = seating_order
             game_instance['dealt_cards'] = dealt_cards
+            game_instance['trump_cards'] = trump_cards
 
     def rounds_to_be_played(self, num_cards, num_players, rounds_suggested):
         """Check what the maximum number of rounds can be."""

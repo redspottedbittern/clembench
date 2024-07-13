@@ -3,6 +3,25 @@ import random
 from copy import deepcopy
 
 
+def convert_keys_to_int(d):
+    """
+    Recursively convert the keys of the dictionary and any nested dictionaries from strings to integers.
+    """
+    if not isinstance(d, dict):
+        return d
+    
+    new_dict = {}
+    for k, v in d.items():
+        new_key = int(k)
+        if isinstance(v, dict):
+            new_value = convert_keys_to_int(v)
+        else:
+            new_value = v
+        new_dict[new_key] = new_value
+    
+    return new_dict
+
+
 def deal_cards_for_round(round, deck, seating_order):
     """Deal cards for a specific round."""
     deck = deepcopy(deck)
@@ -14,9 +33,9 @@ def deal_cards_for_round(round, deck, seating_order):
         dealt_cards[player] = hand
 
     # determine a trump color
-    dealt_cards['trump'] = get_random_trump_card(deck)
+    trump_card = get_random_trump_card(deck)
 
-    return dealt_cards
+    return dealt_cards, trump_card
 
 
 def get_random_undealt_cards(deck, n=0):

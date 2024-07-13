@@ -1,7 +1,7 @@
 This round is over. All cards were played.
 
 This is the players predictions:
-$PLAYER_PREDICTIONS_LAST_ROUND$
+$PLAYER_PREDICTIONS_LAST_ROUND
 
 Because of the difference of predictions and tricks, every player receives points. The point table looks as follows:
-$LEADERBOARD_POINTS$
+$LEADERBOARD_POINTS

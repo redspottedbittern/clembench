@@ -1,13 +1,13 @@
 It's your turn to play a card in the current trick!
 
-You're playing with $NUM_OTHER_PLAYERS$ other players, and you're player number $PLAYER_POSITION$. 
-Each player has $NUM_CARDS$ cards. The trump card is $TRUMP_CARD$, thereby the trump color is $TRUMP_COLOR$.
+You are playing with $NUM_OTHER_PLAYERS other players, and you are player number $PLAYER_POSITION. 
+Each player has $NUM_CARDS cards. The trump card is $TRUMP_CARD, thereby the trump color is $TRUMP_COLOR.
 
-These are the players predictions: $PLAYER_PREDICTIONS$.
+These are the players predictions: $PLAYER_PREDICTIONS.
 
-Your current hand is: $PLAYER_HAND$.
+Your current hand is: $CURRENT_PLAYER_HAND
 
-These cards have been played in this trick already in this order: $CARDS_PLAYED$
+These cards have been played in this trick already in this order: $CARDS_PLAYED
 
 Now you have to play a card from your current hand. Which card do you play?
-Answer in this format: "PLAYED: color + number". Omit any other text.
+Answer in this format: "I PLAY: card". Cards are represented with a capital letter for the color followed by a number, without a space in between. Omit any other text.

@@ -55,6 +55,7 @@ class Parser():
     def which_suit_to_follow(self, trick):
         """Return the color that reigns a trick at a certain point."""
         # if no cards were played so far, no suit must be followed
+        trick = [card for card in trick if card]
         if not trick:
             return None
 
@@ -98,4 +99,36 @@ class Parser():
 
     def is_possible_prediction(self, prediction, round):
         """Check if the prediction if possible."""
-        return prediction in range(1, round+1)
+        return prediction in range(0, round+1)
+
+    def validate_card(self, answer, hand, trick):
+        """Return True if a card is valid."""
+        if self.is_comprehensible_card(answer):
+            card = self.extract_card(answer)
+        else:
+            return False
+
+        if not self.is_in_hand(card, hand):
+            return False
+
+        if not self.follows_suit(card, hand, trick):
+            return False
+
+        return True
+
+    def validate_prediction(self, answer, round):
+        """Return True if a prediction is valid."""
+        if self.is_comprehensible_prediction(answer):
+            prediction = self.extract_prediction(answer)
+        else:
+            return False
+
+        if not self.is_possible_prediction(prediction, round):
+            return False
+        
+        return True
+
+
+class InvalidAnswerError(Exception):
+    """This Error is used to report if here were too many invalid answers."""
+    pass
