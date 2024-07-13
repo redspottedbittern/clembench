@@ -50,8 +50,10 @@ class WizardsApprenticeGameMaster(GameMaster):
 
         # Initialise attributes that will be used for the evaluation scores
         self.aborted: bool = 0
+        self.lose: bool = 0
         self.request_counts = 0
         self.parsed_request_counts = 0
+        self.violated_request_counts = 0
 
         # Import information about reprompting
         self.liberal_mode = self.config['liberal_mode']
