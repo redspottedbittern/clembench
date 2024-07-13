@@ -492,6 +492,7 @@ class DialogueGameMaster(GameMaster):
         message = {"role": role, "content": utterance}
         history = self.messages_by_names[player.descriptor]
         history.append(message)
+        print(history)
 
     def add_user_message(self, player: Player, utterance: str):
         self.add_message(player, utterance, role="user")

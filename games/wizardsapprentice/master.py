@@ -46,6 +46,7 @@ class WizardsApprenticeGameMaster(GameMaster):
         self.model_a = player_backends[0]
         self.model_b = player_backends[1]
         self.players_by_number: Dict[str, Player] = collections.OrderedDict()
+        self.messages_by_names: Dict[str, List] = dict()
 
         # Initialise attributes that will be used for the evaluation scores
         self.aborted: bool = 0
@@ -131,6 +132,7 @@ class WizardsApprenticeGameMaster(GameMaster):
         apprentice = Apprentice(self.model_a, name)
         apprentice.descriptor = number
         self.players_by_number[apprentice.descriptor] = apprentice
+        self.messages_by_names[apprentice.descriptor] = []
 
     def add_message(self, player: Player, utterance: str, role="user") -> None:
         """
@@ -140,7 +142,10 @@ class WizardsApprenticeGameMaster(GameMaster):
         :param utterance: Message content.
         :param role: Role of the message sender (default is "user").
         """
-        player.history.append({'role': role, 'content': utterance})
+        message = {"role": role, "content": utterance}
+        history = self.messages_by_names[player.descriptor]
+        history.append(message)
+        
         action = {'type': 'send message', 'content': utterance}
         self.log_event(from_='GM',
                        to=str(player.player),
@@ -155,7 +160,13 @@ class WizardsApprenticeGameMaster(GameMaster):
         :param player: Player object.
         :return: Answer string.
         """
-        prompt, raw_answer, answer = player(player.history, self.current_turn)
+        history = self.messages_by_names[player.descriptor]
+        prompt, raw_answer, answer = player(history, self.current_turn)
+        self.messages_by_names[player.descriptor] = [] # Reset history after message has been sent
+        print()
+        print(prompt[0]['content'])
+        print(answer)
+        print()
         action = {'type': 'get message', 'content': answer}
         self.log_event(
             # from_=str(self.players_by_names[str(player)]),
@@ -164,8 +175,6 @@ class WizardsApprenticeGameMaster(GameMaster):
             action=action,
             call=(copy.deepcopy(prompt), raw_answer)
         )
-        # TODO: Figure out how to deal with this. Let's ask Hakimov.
-        player.history = []
         return answer
 
     def parse_prediction(self, answer, round):
@@ -226,6 +235,7 @@ class WizardsApprenticeGameMaster(GameMaster):
         prompt = prompt.substitute(self.info)
         # Send it to the LLM and parse the answer
         self.add_message(receiver, prompt)
+        #print(prompt)
         answer = self.get_answer(receiver)
         self.request_counts += 1
 
@@ -330,7 +340,10 @@ class WizardsApprenticeGameMaster(GameMaster):
         # General true for the whole game
         first_round = list(self.dealt_cards.keys())[0]
         self.info['NUM_OTHER_PLAYERS'] = len(self.dealt_cards[first_round])-1
-        self.info['NUM_CARDS'] = len(self.dealt_cards)
+
+        # Fixes issue with number of cards in the trick round:
+        if round is not None:
+            self.info['NUM_CARDS'] = int(round)
 
         if round and player:
             # Declare trump color
@@ -438,7 +451,8 @@ class WizardsApprenticeGameMaster(GameMaster):
                 self.predictions[round][player] = prediction
 
             # START trick round
-            next_prompt = self.trick_start_prompt
+            next_prompt = self.rules_prompt
+            next_prompt += self.trick_start_prompt
             for trick_round in range(1, round+1):
                 print("- Trick: " + str(trick_round))
                 # GET CARDS
@@ -468,7 +482,8 @@ class WizardsApprenticeGameMaster(GameMaster):
                 current_order = shift_to_winner(current_order, winner)
                 self.playing_order[round][trick_round + 1] = current_order
                 # Set new next prompt template
-                next_prompt = self.trick_end_prompt + self.trick_start_prompt
+                next_prompt = self.rules_prompt
+                next_prompt += self.trick_end_prompt + self.trick_start_prompt
 
             # END OF ROUND
             # calculate points for all player
@@ -485,7 +500,8 @@ class WizardsApprenticeGameMaster(GameMaster):
             except KeyError:
                 pass
             # Add round end to next prompt
-            next_prompt = self.trick_end_prompt + self.round_end_prompt
+            next_prompt = self.rules_prompt
+            next_prompt += self.trick_end_prompt + self.round_end_prompt
 
             # Log a message informing that the trick round was successfuly played
             action = {'type': 'info', 'content': 'Round successful'}
