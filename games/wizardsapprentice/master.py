@@ -10,7 +10,6 @@ from clemgame.clemgame import GameMaster, GameBenchmark, Player
 import clemgame.metrics as ms
 # from clemgame import get_logger
 from games.wizardsapprentice.instancegenerator import GAME_NAME
-from games.wizardsapprentice.player import Apprentice
 from games.wizardsapprentice.utils.parser_utils import (
     Parser,
     InvalidAnswerError
@@ -126,7 +125,7 @@ class WizardsApprenticeGameMaster(GameMaster):
 
         return points
 
-    def add_player(self, model, number, focus):
+    def add_player(self, model, number):
         """
         Add a player to the game.
 
