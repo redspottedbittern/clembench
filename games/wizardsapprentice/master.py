@@ -3,28 +3,35 @@ from typing import List, Dict
 from string import Template
 import collections
 import copy
+import numpy as np
 
 from backends import Model
 from clemgame.clemgame import GameMaster, GameBenchmark, Player
-from clemgame import get_logger
+import clemgame.metrics as ms
+# from clemgame import get_logger
 from games.wizardsapprentice.instancegenerator import GAME_NAME
+from games.wizardsapprentice.player import Apprentice
 from games.wizardsapprentice.utils.parser_utils import (
     Parser,
     InvalidAnswerError
 )
-from games.wizardsapprentice.utils.instantiation_utils import convert_keys_to_int
+from games.wizardsapprentice.utils.instantiation_utils import (
+    convert_keys_to_int
+)
 from games.wizardsapprentice.utils.trick_utils import (
     evaluate_trick,
     shift_to_winner,
     evaluate_round
 )
+
 from games.wizardsapprentice.apprentice import Apprentice
 
-logger = get_logger(__name__)
+# logger = get_logger(__name__)
 
 
 class WizardsApprenticeGameMaster(GameMaster):
-    def __init__(self, experiment: Dict, player_backends: List[Model]):
+    # def __init__(self, experiment: Dict, player_backends: List[Model]):
+    def __init__(self, game_name: str, experiment: Dict, player_backends: List[Model]):
         """
         Initialize a WizardsApprenticeGameMaster object.
 
@@ -37,7 +44,6 @@ class WizardsApprenticeGameMaster(GameMaster):
 
         # Saves experiment and player attributes
         self.config = experiment
-        self.name = self.config["name"]
         self.current_turn: int = 0
         self.model_a = player_backends[0]
         self.model_b = player_backends[1]
@@ -45,8 +51,11 @@ class WizardsApprenticeGameMaster(GameMaster):
         self.messages_by_names: Dict[str, List] = dict()
 
         # Initialise attributes that will be used for the evaluation scores
-        # TODO: What other attributes should be used?
-        self.aborted: bool = False  # Boolean to stop game if parsing is incorrect
+        self.aborted: bool = 0
+        self.lose: bool = 0
+        self.request_counts = 0
+        self.parsed_request_counts = 0
+        self.violated_request_counts = 0
 
         # Import information about reprompting
         self.liberal_mode = self.config['liberal_mode']
@@ -117,14 +126,16 @@ class WizardsApprenticeGameMaster(GameMaster):
 
         return points
 
-    def add_player(self, model, number):
+    def add_player(self, model, number, focus):
         """
         Add a player to the game.
 
         :param player: Player object to be added.
         """
+        
         name = "Player " + str(number)
         apprentice = Apprentice(model, name)
+
         apprentice.descriptor = number
         self.players_by_number[apprentice.descriptor] = apprentice
         self.messages_by_names[apprentice.descriptor] = []
@@ -232,16 +243,18 @@ class WizardsApprenticeGameMaster(GameMaster):
         self.add_message(receiver, prompt)
         #print(prompt)
         answer = self.get_answer(receiver)
-        #print(answer)
+        self.request_counts += 1
 
         # Get an answer depending on the exectation and return if valid
         if expect == "prediction":
             parse = self.parse_prediction(answer, round)
             if self.parser.validate_prediction(answer, round):
+                self.parsed_request_counts += 1
                 return parse
         elif expect == "card":
             parse = self.parse_card(answer, hand, trick)
             if self.parser.validate_card(answer, hand, trick):
+                self.parsed_request_counts += 1
                 return parse
 
         # reprompt if the answer was not correctly parsed
@@ -262,7 +275,7 @@ class WizardsApprenticeGameMaster(GameMaster):
 
         :param game_instance: Configuration dictionary for the game instance.
         """
-        logger.info("SETUP!")
+        # logger.info("SETUP!")
 
         # Import game instances
         self.game_instance = game_instance
@@ -309,6 +322,7 @@ class WizardsApprenticeGameMaster(GameMaster):
         # Create the players
         # TODO if we want to have a focused player or something, we have to
         # change the creation at this point and in self.add_player
+        focus_player = 2 # nur ein Platzhalter
         for number in self.seating_order:
             if number % 2 == 0:
                 self.add_player(self.model_b, number)
@@ -422,7 +436,7 @@ class WizardsApprenticeGameMaster(GameMaster):
         next_prompt = self.rules_prompt
         for round in self.dealt_cards:
             print("Round " + str(round))
-            logger.info("Round " + str(round))
+            # logger.info("Round " + str(round))
             # Logs new round
             self.log_next_turn()
 
@@ -499,11 +513,48 @@ class WizardsApprenticeGameMaster(GameMaster):
             action = {'type': 'info', 'content': 'Round successful'}
             self.log_event(from_='GM', to='GM', action=action)
 
-        logger.info("Game is finished!")  # TODO What is this logger for?
+        # logger.info("Game is finished!")  # TODO What is this logger for?
         # Log a final message saying that the game did come to an end
         action = {'type': 'info', 'content': 'end game'}
         self.log_event(from_='GM', to='GM', action=action)
+        self.log_eval_assets()
         return
+
+    def log_eval_assets(self) -> None:
+        """Aux to log variables needed for scoring (firstlast specific)"""
+        self.log_key('Played rounds', len(self.played_cards))
+        self.log_key('predictions', self.predictions)
+        self.log_key('tricks_per_player', self.tricks_per_player)
+        self.log_key('points', self.points)
+        self.log_key(ms.METRIC_LOSE, self.lose)
+        self.log_key(ms.METRIC_ABORTED, self.aborted)
+        self.log_key(ms.METRIC_REQUEST_COUNT, self.request_counts)
+        self.log_key(ms.METRIC_REQUEST_COUNT_PARSED, self.parsed_request_counts)
+        self.log_key(ms.METRIC_REQUEST_COUNT_VIOLATED, self.violated_request_counts)
+
+    def compute_scores(self, episode_interactions: Dict) -> None:
+        """Compute episode-level and turn-level scores (mandatory)."""
+        aborted = int(episode_interactions[ms.METRIC_ABORTED])
+        requests = episode_interactions[ms.METRIC_REQUEST_COUNT]
+        p_requests = episode_interactions[ms.METRIC_REQUEST_COUNT_PARSED]
+        v_requests = requests - p_requests
+        request_success_rate = p_requests / requests
+        lose = int(episode_interactions[ms.METRIC_LOSE]) if not aborted else 0
+        success = 1 - lose if not aborted else 0
+
+        # self.log_turn_score(round, 'points', self.points)
+
+        bench_score = 50 if not aborted else np.nan
+
+        self.log_episode_score(ms.METRIC_ABORTED, aborted)
+        self.log_episode_score(ms.METRIC_REQUEST_COUNT, requests)
+        self.log_episode_score(ms.METRIC_REQUEST_COUNT_PARSED, p_requests)
+        self.log_episode_score(ms.METRIC_REQUEST_COUNT_VIOLATED, v_requests)
+        self.log_episode_score(ms.METRIC_REQUEST_SUCCESS, request_success_rate)
+        self.log_episode_score(ms.METRIC_LOSE, lose)
+        self.log_episode_score(ms.METRIC_SUCCESS, success)
+
+        self.log_episode_score(ms.BENCH_SCORE, bench_score)
 
 
 class WizardsApprenticeGameBenchmark(GameBenchmark):
@@ -521,7 +572,7 @@ class WizardsApprenticeGameBenchmark(GameBenchmark):
         return "Trick tacking card game between 3-6 players."
 
     def create_game_master(self, experiment: dict, player_backends: list[str]) -> GameMaster:
-        return WizardsApprenticeGameMaster(experiment, player_backends)
+        return WizardsApprenticeGameMaster(self.name, experiment, player_backends)
 
     def is_single_player(self) -> bool:
         return False
