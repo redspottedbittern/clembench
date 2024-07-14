@@ -41,19 +41,27 @@ class Player(abc.ABC):
         call_start = datetime.now()
         prompt = messages
         response = dict()
-        if isinstance(self.model, CustomResponseModel):
+        if isinstance(self.model, CustomResponseModel) or self.model == 'programmatic': # TODO: It is not detecting that its programmatic
             response_text = self._custom_response(messages, turn_idx)
         elif isinstance(self.model, HumanModel):
             response_text = self._terminal_response(messages, turn_idx)
         else:
             prompt, response, response_text = self.model.generate_response(messages)
         call_duration = datetime.now() - call_start
-        response["clem_player"] = {
-            "call_start": str(call_start),
-            "call_duration": str(call_duration),
-            "response": response_text,
-            "model_name": self.model.get_name()
-        }
+        try:
+            response["clem_player"] = {
+                "call_start": str(call_start),
+                "call_duration": str(call_duration),
+                "response": response_text,
+                "model_name": self.model.get_name()
+            }
+        except AttributeError as e: # TODO: Deals with programmatic error from line 44
+            response["clem_player"] = {
+                "call_start": str(call_start),
+                "call_duration": str(call_duration),
+                "response": response_text,
+                "model_name": self.model
+            }
         return prompt, response, response_text
 
     def _terminal_response(self, messages, turn_idx) -> str:
@@ -780,18 +788,20 @@ class GameBenchmark(GameResourceLocator):
                     model_0 = f"{model_0.get_name()}-t{model_0.get_temperature()}"
                     # still we store to model--model dir (virtual self-play)
                     dialogue_pair_desc = f"{model_0}--{model_0}"
-                else:  # 2-players
-                    if len(dialogue_pair) > 2:
-                        message = f"Too many player for two-player game '{self.name}': '{len(dialogue_partners)}'"
-                        stdout_logger.error(message)
-                        raise ValueError(message)
-                    if len(dialogue_pair) == 1:
-                        dialogue_pair.append(dialogue_pair[0])  # model expansion
-                    model_0 = dialogue_pair[0]
-                    model_0 = f"{model_0.get_name()}-t{model_0.get_temperature()}"
-                    model_1 = dialogue_pair[1]
-                    model_1 = f"{model_1.get_name()}-t{model_1.get_temperature()}"
-                    dialogue_pair_desc = f"{model_0}--{model_1}"
+                else:
+                    if len(dialogue_pair) == 2: # In our case: if it is programmatic
+                        model_0 = dialogue_pair[0]
+                        model_0 = f"{model_0.get_name()}-t{model_0.get_temperature()}"
+                        dialogue_pair_desc = f"{model_0}--Programmatic--Programmatic"
+                    elif len(dialogue_pair) == 3:
+                        model_0 = dialogue_pair[0]
+                        model_0 = f"{model_0.get_name()}-t{model_0.get_temperature()}"
+                        model_1 = dialogue_pair[1]
+                        model_1 = f"{model_1.get_name()}-t{model_1.get_temperature()}"
+                        model_2 = dialogue_pair[2]
+                        model_2 = f"{model_2.get_name()}-t{model_2.get_temperature()}"
+                        dialogue_pair_desc = f"{model_0}--{model_1}--{model_2}"
+
                 episode_counter = 0
 
                 self.logger.info("Activity: %s Experiment: %s Partners: %s Episode: %d",

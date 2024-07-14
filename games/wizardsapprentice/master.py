@@ -41,13 +41,21 @@ class WizardsApprenticeGameMaster(GameMaster):
         """
         super().__init__(GAME_NAME, experiment, player_backends)
 
+        if len(player_backends) == 3:
+            self.model_a = player_backends[0]
+            self.model_b = player_backends[1]
+            self.model_c = player_backends[2]
+        elif len(player_backends) == 2:
+            self.model_a = player_backends[0]
+            # focus_player = 2 
+
         # Saves experiment and player attributes
         self.config = experiment
         self.current_turn: int = 0
-        self.model_a = player_backends[0]
-        self.model_b = player_backends[1]
         self.players_by_number: Dict[str, Player] = collections.OrderedDict()
         self.messages_by_names: Dict[str, List] = dict()
+        self.backends = player_backends
+        self.num_players = len(player_backends)
 
         # Initialise attributes that will be used for the evaluation scores
         self.aborted: bool = 0
@@ -71,7 +79,8 @@ class WizardsApprenticeGameMaster(GameMaster):
         self.correction_hand_prompt = self.config["correction_hand_prompt"]
         self.correction_prediction_prompt = self.config["correction_prediction_prompt"]
         self.correction_card_structure_prompt = self.config["correction_card_structure_prompt"]
-        self.correction_prediction_structure_prompt = self.config["correction_prediction_structure_prompt"]
+        self.correction_prediction_structure_prompt = self.config[
+            "correction_prediction_structure_prompt"]
         self.regex = self.config['regex']
 
         # Define parser
@@ -125,18 +134,19 @@ class WizardsApprenticeGameMaster(GameMaster):
 
         return points
 
-    def add_player(self, model, number):
+    def add_player(self, model, number, name):
         """
         Add a player to the game.
 
         :param player: Player object to be added.
         """
-        
-        name = "Player " + str(number)
-        apprentice = Apprentice(model, name)
-
-        apprentice.descriptor = number
-        self.players_by_number[apprentice.descriptor] = apprentice
+        if model == 'programmatic':
+            apprentice = Apprentice("programmatic", name)
+        else:
+            apprentice = Apprentice(model, name)
+        # print(apprentice.player) -> Gets name of the player
+        apprentice.descriptor = apprentice.player
+        self.players_by_number[number] = apprentice
         self.messages_by_names[apprentice.descriptor] = []
 
     def add_message(self, player: Player, utterance: str, role="user") -> None:
@@ -150,7 +160,7 @@ class WizardsApprenticeGameMaster(GameMaster):
         message = {"role": role, "content": utterance}
         history = self.messages_by_names[player.descriptor]
         history.append(message)
-        
+
         action = {'type': 'send message', 'content': utterance}
         self.log_event(from_='GM',
                        to=str(player.player),
@@ -165,13 +175,11 @@ class WizardsApprenticeGameMaster(GameMaster):
         :param player: Player object.
         :return: Answer string.
         """
+
         history = self.messages_by_names[player.descriptor]
         prompt, raw_answer, answer = player(history, self.current_turn)
-        self.messages_by_names[player.descriptor] = [] # Reset history after message has been sent
-        print()
-        print(prompt[0]['content'])
-        print(answer)
-        print()
+        player.history = [] # Reset history after message has been sent
+        self.messages_by_names[player.descriptor] = []
         action = {'type': 'get message', 'content': answer}
         self.log_event(
             # from_=str(self.players_by_names[str(player)]),
@@ -240,9 +248,11 @@ class WizardsApprenticeGameMaster(GameMaster):
         prompt = prompt.substitute(self.info)
         # Send it to the LLM and parse the answer
         self.add_message(receiver, prompt)
-        #print(prompt)
         answer = self.get_answer(receiver)
         self.request_counts += 1
+
+        print(prompt)
+        print(answer)
 
         # Get an answer depending on the exectation and return if valid
         if expect == "prediction":
@@ -313,7 +323,8 @@ class WizardsApprenticeGameMaster(GameMaster):
             for d in self.dealt_cards.keys()
         }
         # Set the first seating order
-        self.playing_order[list(self.dealt_cards.keys())[0]][1] = self.seating_order
+        self.playing_order[list(self.dealt_cards.keys())[
+            0]][1] = self.seating_order
 
         # Create the info dictionary to feed the prompt templates
         self.info = {}
@@ -321,12 +332,23 @@ class WizardsApprenticeGameMaster(GameMaster):
         # Create the players
         # TODO if we want to have a focused player or something, we have to
         # change the creation at this point and in self.add_player
-        focus_player = 2 # nur ein Platzhalter
-        for number in self.seating_order:
-            if number % 2 == 0:
-                self.add_player(self.model_b, number)
-            else:
-                self.add_player(self.model_a, number)
+        # focus_player = 2  # nur ein Platzhalter
+        # for number in self.seating_order:
+        #     if number % 2 == 0:
+        #         self.add_player(self.model_b, number)
+        #     else:
+        #         self.add_player(self.model_a, number)
+
+        if self.num_players == 3:
+            list_models = [self.model_a, self.model_b, self.model_c]
+            list_names = ['Gandalf', 'Merlin', 'Oz']
+            if len(self.seating_order) == 3:
+                for idx, value in enumerate(self.seating_order):
+                    self.add_player(list_models[idx], value, list_names[idx])
+        elif self.num_players == 2:
+            self.add_player(self.model_a, self.seating_order[0], 'Gandalf')
+            self.add_player('programmatic', self.seating_order[1], 'Merlin')
+            self.add_player('programmatic', self.seating_order[2], 'Oz')
 
         # Log all the players
         self.log_players({
@@ -334,7 +356,7 @@ class WizardsApprenticeGameMaster(GameMaster):
             for apprentice in self.players_by_number.values()
         })
 
-    def update_info(self, round, player, trick_round, winner=None):
+    def update_info(self, round, player, trick_round, players_name, winner=None):
         """
         Gather information that will be used to fill prompts.
 
@@ -351,6 +373,7 @@ class WizardsApprenticeGameMaster(GameMaster):
             self.info['NUM_CARDS'] = int(round)
 
         if round and player:
+            self.info['PLAYER_NAME'] = str(players_name.player)
             # Declare trump color
             self.info['TRUMP_CARD'] = str(self.trump_cards[round])
             self.info['TRUMP_COLOR'] = (self.info['TRUMP_CARD'][0]
@@ -392,6 +415,7 @@ class WizardsApprenticeGameMaster(GameMaster):
             ]
 
         if round and player and trick_round:
+            self.info['PLAYER_NAME'] = str(players_name.player)
             # Declare which cards were played already and last trick
             self.info['CARDS_PLAYED'] = (
                 self.get_current_trick(round, trick_round)
@@ -443,7 +467,8 @@ class WizardsApprenticeGameMaster(GameMaster):
             next_prompt += self.round_start_prompt
             for player in current_order:
                 # Gather and update information for the prompting
-                self.update_info(round, player, None)
+                self.update_info(round, player, None,
+                                 self.players_by_number[player])
                 receiver = self.players_by_number[player]
                 # Prompt the model
                 try:
@@ -452,6 +477,8 @@ class WizardsApprenticeGameMaster(GameMaster):
                     )
                 except InvalidAnswerError:
                     return
+                except AttributeError:
+                        return
                 # save players prediction
                 self.predictions[round][player] = prediction
 
@@ -463,7 +490,8 @@ class WizardsApprenticeGameMaster(GameMaster):
                 # GET CARDS
                 for player in current_order:
                     # Gather and update information for the prompting
-                    self.update_info(round, player, trick_round)
+                    self.update_info(round, player, trick_round,
+                                     self.players_by_number[player])
                     receiver = self.players_by_number[player]
                     trick = self.get_current_trick(round, trick_round)
                     hand = self.get_current_hand(round, player)
@@ -474,6 +502,9 @@ class WizardsApprenticeGameMaster(GameMaster):
                         )
                     except InvalidAnswerError:
                         return
+                    except AttributeError:
+                        return
+
                     # save the played card
                     self.played_cards[round][trick_round][player] = card
 
@@ -481,7 +512,8 @@ class WizardsApprenticeGameMaster(GameMaster):
                 # Determine the winner of the trick
                 winner = self.determine_trick_winner(round, trick_round)
                 # Update info and leaderboard
-                self.update_info(None, None, None, winner=winner)
+                self.update_info(None, None, None,
+                                 self.players_by_number[player], winner=winner)
                 self.tricks_per_player[round][winner] += 1
                 # Shift seating order to winner and save the new order
                 current_order = shift_to_winner(current_order, winner)
@@ -528,8 +560,10 @@ class WizardsApprenticeGameMaster(GameMaster):
         self.log_key(ms.METRIC_LOSE, self.lose)
         self.log_key(ms.METRIC_ABORTED, self.aborted)
         self.log_key(ms.METRIC_REQUEST_COUNT, self.request_counts)
-        self.log_key(ms.METRIC_REQUEST_COUNT_PARSED, self.parsed_request_counts)
-        self.log_key(ms.METRIC_REQUEST_COUNT_VIOLATED, self.violated_request_counts)
+        self.log_key(ms.METRIC_REQUEST_COUNT_PARSED,
+                     self.parsed_request_counts)
+        self.log_key(ms.METRIC_REQUEST_COUNT_VIOLATED,
+                     self.violated_request_counts)
 
     def compute_scores(self, episode_interactions: Dict) -> None:
         """Compute episode-level and turn-level scores (mandatory)."""

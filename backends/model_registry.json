@@ -20,6 +20,11 @@
     "backend": "openai_compatible"
   },
   {
+    "model_name": "Gemma7B",
+    "model_id": "google/gemma-7b-it",
+    "backend": "openai_compatible"
+  },
+  {
     "model_name": "Llama-3-8B-Instruct",
     "model_id": "meta-llama/Meta-Llama-3-8B-Instruct",
     "backend": "openai_compatible"
