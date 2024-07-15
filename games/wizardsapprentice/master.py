@@ -268,7 +268,6 @@ class WizardsApprenticeGameMaster(GameMaster):
         answer = self.get_answer(receiver)
         # self.request_counts += 1 # TODO: Not being used 
 
-        print('Round: ',round)
         print(prompt)
         print(answer)
 
@@ -549,7 +548,6 @@ class WizardsApprenticeGameMaster(GameMaster):
                     trick = self.get_current_trick(round, trick_round)
                     hand = self.get_current_hand(round, player)
                     # Prompt the model
-                    print('Trick round: ', trick_round)
                     try:
                         card = self.prompt_model(
                             next_prompt, receiver, "card", round, hand, trick
@@ -614,8 +612,8 @@ class WizardsApprenticeGameMaster(GameMaster):
         self.log_event(from_='GM', to='GM', action=action)
         self.log_eval_assets()
         
-        print(self.players_validity_errors)
-        print(self.players_parsed_errors)
+        # print(self.players_validity_errors)
+        # print(self.players_parsed_errors)
 
         return
 
