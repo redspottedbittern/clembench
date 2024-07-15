@@ -268,6 +268,7 @@ class WizardsApprenticeGameMaster(GameMaster):
         answer = self.get_answer(receiver)
         # self.request_counts += 1 # TODO: Not being used 
 
+        print('Round: ',round)
         print(prompt)
         print(answer)
 
@@ -386,7 +387,7 @@ class WizardsApprenticeGameMaster(GameMaster):
             ordered_cards[player] = played_cards[player]
         return ordered_cards
 
-    def update_info(self, round, trick_round, players_name, winner=None):
+    def update_info(self, round, trick_round, players_name, previous_play = False, winner=None):
         """
         Gather information that will be used to fill prompts.
 
@@ -422,19 +423,15 @@ class WizardsApprenticeGameMaster(GameMaster):
             self.info['PLAYER_POSITION'] = (
                 self.playing_order[round][1].index(players_name) + 1
             )
-            # Declare the predictions so far and for last round
-            self.info['PLAYER_PREDICTIONS'] = [
-                (player, prediction) for player, prediction
-                in self.predictions[round].items()
-            ]
-            # Check if there were last predictions and retrieve them
-            if str(int(round)-1) in list(self.predictions.keys()):
-                self.info['PLAYER_PREDICTIONS_LAST_ROUND'] = [
-                    (player, prediction) for player, prediction
-                    in self.predictions[str(int(round)-1)].items()
-                ]
+            if previous_play == True:
+                self.info['PLAYER_PREDICTIONS'] = list(self.predictions[round].items())
+                self.info['PLAYER_PREDICTIONS_LAST_ROUND'] = list(self.predictions[round].items())
             else:
-                self.info['PLAYER_PREDICTIONS_LAST_ROUND'] = ""
+                self.info['PLAYER_PREDICTIONS'] = [
+                    (player, prediction) for player, prediction
+                    in self.predictions[round].items()
+                ]
+                self.info['PLAYER_PREDICTIONS_LAST_ROUND'] = ""                
 
             # Declare leaderboard self.info
             self.info['LEADERBOARD_TRICKS'] = list(
@@ -522,7 +519,10 @@ class WizardsApprenticeGameMaster(GameMaster):
             next_prompt += self.round_start_prompt
             for player in self.playing_order[round][1]:
                 # Gather and update information for the prompting
-                self.update_info(round, None, player)
+                if int(round) > 2:
+                    self.update_info(str(int(round)-1), None, player, previous_play=True)
+                else:
+                    self.update_info(round, None, player)
                 receiver = self.player_by_name[player]
                 # Prompt the model
                 try:
@@ -549,6 +549,7 @@ class WizardsApprenticeGameMaster(GameMaster):
                     trick = self.get_current_trick(round, trick_round)
                     hand = self.get_current_hand(round, player)
                     # Prompt the model
+                    print('Trick round: ', trick_round)
                     try:
                         card = self.prompt_model(
                             next_prompt, receiver, "card", round, hand, trick
