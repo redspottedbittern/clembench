@@ -789,11 +789,7 @@ class GameBenchmark(GameResourceLocator):
                     # still we store to model--model dir (virtual self-play)
                     dialogue_pair_desc = f"{model_0}--{model_0}"
                 else:
-                    if len(dialogue_pair) == 1:
-                        message = f"Not enough players for game '{self.name}': '{len(dialogue_partners)}'"
-                        stdout_logger.error(message)
-                        raise ValueError(message)
-                    elif len(dialogue_pair) == 2: # Programmatic case
+                    if len(dialogue_pair) == 2: # In our case: if it is programmatic
                         model_0 = dialogue_pair[0]
                         model_0 = f"{model_0.get_name()}-t{model_0.get_temperature()}"
                         dialogue_pair_desc = f"{model_0}--Programmatic--Programmatic"
@@ -805,47 +801,6 @@ class GameBenchmark(GameResourceLocator):
                         model_2 = dialogue_pair[2]
                         model_2 = f"{model_2.get_name()}-t{model_2.get_temperature()}"
                         dialogue_pair_desc = f"{model_0}--{model_1}--{model_2}"
-                    elif len(dialogue_pair) == 4:
-                        model_0 = dialogue_pair[0]
-                        model_0 = f"{model_0.get_name()}-t{model_0.get_temperature()}"
-                        model_1 = dialogue_pair[1]
-                        model_1 = f"{model_1.get_name()}-t{model_1.get_temperature()}"
-                        model_2 = dialogue_pair[2]
-                        model_2 = f"{model_2.get_name()}-t{model_2.get_temperature()}"
-                        model_3 = dialogue_pair[3]
-                        model_3 = f"{model_3.get_name()}-t{model_3.get_temperature()}"
-                        dialogue_pair_desc = f"{model_0}--{model_1}--{model_2}--{model_3}"
-                    elif len(dialogue_pair) == 5:
-                        model_0 = dialogue_pair[0]
-                        model_0 = f"{model_0.get_name()}-t{model_0.get_temperature()}"
-                        model_1 = dialogue_pair[1]
-                        model_1 = f"{model_1.get_name()}-t{model_1.get_temperature()}"
-                        model_2 = dialogue_pair[2]
-                        model_2 = f"{model_2.get_name()}-t{model_2.get_temperature()}"
-                        model_3 = dialogue_pair[3]
-                        model_3 = f"{model_3.get_name()}-t{model_3.get_temperature()}"
-                        model_4 = dialogue_pair[4]
-                        model_4 = f"{model_4.get_name()}-t{model_4.get_temperature()}"
-                        dialogue_pair_desc = f"{model_0}--{model_1}--{model_2}--{model_3}--{model_4}"
-                    elif len(dialogue_pair) == 6:
-                        model_0 = dialogue_pair[0]
-                        model_0 = f"{model_0.get_name()}-t{model_0.get_temperature()}"
-                        model_1 = dialogue_pair[1]
-                        model_1 = f"{model_1.get_name()}-t{model_1.get_temperature()}"
-                        model_2 = dialogue_pair[2]
-                        model_2 = f"{model_2.get_name()}-t{model_2.get_temperature()}"
-                        model_3 = dialogue_pair[3]
-                        model_3 = f"{model_3.get_name()}-t{model_3.get_temperature()}"
-                        model_4 = dialogue_pair[4]
-                        model_4 = f"{model_4.get_name()}-t{model_4.get_temperature()}"
-                        model_5 = dialogue_pair[5]
-                        model_5 = f"{model_5.get_name()}-t{model_5.get_temperature()}"
-                        dialogue_pair_desc = f"{model_0}--{model_1}--{model_2}--{model_3}--{model_4}--{model_5}"
-                    else:
-                        message = f"Too many player for game '{self.name}': '{len(dialogue_partners)}'"
-                        stdout_logger.error(message)
-                        raise ValueError(message)
-
 
                 episode_counter = 0
 

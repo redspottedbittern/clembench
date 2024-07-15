@@ -140,7 +140,7 @@ class WordleGameMaster(GameMaster):
                 "critic_error": error,
             }
             if error:
-                content = f"Critic Error: {error} while parsing Player 2's (critic: {self.player_model_names[1]}) response"
+                content = f"Critic Error: {error} while parsing Player 2's (critic: {self.player_model_names[1]}) response, retrying"
             else:
                 if critic_agreement == "yes":
                     content = f"Player 2 (model: {self.player_model_names[1]}) agrees with Player 1's (model: {self.player_model_names[0]}) guess, proceeding for validation"
@@ -159,7 +159,7 @@ class WordleGameMaster(GameMaster):
                 else:
                     content = f"attempts: {attempts}\ntarget_word = {self.target_word}\nguess: {guess}\nguess_feedback: {guess_feedback}"
             else:
-                content = f"Guesser Error: {error} while parsing Player 1's (model: {self.player_model_names[0]}) response"
+                content = f"Guesser Error: {error} while parsing Player 1's (model: {self.player_model_names[0]}) response, retrying"
             metadata = {
                 "attempts": attempts,
                 "target_word": self.target_word,
@@ -433,7 +433,6 @@ class WordleGameMaster(GameMaster):
             "INVALID_WORD",
             "INVALID_WORD_LENGTH",
             "NOT_VALID_ENGLISH_WORD",
-            "CONTEXT_EXCEEDED_ERROR"
         ]:
             actual_status = self.game_final_status
             self.game_final_status = "ABORTED"
@@ -625,7 +624,7 @@ class WordleGameScorer(GameScorer):
             # Compute Episode Scores
             episode_score = self.cm.episodes(turn_results)
             # Compute Rank
-            speed = self.cm.speed(turn_results, self.name)
+            speed = self.cm.speed(turn_results)
             # Compute Guess repetition
             repeats_guess, num_guess_repeats = self.cm.repeats_guess(turn_results)
 

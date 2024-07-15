@@ -99,7 +99,7 @@ class Parser():
 
     def is_possible_prediction(self, prediction, round):
         """Check if the prediction if possible."""
-        return prediction in range(0, int(round)+1)
+        return prediction in range(0, round+1)
 
     def validate_card(self, answer, hand, trick):
         """Return True if a card is valid."""
