@@ -7,7 +7,7 @@ import re
 import numpy as np
 
 from backends import Model
-from clemgame.clemgame import GameMaster, GameBenchmark, Player
+from clemgame.clemgame import GameMaster, GameBenchmark, Player, GameScorer
 import clemgame.metrics as ms
 from games.wizardsapprentice.instancegenerator import GAME_NAME
 from games.wizardsapprentice.utils.parser_utils import (
@@ -362,6 +362,11 @@ class WizardsApprenticeGameMaster(GameMaster):
             d: dict.fromkeys(list_names, 0)
             for d in self.dealt_cards.keys()
         }
+        
+        self.players_prompt_trials = {
+            d: dict.fromkeys(list_names, 0)
+            for d in self.dealt_cards.keys()
+        }
 
         self.players_validity_errors = {
             d: dict.fromkeys(list_names, 0)
@@ -630,6 +635,10 @@ class WizardsApprenticeGameMaster(GameMaster):
                      self.parsed_request_counts)
         self.log_key(ms.METRIC_REQUEST_COUNT_VIOLATED,
                      self.violated_request_counts)
+    
+class WizardsApprenticeScorer(GameScorer):
+    def __init__(self, experiment: Dict, game_instance: Dict):
+        super().__init__(GAME_NAME, experiment, game_instance)
 
     def compute_scores(self, episode_interactions: Dict) -> None:
         """Compute episode-level and turn-level scores (mandatory)."""
@@ -637,7 +646,10 @@ class WizardsApprenticeGameMaster(GameMaster):
         requests = episode_interactions[ms.METRIC_REQUEST_COUNT]
         p_requests = episode_interactions[ms.METRIC_REQUEST_COUNT_PARSED]
         v_requests = requests - p_requests
-        request_success_rate = p_requests / requests
+        if requests > 0:
+            request_success_rate = p_requests / requests
+        else:
+            request_success_rate = 0
         lose = int(episode_interactions[ms.METRIC_LOSE]) if not aborted else 0
         success = 1 - lose if not aborted else 0
 
@@ -669,6 +681,9 @@ class WizardsApprenticeGameBenchmark(GameBenchmark):
 
     def get_description(self):
         return "Trick tacking card game between 3-6 players."
+    
+    def create_game_scorer(self, experiment: Dict, game_instance: Dict) -> GameScorer:
+        return WizardsApprenticeScorer(experiment, game_instance)
 
     def create_game_master(self, experiment: dict, player_backends: list[str]) -> GameMaster:
         return WizardsApprenticeGameMaster(self.name, experiment, player_backends)
