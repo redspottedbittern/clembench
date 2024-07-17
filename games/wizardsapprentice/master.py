@@ -635,7 +635,13 @@ class WizardsApprenticeGameMaster(GameMaster):
                      self.parsed_request_counts)
         self.log_key(ms.METRIC_REQUEST_COUNT_VIOLATED,
                      self.violated_request_counts)
-    
+
+def calculate_gandalf_points(data):
+    total_points = 0
+    for key in data:
+        if 'Gandalf' in data[key]:
+            total_points += data[key]['Gandalf']
+    return total_points
 class WizardsApprenticeScorer(GameScorer):
     def __init__(self, experiment: Dict, game_instance: Dict):
         super().__init__(GAME_NAME, experiment, game_instance)
@@ -654,8 +660,10 @@ class WizardsApprenticeScorer(GameScorer):
         success = 1 - lose if not aborted else 0
 
         # self.log_turn_score(round, 'points', self.points)
+        
+        points = calculate_gandalf_points(episode_interactions["points"])
 
-        bench_score = 50 if not aborted else np.nan
+        bench_score = points if not aborted else np.nan
 
         self.log_episode_score(ms.METRIC_ABORTED, aborted)
         self.log_episode_score(ms.METRIC_REQUEST_COUNT, requests)
