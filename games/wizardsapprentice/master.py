@@ -266,7 +266,7 @@ class WizardsApprenticeGameMaster(GameMaster):
         # Send it to the LLM and parse the answer
         self.add_message(receiver, prompt)
         answer = self.get_answer(receiver)
-        # self.request_counts += 1 # TODO: Not being used 
+        self.request_counts += 1 # TODO: Not being used 
 
         print(prompt)
         print(answer)
@@ -275,14 +275,14 @@ class WizardsApprenticeGameMaster(GameMaster):
         if expect == "prediction":
             parse = self.parse_prediction(answer, round, prompt, receiver)
             if self.parser.validate_prediction(answer, round):
-                # self.parsed_request_counts += 1
+                self.parsed_request_counts += 1
                 return parse
             else:
                 self.players_validity_errors[round][str(receiver.player)] += 1
         elif expect == "card":
             parse = self.parse_card(answer, hand, trick, prompt, receiver, round)
             if self.parser.validate_card(answer, hand, trick):
-                # self.parsed_request_counts += 1
+                self.parsed_request_counts += 1
                 return parse
             else:
                 self.players_validity_errors[round][str(receiver.player)] += 1
@@ -657,6 +657,9 @@ def calculate_oz_points(data):
         if 'Oz' in data[key]:
             total_points += data[key]['Oz']
     return total_points
+
+def transform_clemscore(x, k=0.1):
+    return 100 / (1 + np.exp(-k * x))
 class WizardsApprenticeScorer(GameScorer):
     def __init__(self, experiment: Dict, game_instance: Dict):
         super().__init__(GAME_NAME, experiment, game_instance)
@@ -677,7 +680,7 @@ class WizardsApprenticeScorer(GameScorer):
         # self.log_turn_score(round, 'points', self.points)
         
         points = calculate_gandalf_points(episode_interactions["points"])
-        bench_score = points if not aborted else np.nan
+        bench_score = transform_clemscore(points) if not aborted else 0
 
         self.log_episode_score(ms.METRIC_ABORTED, aborted)
         self.log_episode_score(ms.METRIC_REQUEST_COUNT, requests)
