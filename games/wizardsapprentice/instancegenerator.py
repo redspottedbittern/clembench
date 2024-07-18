@@ -3,6 +3,9 @@ This is the class that produces our game instances.
 
 For new experiments change the game parameters below and also change the seed.
 """
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 import random
 from string import Template
@@ -17,11 +20,11 @@ from games.wizardsapprentice.utils.instantiation_utils import (
 GAME_NAME = "wizardsapprentice"
 EXPERIMENT_NAME = "full_game_4p"
 SEED = 123
-N_INSTANCES = 1
+N_INSTANCES = 10
 
 # parameters for the game
 START_ROUND = 2
-END_ROUND = 4
+END_ROUND = 7
 PLAYERS = 3
 
 # parameters for the cards

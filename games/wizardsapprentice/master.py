@@ -296,6 +296,7 @@ class WizardsApprenticeGameMaster(GameMaster):
             # log the abortion event
             action = {'type': 'invalid format', 'content': 'abort'}
             self.log_event(from_='GM', to='GM', action=action)
+            self.log_eval_assets()
             raise InvalidAnswerError
 
     def setup(self, **game_instance) -> None:
@@ -642,6 +643,20 @@ def calculate_gandalf_points(data):
         if 'Gandalf' in data[key]:
             total_points += data[key]['Gandalf']
     return total_points
+
+def calculate_merlin_points(data):
+    total_points = 0
+    for key in data:
+        if 'Merlin' in data[key]:
+            total_points += data[key]['Merlin']
+    return total_points
+
+def calculate_oz_points(data):
+    total_points = 0
+    for key in data:
+        if 'Oz' in data[key]:
+            total_points += data[key]['Oz']
+    return total_points
 class WizardsApprenticeScorer(GameScorer):
     def __init__(self, experiment: Dict, game_instance: Dict):
         super().__init__(GAME_NAME, experiment, game_instance)
@@ -662,7 +677,6 @@ class WizardsApprenticeScorer(GameScorer):
         # self.log_turn_score(round, 'points', self.points)
         
         points = calculate_gandalf_points(episode_interactions["points"])
-
         bench_score = points if not aborted else np.nan
 
         self.log_episode_score(ms.METRIC_ABORTED, aborted)

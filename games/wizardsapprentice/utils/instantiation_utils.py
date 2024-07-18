@@ -108,7 +108,7 @@ def create_seating_order(num_players):
     order_list = [*range(1, num_players+1)]
     random.shuffle(order_list)
 
-    return order_list
+    return ["Merlin", "Gandalf", "Oz"]
 
 
 def create_deck(colors, cards_per_color, special_cards, special_cards_num,
