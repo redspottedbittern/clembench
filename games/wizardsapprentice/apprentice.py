@@ -87,6 +87,8 @@ class Apprentice(Player):
 
             cards_already_played = extract_card_list(cards_played_in_prompt, promptstring)
             suit = cards_already_played[0][0]
+            if suit == "J":
+                suit = cards_already_played[1][0]
             
             played_card = player_cards[0]
 
