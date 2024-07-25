@@ -674,12 +674,13 @@ class WizardsApprenticeScorer(GameScorer):
             request_success_rate = p_requests / requests
         else:
             request_success_rate = 0
-        lose = int(episode_interactions[ms.METRIC_LOSE]) if not aborted else 0
+        points = calculate_gandalf_points(episode_interactions["points"])
+        breakpoint()
+        lose = 1 if ((points < calculate_merlin_points(episode_interactions["points"])) and (points < calculate_oz_points(episode_interactions["points"]))) else 0
         success = 1 - lose if not aborted else 0
 
         # self.log_turn_score(round, 'points', self.points)
         
-        points = calculate_gandalf_points(episode_interactions["points"])
         bench_score = transform_clemscore(points) if not aborted else 0
 
         self.log_episode_score(ms.METRIC_ABORTED, aborted)
