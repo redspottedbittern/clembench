@@ -121,7 +121,8 @@ class WizardsApprenticeGameMaster(GameMaster):
         """Determine best card and its player for a certain trick."""
         # Evaluate trick
         trick = self.get_current_trick(round, trick_round)
-        trump = self.trump_cards[round][0]
+        trump = (self.trump_cards[round][0]
+                 if self.trump_cards[round] else "")
         best_card = evaluate_trick(trick, trump)
 
         # Check which player played the best_card
@@ -577,7 +578,10 @@ class WizardsApprenticeGameMaster(GameMaster):
                     self.playing_order[round][trick_round][:winner_index]
 
                 if max(range(1, int(round)+1)) == trick_round and max(self.dealt_cards) != round:
-                    self.playing_order[str(int(round) + 1)][1] = new_order
+                    try:
+                        self.playing_order[str(int(round) + 1)][1] = new_order
+                    except KeyError:
+                        pass
                 elif max(self.dealt_cards) == round and max(range(1, int(round)+1)) == trick_round:
                     pass
                 else:
@@ -598,7 +602,7 @@ class WizardsApprenticeGameMaster(GameMaster):
             # a bit of a unclean hack. In the last round, there are no keys
             # left
             try:
-                self.playing_order[int(round)+1][1] = current_order
+                self.playing_order[str(int(round)+1)][1] = current_order
             except KeyError:
                 pass
             # Add round end to next prompt
