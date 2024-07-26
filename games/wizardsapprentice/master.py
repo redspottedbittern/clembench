@@ -268,9 +268,6 @@ class WizardsApprenticeGameMaster(GameMaster):
         answer = self.get_answer(receiver)
         self.request_counts += 1 # TODO: Not being used 
 
-        print(prompt)
-        print(answer)
-
         # Get an answer depending on the exectation and return if valid
         if expect == "prediction":
             parse = self.parse_prediction(answer, round, prompt, receiver)
@@ -363,7 +360,7 @@ class WizardsApprenticeGameMaster(GameMaster):
             d: dict.fromkeys(list_names, 0)
             for d in self.dealt_cards.keys()
         }
-        
+
         self.players_prompt_trials = {
             d: dict.fromkeys(list_names, 0)
             for d in self.dealt_cards.keys()
@@ -517,7 +514,7 @@ class WizardsApprenticeGameMaster(GameMaster):
         # START round
         next_prompt = self.rules_prompt
         for round in self.dealt_cards:
-            print("Round " + str(round))
+            print("\nRound " + str(round) + " | Trick:", end='')
             self.log_next_turn()
 
             # GET PREDICTIONS
@@ -545,7 +542,7 @@ class WizardsApprenticeGameMaster(GameMaster):
             next_prompt = self.rules_prompt
             next_prompt += self.trick_start_prompt
             for trick_round in range(1, int(round)+1):
-                print("- Trick: " + str(trick_round))
+                print(" (" + str(trick_round) + ")", end='')
                 # GET CARDS
                 for player in self.playing_order[round][trick_round]:
                     # Gather and update information for the prompting
@@ -618,9 +615,6 @@ class WizardsApprenticeGameMaster(GameMaster):
         self.log_event(from_='GM', to='GM', action=action)
         self.log_eval_assets()
         
-        # print(self.players_validity_errors)
-        # print(self.players_parsed_errors)
-
         return
 
     def log_eval_assets(self) -> None:
@@ -660,6 +654,8 @@ def calculate_oz_points(data):
 
 def transform_clemscore(x, k=0.1):
     return 100 / (1 + np.exp(-k * x))
+
+
 class WizardsApprenticeScorer(GameScorer):
     def __init__(self, experiment: Dict, game_instance: Dict):
         super().__init__(GAME_NAME, experiment, game_instance)
