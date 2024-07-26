@@ -672,7 +672,7 @@ class WizardsApprenticeScorer(GameScorer):
         lose = 1 if ((points < calculate_merlin_points(episode_interactions["points"])) and (points < calculate_oz_points(episode_interactions["points"]))) else 0
         success = 1 - lose if not aborted else 0
 
-        rounds = episode_interactions['last_round']
+        rounds = len(episode_interactions['points'])
         bench_score = transform_clemscore(points, int(rounds)) if not aborted else 0
 
         self.log_episode_score(ms.METRIC_ABORTED, aborted)
