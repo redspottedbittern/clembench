@@ -652,9 +652,19 @@ def calculate_oz_points(data):
             total_points += data[key]['Oz']
     return total_points
 
-def transform_clemscore(x, k=0.1):
-    return 100 / (1 + np.exp(-k * x))
+def transform_clemscore(points, rounds):
+    """Transform the points to a value between 0 and 100 for the clemscore."""
+    # This uses a sigmoid function which isn't usable.
+    # return 100 / (1 + np.exp(-k * x))
 
+    # Gauß'sche Summenformel
+    base_value = ((rounds * (rounds+1)) // 2) * 10
+    max_points = base_value + (20 * rounds)
+    min_points = -base_value
+
+    clemscore = ((points - min_points) * 100) / (max_points-min_points)
+
+    return clemscore
 
 class WizardsApprenticeScorer(GameScorer):
     def __init__(self, experiment: Dict, game_instance: Dict):
@@ -671,13 +681,11 @@ class WizardsApprenticeScorer(GameScorer):
         else:
             request_success_rate = 0
         points = calculate_gandalf_points(episode_interactions["points"])
-        breakpoint()
         lose = 1 if ((points < calculate_merlin_points(episode_interactions["points"])) and (points < calculate_oz_points(episode_interactions["points"]))) else 0
         success = 1 - lose if not aborted else 0
 
-        # self.log_turn_score(round, 'points', self.points)
-        
-        bench_score = transform_clemscore(points) if not aborted else 0
+        rounds = episode_interactions['Played rounds']
+        bench_score = transform_clemscore(points, rounds) if not aborted else 0
 
         self.log_episode_score(ms.METRIC_ABORTED, aborted)
         self.log_episode_score(ms.METRIC_REQUEST_COUNT, requests)
