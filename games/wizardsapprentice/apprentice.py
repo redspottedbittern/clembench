@@ -6,33 +6,34 @@ from games.wizardsapprentice.utils.trick_utils import (
     is_higher_number
 )
 
+
 def extract_card_list(prompt_snippet, prompt):
     # extract line that has the current hand
-        hand = [line for line in prompt.splitlines() if prompt_snippet in line][0]
+    hand = [line for line in prompt.splitlines() if prompt_snippet in line][0]
 
-        # remove the leading dot if there is one
-        if hand[-1] == '.':
-            hand = hand[:-1]
+    # remove the leading dot if there is one
+    if hand[-1] == '.':
+        hand = hand[:-1]
 
-        # split the text until only cards are left
-        cards = hand.split(':')[1]
-        cards = cards.split(',')
-        return clean_input(cards)
+    # split the text until only cards are left
+    cards = hand.split(':')[1]
+    cards = cards.split(',')
+    return clean_input(cards)
 
 
 def clean_input(input_list):
-       # Joining the list into a single string
+    # Joining the list into a single string
     joined_string = ''.join(input_list)
-    
+
     # Removing unwanted characters and extra spaces
     cleaned_string = joined_string.replace("'", "").replace("[", "").replace("]", "").strip()
-    
+
     # Splitting the cleaned string by spaces
     result = cleaned_string.split()
-    
+
     return result
-    
-        
+
+
 class Apprentice(Player):
     def __init__(self, model_name: str, player: str):
         """
@@ -89,7 +90,7 @@ class Apprentice(Player):
             suit = cards_already_played[0][0]
             if suit == "J":
                 suit = cards_already_played[1][0]
-            
+
             played_card = player_cards[0]
 
             for card in player_cards:
@@ -99,29 +100,5 @@ class Apprentice(Player):
                     if is_higher_number(played_card, card):
                         played_card = card
                     else: # Still has to follow suit
-                        played_card = card
-            return "I PLAY: " + played_card
-        
-        elif "I PLAY: card" in promptstring:
-            # extract line that has the current hand
-            word = "Your current hand is: "
-            #breakpoint()
-            player_cards = extract_card_list(word, promptstring)
-            
-            cards_played_in_prompt = "These cards have been played in this trick already in this order: "
-
-            cards_already_played = extract_card_list(cards_played_in_prompt, promptstring)
-            suit = cards_already_played[0][0]
-            
-            played_card = player_cards[0]
-
-            for card in player_cards:
-                if is_wizard(card):
-                    return "I PLAY: " + card
-                if card[0] == suit:
-                    if is_higher_number(played_card, card):
-                        played_card = card
-                    else: # Still has to follow suit 
-                        # TODO: Make it more dynamically: go through all cards and use the best card. If not, must follow suit anyway.
                         played_card = card
             return "I PLAY: " + played_card

@@ -515,7 +515,7 @@ class WizardsApprenticeGameMaster(GameMaster):
         # START round
         next_prompt = self.rules_prompt
         for round in self.dealt_cards:
-            print("\nRound " + str(round) + " | Trick:", end='')
+            # print("\nRound " + str(round) + " | Trick:", end='')
             self.log_next_turn()
 
             # GET PREDICTIONS
@@ -543,7 +543,7 @@ class WizardsApprenticeGameMaster(GameMaster):
             next_prompt = self.rules_prompt
             next_prompt += self.trick_start_prompt
             for trick_round in range(1, int(round)+1):
-                print(" (" + str(trick_round) + ")", end='')
+                # print(" (" + str(trick_round) + ")", end='')
                 # GET CARDS
                 for player in self.playing_order[round][trick_round]:
                     # Gather and update information for the prompting
