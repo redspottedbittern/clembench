@@ -43,6 +43,7 @@ class Apprentice(Player):
         :param player: The name of the player.
         """
         super().__init__(model_name)
+        self.model_name = model_name
         self.player: str = player
         # A list to keep the dialogue history
         self.history: List = []
@@ -74,7 +75,12 @@ class Apprentice(Player):
 
             # change a random number from that digits
             num_cards = int(num_cards)
-            guess = random.choice(range(1, num_cards+1))
+
+            if str(self.model_name)  == "custom":
+                guess = random.choice(range(1, num_cards+1))
+            elif str(self.model_name)  == "programmatic":
+                # TODO: Better guess -> but how?
+                guess = random.choice(range(1, num_cards+1))
 
             return "PREDICTION: " + str(guess)
                 
@@ -97,11 +103,21 @@ class Apprentice(Player):
             # suits_found = [card for card in player_cards if card[0] == suit]
             highest_card_index = 0
 
-            for index, card in enumerate(player_cards):
-                new_suit_found = card[0] == suit or is_higher_number(played_card, card)
-                if is_wizard(card) or new_suit_found:
-                    return "I PLAY: " + card
-                if max(card[0], player_cards[highest_card_index]) == card[0]:
-                    highest_card_index = index
+            if str(self.model_name)  == "custom":
+                suits = []
+                [suits.append(x) for x in player_cards if x[0] == suit]
+                if len(suits) > 0:
+                    guessed_idx = random.choice(range(0, len(suits)))
+                    return "I PLAY: " + suits[guessed_idx]
+                else:
+                    guessed_idx = random.choice(range(0, len(player_cards)))
+                    return "I PLAY: " + player_cards[guessed_idx]
+            elif str(self.model_name)  == "programmatic":
+                for index, card in enumerate(player_cards):
+                    new_suit_found = card[0] == suit or is_higher_number(played_card, card)
+                    if is_wizard(card) or new_suit_found:
+                        return "I PLAY: " + card
+                    if max(card[0], player_cards[highest_card_index]) == card[0]:
+                        highest_card_index = index
 
             return "I PLAY: " + player_cards[highest_card_index]

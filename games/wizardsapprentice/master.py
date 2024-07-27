@@ -248,7 +248,7 @@ class WizardsApprenticeGameMaster(GameMaster):
 
         self.request_counts += 1 # TODO: Not being used 
 
-        print(prompt)
+        # print(prompt)
         # print(answer)
 
         # Get an answer depending on the exectation and return if valid
@@ -307,11 +307,12 @@ class WizardsApprenticeGameMaster(GameMaster):
         list_names = ['Gandalf', 'Merlin', 'Oz', 'Harry', 'Giogini', 'Houdini', 'Carlos']
         list_names = list_names[:num_players]
 
+
         for index, _ in enumerate(self.player_backends):
             self.add_player(getattr(self, f"model_{index}"), list_names[index])
 
         self.predictions = {
-            d: dict.fromkeys(list_names, 0)
+            d: dict.fromkeys(list_names, None)
             for d in self.dealt_cards.keys()
         }
 
@@ -335,6 +336,8 @@ class WizardsApprenticeGameMaster(GameMaster):
             apprentice: f'{apprentice}: {self.player_by_name[apprentice].model}'
             for apprentice in self.player_by_name
         })
+
+        self.played_cards_in_game = []
 
     def get_last_complete_trick(self, played_cards):
         for trick_number in reversed(sorted(played_cards.keys())):
@@ -418,6 +421,10 @@ class WizardsApprenticeGameMaster(GameMaster):
             else:
                 self.info['CARDS_PLAYED_LAST_TRICK'] = ''
 
+            self.info['CARDS_PLAYED_IN_GAME'] = self.played_cards_in_game
+
+
+
         if round and players_name and trick_round:
             # Declare leaderboard self.info
             self.info['LEADERBOARD_TRICKS'] = list(
@@ -447,8 +454,8 @@ class WizardsApprenticeGameMaster(GameMaster):
                 ordered_trick_data = self.get_ordered_trick_cards(
                     trick_data, playing_order)
                 self.info['CARDS_PLAYED_LAST_TRICK'] = ordered_trick_data
-            else:
-                self.info['CARDS_PLAYED_LAST_TRICK'] = ''
+
+            self.info['CARDS_PLAYED_IN_GAME'] = self.played_cards_in_game
 
         if winner:
             # Declare winner if there was one
@@ -502,7 +509,7 @@ class WizardsApprenticeGameMaster(GameMaster):
             next_prompt = self.rules_prompt
             next_prompt += self.trick_start_prompt
             for trick_round in range(1, int(round)+1):
-                print(" (" + str(trick_round) + ")", end='')
+                print("Trick round: " + str(trick_round) + "\n", end='')
                 # GET CARDS
                 for player in self.playing_order[round][trick_round]:
                     # Gather and update information for the prompting
@@ -522,6 +529,8 @@ class WizardsApprenticeGameMaster(GameMaster):
 
                     # save the played card
                     self.played_cards[round][trick_round][player] = card
+                    self.played_cards_in_game.append(card)
+
 
                 # END OF TRICK
                 # Determine the winner of the trick
@@ -565,8 +574,8 @@ class WizardsApprenticeGameMaster(GameMaster):
             except KeyError:
                 pass
             # Add round end to next prompt
-            # next_prompt = self.rules_prompt
-            next_prompt = self.trick_end_prompt + self.round_end_prompt
+            next_prompt = self.rules_prompt
+            next_prompt += self.trick_end_prompt + self.round_end_prompt
 
             # Log a message informing that the trick round was successfuly played
             action = {'type': 'info', 'content': 'Round successful'}
