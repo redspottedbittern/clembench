@@ -41,7 +41,7 @@ class Player(abc.ABC):
         call_start = datetime.now()
         prompt = messages
         response = dict()
-        if isinstance(self.model, CustomResponseModel) or self.model == 'programmatic': # TODO: It is not detecting that its programmatic
+        if isinstance(self.model, CustomResponseModel):
             response_text = self._custom_response(messages, turn_idx)
         elif isinstance(self.model, HumanModel):
             response_text = self._terminal_response(messages, turn_idx)

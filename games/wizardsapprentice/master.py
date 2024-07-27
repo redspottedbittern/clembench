@@ -38,30 +38,9 @@ class WizardsApprenticeGameMaster(GameMaster):
         """
         super().__init__(GAME_NAME, experiment, player_backends)
 
-        if len(player_backends) == 2:  # Programmatic case
-            self.model_a = player_backends[0]
-        elif len(player_backends) == 3:
-            self.model_a = player_backends[0]
-            self.model_b = player_backends[1]
-            self.model_c = player_backends[2]
-        elif len(player_backends) == 4:
-            self.model_a = player_backends[0]
-            self.model_b = player_backends[1]
-            self.model_c = player_backends[2]
-            self.model_d = player_backends[3]
-        elif len(player_backends) == 5:
-            self.model_a = player_backends[0]
-            self.model_b = player_backends[1]
-            self.model_c = player_backends[2]
-            self.model_d = player_backends[3]
-            self.model_d = player_backends[4]
-        elif len(player_backends) == 6:
-            self.model_a = player_backends[0]
-            self.model_b = player_backends[1]
-            self.model_c = player_backends[2]
-            self.model_d = player_backends[3]
-            self.model_d = player_backends[4]
-            self.model_d = player_backends[5]
+        if len(player_backends) >= 2:
+            for index, _ in enumerate(player_backends):
+                setattr(self, f"model_{index}", player_backends[index])
         else:
             message = f"Not enough players for game '{game_name}': '{len(player_backends)}'"
             raise ValueError(message)
@@ -71,8 +50,8 @@ class WizardsApprenticeGameMaster(GameMaster):
         self.current_turn: int = 0
         self.player_by_name = dict()
         self.messages_by_names: Dict[str, List] = dict()
-        self.num_players = len(player_backends)
-
+        # self.num_players = len(player_backends)
+        self.player_backends = player_backends
         # Initialise attributes that will be used for the evaluation scores
         self.aborted: bool = 0
         self.lose: bool = 0
@@ -139,16 +118,18 @@ class WizardsApprenticeGameMaster(GameMaster):
             self.predictions[round][player], self.tricks_per_player[round][player])
         return points
 
-    def add_player(self, model, name):
+    def add_player(self, model: str, name):
         """
         Add a player to the game.
 
         :param player: Player object to be added.
         """
-        if model == 'programmatic':
-            apprentice = Apprentice("programmatic", name) # TODO: Check this with Hakimov
-        else:
-            apprentice = Apprentice(model, name)
+        # if model == 'programmatic':
+        #     apprentice = Apprentice("programmatic", name) # TODO: Check this with Hakimov
+        # else:
+        #     apprentice = Apprentice(model, name)
+        apprentice = Apprentice(model, name)
+        print(apprentice)
         apprentice.descriptor = apprentice.player
         self.player_by_name[name] = apprentice
         self.messages_by_names[name] = []
@@ -269,7 +250,7 @@ class WizardsApprenticeGameMaster(GameMaster):
         self.request_counts += 1 # TODO: Not being used 
 
         print(prompt)
-        print(answer)
+        # print(answer)
 
         # Get an answer depending on the exectation and return if valid
         if expect == "prediction":
@@ -325,18 +306,40 @@ class WizardsApprenticeGameMaster(GameMaster):
         # Create the info dictionary to feed the prompt templates
         self.info = {}
 
-        # Create the players
-        if self.num_players == 3:  # TODO: Extend to five players
-            list_names = ['Gandalf', 'Merlin', 'Oz']
-            list_models = [self.model_a, self.model_b, self.model_c]
-            for idx, value in enumerate(self.playing_order[list(self.dealt_cards.keys())[0]][1]):
-                self.add_player(list_models[idx], list_names[idx])
-        elif self.num_players == 2:  # When programmatic
-            list_names = ['Gandalf', 'Merlin', 'Oz']
-            list_models = [self.model_a, self.model_b, self.model_c]
-            self.add_player(self.model_a, list_names[0])
-            self.add_player('programmatic', list_names[1])
-            self.add_player('programmatic', list_names[2])
+
+        # # Create the players
+        # if self.num_players == 3:  # TODO: Extend to five players
+        #     list_names = ['Gandalf', 'Merlin', 'Oz']
+        #     list_models = [self.model_0, self.model_1, self.model_2]
+        #     for idx, value in enumerate(self.playing_order[list(self.dealt_cards.keys())[0]][1]):
+        #         self.add_player(list_models[idx], list_names[idx])
+        # elif self.num_players == 2:  # When programmatic
+        #     list_names = ['Gandalf', 'Merlin', 'Oz']
+        #     self.add_player(self.model_a, list_names[0])
+        #     self.add_player('programmatic', list_names[1])
+        #     self.add_player('programmatic', list_names[2])
+
+        list_names = ['Gandalf', 'Merlin', 'Oz', 'Harry', 'Giogini', 'Houdini', 'Carlos']
+
+        print(self.player_backends)
+
+        for index, _ in enumerate(self.player_backends):
+                # if len(self.player_backends) == 3:
+                #     list_models = [self.model_1, self.model_2, self.model_3]
+                #     for idx, value in enumerate(self.playing_order[list(self.dealt_cards.keys())[0]][1]):
+                #         self.add_player(list_models[idx], list_names[idx])
+                # else:
+            self.add_player(getattr(self, f"model_{index}"), list_names[index])
+
+        # if len(self.player_backends) == 2:  # Programmatic case
+        #     self.model_a = self.player_backends[0]
+        # elif len(self.player_backends) > 2:
+        #     print(self.player_backends)
+        #     for index, _ in enumerate(self.player_backends):
+        #         setattr(self, f"model_{index}", player_backends[index])
+        # else:
+        #     message = f"Not enough players for game '{game_name}': '{len(self.player_backends)}'"
+        #     raise ValueError(message)
 
         self.predictions = {
             d: dict.fromkeys(list_names, 0)
@@ -674,7 +677,9 @@ class WizardsApprenticeScorer(GameScorer):
             request_success_rate = p_requests / requests
         else:
             request_success_rate = 0
-        lose = int(episode_interactions[ms.METRIC_LOSE]) if not aborted else 0
+        
+        points = calculate_gandalf_points(episode_interactions["points"])
+        lose = 1 if ((points < calculate_merlin_points(episode_interactions["points"])) and (points < calculate_oz_points(episode_interactions["points"]))) else 0
         success = 1 - lose if not aborted else 0
 
         # self.log_turn_score(round, 'points', self.points)
