@@ -6,33 +6,34 @@ from games.wizardsapprentice.utils.trick_utils import (
     is_higher_number
 )
 
+
 def extract_card_list(prompt_snippet, prompt):
     # extract line that has the current hand
-        hand = [line for line in prompt.splitlines() if prompt_snippet in line][0]
+    hand = [line for line in prompt.splitlines() if prompt_snippet in line][0]
 
-        # remove the leading dot if there is one
-        if hand[-1] == '.':
-            hand = hand[:-1]
+    # remove the leading dot if there is one
+    if hand[-1] == '.':
+        hand = hand[:-1]
 
-        # split the text until only cards are left
-        cards = hand.split(':')[1]
-        cards = cards.split(',')
-        return clean_input(cards)
+    # split the text until only cards are left
+    cards = hand.split(':')[1]
+    cards = cards.split(',')
+    return clean_input(cards)
 
 
 def clean_input(input_list):
-       # Joining the list into a single string
+    # Joining the list into a single string
     joined_string = ''.join(input_list)
-    
+
     # Removing unwanted characters and extra spaces
     cleaned_string = joined_string.replace("'", "").replace("[", "").replace("]", "").strip()
-    
+
     # Splitting the cleaned string by spaces
     result = cleaned_string.split()
-    
+
     return result
-    
-        
+
+
 class Apprentice(Player):
     def __init__(self, model_name: str, player: str):
         """
@@ -76,7 +77,7 @@ class Apprentice(Player):
             guess = random.choice(range(1, num_cards+1))
 
             return "PREDICTION: " + str(guess)
-        
+                
         elif "I PLAY: card" in promptstring:
             # extract line that has the current hand
             word = "Your current hand is: "
@@ -87,6 +88,9 @@ class Apprentice(Player):
 
             cards_already_played = extract_card_list(cards_played_in_prompt, promptstring)
             suit = cards_already_played[0][0]
+
+            if suit == "J":
+                suit = cards_already_played[1][0]
             
             played_card = player_cards[0]
 
@@ -101,5 +105,3 @@ class Apprentice(Player):
                     highest_card_index = index
 
             return "I PLAY: " + player_cards[highest_card_index]
-        
-        

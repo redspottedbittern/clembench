@@ -1,0 +1,31 @@
+{
+    "EXPERIMENT_NAME": "short_pos3_easy",
+    "N_INSTANCES": 6,
+    "START_ROUND": 1,
+    "END_ROUND": 9,
+    "PLAYERS": 3,
+    "PLAYER_POSITION": 3,
+    "DIFFICULTY": "easy",
+    "COLORS": ["G", "B", "R", "Y"],
+    "CARDS_PER_COLOR": 13,
+    "SPECIAL_CARDS": ["Z", "J"],
+    "SPECIAL_CARDS_NUM": 4,
+    "LIBERAL_MODE": true,
+    "ATTEMPTS": 5,
+    "PROGRAMMATIC": "random",
+    "COLORS_MEANING": {"G": "green", "B": "blue", "R": "red", "Y": "yellow"},
+    "SPECIAL_CARDS_MEANING": {"Z": "Wizard", "J": "Jester"},
+    "PROMPT_NAMES": [
+        "rules",
+        "round_start",
+        "trick_start",
+        "trick_end",
+        "round_end",
+        "game_end",
+        "correction_suit",
+        "correction_hand",
+        "correction_prediction",
+        "correction_card_structure",
+        "correction_prediction_structure"
+    ]
+}
