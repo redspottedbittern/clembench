@@ -46,7 +46,7 @@ class Apprentice(Player):
         self.player: str = player
         # A list to keep the dialogue history
         self.history: List = []
-        
+
     def _custom_response(self, messages, turn_idx) -> str:
         """
         Give a programmatic response without an API call to a model.
@@ -88,17 +88,20 @@ class Apprentice(Player):
 
             cards_already_played = extract_card_list(cards_played_in_prompt, promptstring)
             suit = cards_already_played[0][0]
+
             if suit == "J":
                 suit = cards_already_played[1][0]
-
+            
             played_card = player_cards[0]
 
-            for card in player_cards:
-                if is_wizard(card):
+            # suits_found = [card for card in player_cards if card[0] == suit]
+            highest_card_index = 0
+
+            for index, card in enumerate(player_cards):
+                new_suit_found = card[0] == suit or is_higher_number(played_card, card)
+                if is_wizard(card) or new_suit_found:
                     return "I PLAY: " + card
-                if card[0] == suit:
-                    if is_higher_number(played_card, card):
-                        played_card = card
-                    else: # Still has to follow suit
-                        played_card = card
-            return "I PLAY: " + played_card
+                if max(card[0], player_cards[highest_card_index]) == card[0]:
+                    highest_card_index = index
+
+            return "I PLAY: " + player_cards[highest_card_index]
