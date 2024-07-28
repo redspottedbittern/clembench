@@ -84,7 +84,7 @@ class Apprentice(Player):
             elif str(self.model_name)  == "programmatic":
                 # More intelligent guessing strategy
                 lower_bound = int(num_cards / 2) - 1
-                upper_bound = num_cards
+                upper_bound = num_cards + 1
 
                 guess = random.randint(lower_bound, num_cards)
 
