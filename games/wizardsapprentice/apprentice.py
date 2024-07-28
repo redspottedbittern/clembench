@@ -76,36 +76,44 @@ class Apprentice(Player):
             # change a random number from that digits
             num_cards = int(num_cards)
 
+            word = "You've been dealt the following cards: "
+            player_cards = extract_card_list(word, promptstring)
+            
             if str(self.model_name)  == "custom":
                 guess = random.choice(range(1, num_cards+1))
             elif str(self.model_name)  == "programmatic":
-                # TODO: Better guess -> but how?
-                guess = random.choice(range(1, num_cards+1))
+                # More intelligent guessing strategy
+                lower_bound = int(num_cards / 2) - 1
+                upper_bound = num_cards
+
+                guess = random.randint(lower_bound, num_cards)
+
+                # Adjust guess based on Z or J
+                z_in_hand = [x for x in player_cards if "Z" in x]
+                j_in_hand = [x for x in player_cards if "J" in x]
+
+                lower_bound += len(z_in_hand)
+                upper_bound -= len(j_in_hand)
+
+                guess = random.choice(range(lower_bound, upper_bound))
 
             return "PREDICTION: " + str(guess)
                 
         elif "I PLAY: card" in promptstring:
             # extract line that has the current hand
             word = "Your current hand is: "
-            #breakpoint()
             player_cards = extract_card_list(word, promptstring)
             
+            # extract suit
             cards_played_in_prompt = "These cards have been played in this trick already in this order: "
-
             cards_already_played = extract_card_list(cards_played_in_prompt, promptstring)
             suit = cards_already_played[0][0]
-
             if suit == "J":
                 suit = cards_already_played[1][0]
             
-            played_card = player_cards[0]
-
-            # suits_found = [card for card in player_cards if card[0] == suit]
-            highest_card_index = 0
-
             if str(self.model_name)  == "custom":
-                suits = []
-                [suits.append(x) for x in player_cards if x[0] == suit]
+                suits = [card for card in player_cards if card[0] == suit]
+                # follows suit randomly
                 if len(suits) > 0:
                     guessed_idx = random.choice(range(0, len(suits)))
                     return "I PLAY: " + suits[guessed_idx]
@@ -113,11 +121,16 @@ class Apprentice(Player):
                     guessed_idx = random.choice(range(0, len(player_cards)))
                     return "I PLAY: " + player_cards[guessed_idx]
             elif str(self.model_name)  == "programmatic":
-                for index, card in enumerate(player_cards):
-                    new_suit_found = card[0] == suit or is_higher_number(played_card, card)
-                    if is_wizard(card) or new_suit_found:
-                        return "I PLAY: " + card
-                    if max(card[0], player_cards[highest_card_index]) == card[0]:
-                        highest_card_index = index
+                wizards_in_hand = [card for _, card in enumerate(player_cards) if card[0]=="Z"]
+                suit_cards = [card for _, card in enumerate(player_cards) if card[0]==suit]
 
-            return "I PLAY: " + player_cards[highest_card_index]
+                # if wizard, plays it
+                if len(wizards_in_hand) > 0:
+                    return "I PLAY: " + max(wizards_in_hand)
+                # else if suit in hand, plays biggest one
+                elif len(suit_cards) > 0:
+                    return "I PLAY: " + max(suit_cards, key=lambda x: int(x[1:]))
+                # else chooses biggest card
+                else:
+                    return "I PLAY: " + max(player_cards, key=lambda x: int(x[1:]))
+                    
