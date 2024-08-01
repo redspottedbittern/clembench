@@ -8,7 +8,7 @@
     "DIFFICULTY": "standard",
     "COLORS": ["G", "B", "R", "Y"],
     "CARDS_PER_COLOR": 13,
-    "SPECIAL_CARDS": ["", ""],
+    "SPECIAL_CARDS": [],
     "SPECIAL_CARDS_NUM": 4,
     "LIBERAL_MODE": true,
     "ATTEMPTS": 5,
