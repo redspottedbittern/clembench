@@ -22,14 +22,17 @@ def convert_keys_to_int(d):
     return new_dict
 
 
-def deal_cards_for_round(round, deck, seating_order):
+def deal_cards_for_round(round, deck, seating_order, mode="random"):
     """Deal cards for a specific round."""
     deck = deepcopy(deck)
     dealt_cards = {}
 
     # draw round many cards for every player and save them
     for player in seating_order:
-        hand = get_random_undealt_cards(deck, round)
+        if player == "Gandalf":
+            hand = get_cards(deck, round, mode)
+        else:
+            hand = get_cards(deck, round, "random")
         dealt_cards[player] = hand
 
     # determine a trump color
@@ -69,6 +72,55 @@ def get_random_undealt_cards(deck, n=0):
         deck[key]["dealt"] = True
 
     return selected_keys
+
+def get_cards(deck, n=0, mode="random"):
+    """
+    Get random undealt cards from the deck.
+
+    Parameters:
+    deck (dict): The dictionary representing the deck of cards.
+    n (int): The number of undealt cards to select.
+
+    Returns:
+    list: A list of keys representing the selected undealt cards.
+
+    Raises:
+    ValueError: If there are not enough undealt cards to select.
+    """
+    # Create a list of keys for cards that have not been dealt
+    
+    undealt_keys = [key for key, value in deck.items()
+                    if not value["dealt"]]
+    undealt_cards_count = len(undealt_keys)
+    # Check if there are enough undealt cards available
+    if undealt_cards_count < n:
+        raise ValueError(f"Not enough unplayed cards to select from.\
+                         Undealt Cards: {undealt_cards_count}, Round: {n}")
+
+    # Randomly select n undealt cards
+    if mode == "random":
+        selected_keys = get_random_cards(undealt_keys, n)
+    elif mode == "bad_cards":
+        selected_keys = get_bad_cards(undealt_keys, n)
+    else:
+        selected_keys = get_good_cards(undealt_keys, n)
+        
+    for key in selected_keys:  # Mark the selected cards as dealt
+        deck[key]["dealt"] = True
+
+    return selected_keys
+
+def get_random_cards(undealt_keys, n):
+    # Randomly select n undealt cards
+    return random.sample(undealt_keys, n)
+
+def get_bad_cards(undealt_keys, n):
+    bad_cards = [s for s in undealt_keys if s[0] in 'RYGBJ' and s[1:].isdigit() and int(s[1:]) <= 5]
+    return random.sample(bad_cards, n)
+
+def get_good_cards(undealt_keys, n):
+    good_cards = [s for s in undealt_keys if s[0] in 'RYGBZ' and s[1:].isdigit() and (int(s[1:]) >= 9 or s[0] == 'Z')]
+    return random.sample(good_cards, n)
 
 
 def get_random_trump_card(deck):

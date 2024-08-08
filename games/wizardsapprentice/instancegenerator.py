@@ -19,12 +19,12 @@ from games.wizardsapprentice.utils.instantiation_utils import (
 GAME_NAME = "wizardsapprentice"
 SEED = 123
 EXPERIMENTS = [
-    "full_game"
-    # "full_no_special_cards",
+    # "full_game"
+    #"full_no_special_cards",
     # "full_programmatic2",
     # "short_no_reprompting",
     # "short_pos1_easy",
-    # "short_pos1_hard",
+    "short_pos1_hard",
     # "short_pos2_easy",
     # "short_pos2_hard",
     # "short_pos3_easy",
@@ -185,9 +185,16 @@ class WizardsApprenticeInstanceGenerator(GameInstanceGenerator):
                 # for every round deal cards to each player
                 dealt_cards = {}
                 trump_cards = {}
+                card_difficulty = ""
+                if settings['DIFFICULTY'] == "easy":
+                    card_difficulty = "good_cards"
+                elif settings["DIFFICULTY"] == "hard":
+                    card_difficulty = "bad_cards"
+                else:
+                    card_difficulty = "random"
                 for round in range(settings['START_ROUND'], end_round + 1):
                     dealt_cards[round], trump_cards[round] = (
-                        deal_cards_for_round(round, deck, seating_order)
+                        deal_cards_for_round(round, deck, seating_order, card_difficulty)
                     )
 
                 game_instance['seating_order'] = seating_order
