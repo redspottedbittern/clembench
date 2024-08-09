@@ -31,12 +31,12 @@ class WizardsApprenticeGameMaster(GameMaster):
         """
         super().__init__(GAME_NAME, experiment, player_backends)
 
-        if len(player_backends) >= 2:
-            for index, _ in enumerate(player_backends):
-                setattr(self, f"model_{index}", player_backends[index])
-        else:
-            message = f"Not enough players for game '{game_name}': '{len(player_backends)}'"
-            raise ValueError(message)
+        # if len(player_backends) >= 2:
+        #     for index, _ in enumerate(player_backends):
+        #         setattr(self, f"model_{index}", player_backends[index])
+        # else:
+        #     message = f"Not enough players for game '{game_name}': '{len(player_backends)}'"
+            # raise ValueError(message)
 
         # Saves experiment and player attributes
         self.config = experiment
@@ -246,7 +246,7 @@ class WizardsApprenticeGameMaster(GameMaster):
         self.add_message(receiver, prompt)
         answer = self.get_answer(receiver)
 
-        self.request_counts += 1 # TODO: Not being used 
+        self.request_counts += 1 # TODO: Not being used
 
         # print(prompt)
         # print(answer)
@@ -302,32 +302,46 @@ class WizardsApprenticeGameMaster(GameMaster):
         # Create the info dictionary to feed the prompt templates
         self.info = {}
 
-        num_players = len(self.playing_order["2"][1])
+        # check if there are enough models and players
+        assert len(self.player_backends) == len(self.playing_order)
 
-        list_names = ['Gandalf', 'Merlin', 'Oz', 'Harry', 'Giogini', 'Houdini', 'Carlos']
-        list_names = list_names[:num_players]
+        # create player: Gandalf is the model, the rest gets random names
+        names = self.seating_order.copy()
+        names.remove('Gandalf')
 
+        for idx, model in enumerate(self.player_backends):
+            if idx == 0:
+                self.add_player(model, "Gandalf")
+            else:
+                self.add_player(model, names.pop(0))
 
-        for index, _ in enumerate(self.player_backends):
-            self.add_player(getattr(self, f"model_{index}"), list_names[index])
+        # num_players = len(self.playing_order["2"][1])
+
+        # list_names = ['Gandalf', 'Merlin', 'Oz', 'Harry', 'Giogini', 'Houdini', 'Carlos']
+        # list_names = list_names[:num_players]
+
+        # for index, _ in enumerate(self.player_backends):
+        #     name = self.seating_order[index]
+        #     # if name is "Gandalf"
+        #     self.add_player(getattr(self, f"model_{index}"), list_names[index])
 
         self.predictions = {
-            d: dict.fromkeys(list_names, None)
+            d: dict.fromkeys(self.seating_order, None)
             for d in self.dealt_cards.keys()
         }
 
         self.points = {
-            d: dict.fromkeys(list_names, 0)
+            d: dict.fromkeys(self.seating_order, 0)
             for d in self.dealt_cards.keys()
         }
 
         self.tricks_per_player = {
-            d: dict.fromkeys(list_names, 0)
+            d: dict.fromkeys(self.seating_order, 0)
             for d in self.dealt_cards.keys()
         }
 
         self.played_cards = {
-            d: {dd: dict.fromkeys(list_names)
+            d: {dd: dict.fromkeys(self.seating_order)
                 for dd in range(1, int(d)+1)}
             for d in self.dealt_cards.keys()
         }
@@ -656,7 +670,7 @@ class WizardsApprenticeScorer(GameScorer):
             request_success_rate = p_requests / requests
         else:
             request_success_rate = 0
-           
+
         points = calculate_gandalf_points(episode_interactions["points"])
         lose = 1 if ((points < calculate_merlin_points(episode_interactions["points"])) and (points < calculate_oz_points(episode_interactions["points"]))) else 0
         success = 1 - lose if not aborted else 0

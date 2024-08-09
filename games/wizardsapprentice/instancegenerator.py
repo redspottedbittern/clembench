@@ -19,12 +19,13 @@ from games.wizardsapprentice.utils.instantiation_utils import (
 GAME_NAME = "wizardsapprentice"
 SEED = 123
 EXPERIMENTS = [
+    "test_game"
     # "full_game"
-    #"full_no_special_cards",
+    # "full_no_special_cards",
     # "full_programmatic2",
     # "short_no_reprompting",
     # "short_pos1_easy",
-    "short_pos1_hard",
+    # "short_pos1_hard",
     # "short_pos2_easy",
     # "short_pos2_hard",
     # "short_pos3_easy",
@@ -180,7 +181,9 @@ class WizardsApprenticeInstanceGenerator(GameInstanceGenerator):
                 game_instance = self.add_game_instance(experiment, game_id)
 
                 # create a seating order for this instance
-                seating_order = create_seating_order(settings['PLAYERS'])
+                n_players = settings['PLAYERS']
+                position = settings['PLAYER_POSITION']
+                seating_order = create_seating_order(n_players, position)
 
                 # for every round deal cards to each player
                 dealt_cards = {}
