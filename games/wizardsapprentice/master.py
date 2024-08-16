@@ -56,6 +56,7 @@ class WizardsApprenticeGameMaster(GameMaster):
         self.error_card_not_comprehensible = 0
         self.error_prediction_int_not_possible = 0
         self.error_prediction_not_comprehensible = 0
+        self.forced_cards = 0
 
         # Import information about reprompting
         self.liberal_mode = self.config['liberal_mode']
@@ -260,7 +261,11 @@ class WizardsApprenticeGameMaster(GameMaster):
         elif expect == "card":
             parse = self.parse_card(answer, hand, trick, prompt, receiver, round)
             if self.parser.validate_card(answer, hand, trick):
+                # increase counter of succesfully parsed request
                 self.parsed_request_counts += 1
+                # increase counter if card if forced
+                if self.parser.card_is_forced(parse, hand, trick):
+                    self.forced_cards += 1
                 return parse
 
         # reprompt if the answer was not correctly parsed
@@ -615,6 +620,7 @@ class WizardsApprenticeGameMaster(GameMaster):
         self.log_key('error_card_not_comprehensible', self.error_card_not_comprehensible)
         self.log_key('error_prediction_int_not_possible', self.error_prediction_int_not_possible)
         self.log_key('error_prediction_not_comprehensible', self.error_prediction_not_comprehensible)
+        self.log_key('forced_card', self.forced_cards)
         self.log_key(ms.METRIC_LOSE, self.lose)
         self.log_key(ms.METRIC_ABORTED, self.aborted)
         self.log_key(ms.METRIC_REQUEST_COUNT, self.request_counts)

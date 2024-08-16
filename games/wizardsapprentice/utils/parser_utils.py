@@ -125,8 +125,20 @@ class Parser():
 
         if not self.is_possible_prediction(prediction, round):
             return False
-        
+
         return True
+
+    def card_is_forced(self, played_card, hand, trick):
+        """Check if played card is the only possible card to play."""
+        valid_cards = []
+        for card in hand:
+            if self.validate_card("I PLAY: " + card, hand, trick):
+                valid_cards.append(card)
+
+        if played_card in valid_cards and len(valid_cards) == 1:
+            return True
+
+        return False
 
 
 class InvalidAnswerError(Exception):
