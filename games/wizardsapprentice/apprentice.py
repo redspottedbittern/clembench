@@ -95,6 +95,9 @@ class Apprentice(Player):
                 lower_bound += len(z_in_hand)
                 upper_bound -= len(j_in_hand)
 
+                # make sure the lower bound is never lower than 0
+                lower_bound = 0 if lower_bound < 0 else lower_bound
+
                 guess = random.choice(range(lower_bound, upper_bound))
 
             return "PREDICTION: " + str(guess)
