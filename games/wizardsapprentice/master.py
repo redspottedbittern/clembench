@@ -583,15 +583,18 @@ class WizardsApprenticeGameMaster(GameMaster):
             for player in self.player_by_name.keys():
                 self.points[round][player] = self.calculate_points(
                     round, player)
+
             # Shift original seating_order by one and save it
-            current_order = (self.playing_order[round][1][1:] +
-                             self.playing_order[round][1][:1])
+            # current_order = (self.playing_order[round][1][1:] +
+            #                  self.playing_order[round][1][:1])
+            current_order = self.seating_order
             # a bit of a unclean hack. In the last round, there are no keys
             # left
             try:
                 self.playing_order[str(int(round)+1)][1] = current_order
             except KeyError:
                 pass
+            
             # Add round end to next prompt
             next_prompt = self.rules_prompt
             next_prompt += self.trick_end_prompt + self.round_end_prompt
