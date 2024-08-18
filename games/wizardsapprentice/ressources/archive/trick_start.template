@@ -1,6 +1,6 @@
 It's your turn to play a card in the current trick!
 
-You are playing with $NUM_OTHER_PLAYERS other players, and you are player number $PLAYER_POSITION. 
+You are playing with $NUM_OTHER_PLAYERS other players, and you are player $PLAYER_NAME in position $PLAYER_POSITION of the trick round.
 Each player has $NUM_CARDS cards. The trump card is $TRUMP_CARD, thereby the trump color is $TRUMP_COLOR.
 
 These are the players predictions: $PLAYER_PREDICTIONS.

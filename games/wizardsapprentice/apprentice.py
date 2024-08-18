@@ -1,10 +1,6 @@
 import random
 from typing import List
 from clemgame.clemgame import Player
-from games.wizardsapprentice.utils.trick_utils import (
-    is_wizard,
-    is_higher_number
-)
 
 
 def extract_card_list(prompt_snippet, prompt):
@@ -111,6 +107,8 @@ class Apprentice(Player):
             cards_played_in_prompt = "These cards have been played in this trick already in this order: "
             cards_already_played = extract_card_list(cards_played_in_prompt, promptstring)
             suit = cards_already_played[0][0]
+
+            # Gets suit in case of J being the first card played
             if suit == "J":
                 suit = cards_already_played[1][0]
             
@@ -133,7 +131,7 @@ class Apprentice(Player):
                 # else if suit in hand, plays biggest one
                 elif len(suit_cards) > 0:
                     return "I PLAY: " + max(suit_cards, key=lambda x: int(x[1:]))
-                # else chooses biggest card
+                # else chooses biggest card to play
                 else:
                     return "I PLAY: " + max(player_cards, key=lambda x: int(x[1:]))
                     

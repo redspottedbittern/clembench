@@ -5,6 +5,11 @@
     "backend": "openai_compatible"
   },
   {
+    "model_name": "Qwen2-72B-Instruct",
+    "model_id": "Qwen/Qwen2-72B-Instruct",
+    "backend": "openai_compatible"
+  },
+  {
     "model_name": "codellama-34b",
     "model_id": "codellama-34b-instruct",
     "backend": "openai_compatible"
@@ -16,12 +21,17 @@
   },
   {
     "model_name": "Llama-3-70B-Together.ai",
-    "model_id": "meta-llama/Llama-3-70b-chat-hf",
+    "model_id": "meta-llama/Meta-Llama-3-70B-Instruct-Lite",
     "backend": "openai_compatible"
   },
   {
     "model_name": "Gemma7B",
     "model_id": "google/gemma-7b-it",
+    "backend": "openai_compatible"
+  },
+  {
+    "model_name": "Gemma27B",
+    "model_id": "google/gemma-2-27b-it",
     "backend": "openai_compatible"
   },
   {

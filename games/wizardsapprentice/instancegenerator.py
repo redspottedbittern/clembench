@@ -3,9 +3,6 @@ This is the class that produces our game instances.
 
 For new experiments change the game parameters below and also change the seed.
 """
-# import sys
-# import os
-# sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 import random
 from string import Template

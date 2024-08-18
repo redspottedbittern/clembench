@@ -48,20 +48,14 @@ class Player(abc.ABC):
         else:
             prompt, response, response_text = self.model.generate_response(messages)
         call_duration = datetime.now() - call_start
-        try:
-            response["clem_player"] = {
+
+        response["clem_player"] = {
                 "call_start": str(call_start),
                 "call_duration": str(call_duration),
                 "response": response_text,
                 "model_name": self.model.get_name()
-            }
-        except AttributeError as e: # TODO: Deals with programmatic error from line 44
-            response["clem_player"] = {
-                "call_start": str(call_start),
-                "call_duration": str(call_duration),
-                "response": response_text,
-                "model_name": self.model
-            }
+        }
+        
         return prompt, response, response_text
 
     def _terminal_response(self, messages, turn_idx) -> str:
@@ -778,6 +772,7 @@ class GameBenchmark(GameResourceLocator):
                 stdout_logger.error(message)
                 raise ValueError(message)
 
+            # TODO: make this part more dynamic and less hard-coded
             for dialogue_pair in dialogue_partners:
                 if self.is_single_player():
                     if len(dialogue_pair) > 1:

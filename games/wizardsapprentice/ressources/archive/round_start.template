@@ -1,7 +1,7 @@
 A new round starts with one additional card.
 
 Let us start:
-You are playing with $NUM_OTHER_PLAYERS other players, and you are player number $PLAYER_POSITION. 
+You are playing with $NUM_OTHER_PLAYERS other players, and you are player $PLAYER_NAME in position $PLAYER_POSITION of the trick round.
 Each player gets $NUM_CARDS cards, and the rest stay in the deck. I have shuffled the cards. 
 The trump card is $TRUMP_CARD, thereby all cards with the color $TRUMP_COLOR are trumps.
 
