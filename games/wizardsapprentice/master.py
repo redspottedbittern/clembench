@@ -326,7 +326,7 @@ class WizardsApprenticeGameMaster(GameMaster):
         self.info = {}
 
         # check if there are enough models and players
-        assert len(self.player_backends) == len(self.playing_order)
+        assert len(self.player_backends) == len(self.seating_order)
 
         # create player: Gandalf is the model, the rest gets random names
         names = self.seating_order.copy()
