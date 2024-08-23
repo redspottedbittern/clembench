@@ -1,1 +1,1 @@
-You can't take that as a prediction. It must be a number between 0 and $HAND_SIZE. Make a new predicion.
+VALIDATION ERROR: Your answer was: \n §ANSWER \nYou can't take that as a prediction. It must be a number between 0 and $HAND_SIZE. Make a new predicion.\n

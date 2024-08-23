@@ -1,7 +1,1 @@
-In the last trick, these cards were played:
-$CARDS_PLAYED_LAST_TRICK
-
-Thereby this player has won the trick: $WINNER_LAST_TRICK
-
-This is, how many tricks every player has:
-$LEADERBOARD_TRICKS
+In the last trick, these cards were played: $CARDS_PLAYED_LAST_TRICK\n\nThereby this player has won the trick: $WINNER_LAST_TRICK\n\nThis is how many tricks every player has: $LEADERBOARD_TRICKS\n\n########################################################################################################\n\n
