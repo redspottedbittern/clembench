@@ -16,17 +16,17 @@ from games.wizardsapprentice.utils.instantiation_utils import (
 GAME_NAME = "wizardsapprentice"
 SEED = 123
 EXPERIMENTS = [
-    "test_game"
-    # "full_game"
-    # "full_no_special_cards",
-    # "full_programmatic2",
-    # "short_no_reprompting",
-    # "short_pos1_easy",
-    # "short_pos1_hard",
-    # "short_pos2_easy",
-    # "short_pos2_hard",
-    # "short_pos3_easy",
-    # "short_pos3_hard"
+    # "test_game"
+    "full_game",
+    "full_no_special_cards",
+    "full_programmatic2",
+    "short_no_reprompting",
+    "short_pos1_easy",
+    "short_pos1_hard",
+    "short_pos2_easy",
+    "short_pos2_hard",
+    "short_pos3_easy",
+    "short_pos3_hard"
 ]
 
 class WizardsApprenticeInstanceGenerator(GameInstanceGenerator):
@@ -51,7 +51,7 @@ class WizardsApprenticeInstanceGenerator(GameInstanceGenerator):
     def load_prompts(self, settings):
         """Use base method to load prompt texts."""
         # set the path for the prompts
-        folder = 'ressources/'
+        folder = 'ressources/prompts/'
 
         # create a dictionary of the prompts for this experimen
         prompts = {}
