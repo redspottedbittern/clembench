@@ -1,1 +1,16 @@
-A new round starts with one additional card.\n\nThese cards have been played in the game so far: $CARDS_PLAYED_IN_GAME. \n\nLet us start:\nYou are playing with $NUM_OTHER_PLAYERS other players, and you are player $PLAYER_NAME in position $PLAYER_POSITION of the trick round.  \nEach player gets $NUM_CARDS cards at the beginnig of the trick round, and the rest stay in the deck. I have shuffled the cards. \nThe trump card is $TRUMP_CARD, thereby all cards with the color $TRUMP_COLOR are trumps.\n\nYou've been dealt the following cards: $PLAYER_HAND. \n\nThese predictions have been made so far: $PLAYER_PREDICTIONS\n\nNow you have to predict how many tricks you will get. What's your prediction?\n\nIMPORTANT: Anwer only in this format: \"PREDICTION: number\". IMPORTANT: Omit any other text.\n
+A new round starts with one additional card.
+
+These cards have been played in the game so far: $CARDS_PLAYED_IN_GAME. 
+
+Let us start:
+You are playing with $NUM_OTHER_PLAYERS other players, and you are player $PLAYER_NAME in position $PLAYER_POSITION of the trick round.  
+Each player gets $NUM_CARDS cards at the beginnig of the trick round, and the rest stay in the deck. I have shuffled the cards. 
+The trump card is $TRUMP_CARD, thereby all cards with the color $TRUMP_COLOR are trumps.
+
+You've been dealt the following cards: $PLAYER_HAND. 
+
+These predictions have been made so far: $PLAYER_PREDICTIONS
+
+Now you have to predict how many tricks you will get. What's your prediction?
+
+IMPORTANT: Anwer only in this format: "PREDICTION: number". IMPORTANT: Omit any other text.

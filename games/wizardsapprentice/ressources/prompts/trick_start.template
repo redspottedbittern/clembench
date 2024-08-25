@@ -1,1 +1,18 @@
-It's your turn to play a card in the current trick!\n\nThese cards have been played in the game so far: $CARDS_PLAYED_IN_GAME. \n\nYou are playing with $NUM_OTHER_PLAYERS other players, and you are player $PLAYER_NAME in position $PLAYER_POSITION of the trick round. \nEach player has gotten $NUM_CARDS cards at the beginnig of the trick round. The trump card is $TRUMP_CARD, thereby the trump color is $TRUMP_COLOR.\n\nThese are the players predictions: $PLAYER_PREDICTIONS.\n\nYour current hand is: $CURRENT_PLAYER_HAND\n\nThese cards have been played in this trick already in this order: $CARDS_PLAYED\n\nNow you have to play a card from your current hand. Which card do you play?\n\nAnswer in this format: \"I PLAY: card\". Cards are represented with a capital letter for the color followed by a number, without a space in between. \n\nIMPORTANT: Omit any other text.\n
+It's your turn to play a card in the current trick!
+
+These cards have been played in the game so far: $CARDS_PLAYED_IN_GAME. 
+
+You are playing with $NUM_OTHER_PLAYERS other players, and you are player $PLAYER_NAME in position $PLAYER_POSITION of the trick round. 
+Each player has gotten $NUM_CARDS cards at the beginnig of the trick round. The trump card is $TRUMP_CARD, thereby the trump color is $TRUMP_COLOR.
+
+These are the players predictions: $PLAYER_PREDICTIONS.
+
+Your current hand is: $CURRENT_PLAYER_HAND
+
+These cards have been played in this trick already in this order: $CARDS_PLAYED
+
+Now you have to play a card from your current hand. Which card do you play?
+
+Answer in this format: "I PLAY: card". Cards are represented with a capital letter for the color followed by a number, without a space in between. 
+
+IMPORTANT: Omit any other text.

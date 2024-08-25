@@ -1,1 +1,7 @@
-This round is over. All cards were played.\n\nThis is the players predictions: $PLAYER_PREDICTIONS_END \nBecause of the difference of predictions and tricks, every player receives points. The point table looks as follows: $LEADERBOARD_POINTS\n\n########################################################################################################\n\n
+This round is over. All cards were played.
+
+This is the players predictions: $PLAYER_PREDICTIONS_END 
+Because of the difference of predictions and tricks, every player receives points.
+The point table looks as follows: $LEADERBOARD_POINTS
+
+########################################################################################################
