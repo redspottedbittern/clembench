@@ -532,6 +532,7 @@ class WizardsApprenticeGameMaster(GameMaster):
                 self.predictions[round][str(receiver.player)] = prediction
 
             if invalid_answer:
+                print("hier")
                 break
 
             # START trick round
@@ -575,7 +576,7 @@ class WizardsApprenticeGameMaster(GameMaster):
                     winner)
                 new_order = self.playing_order[round][trick_round][winner_index:] + self.playing_order[round][trick_round][:winner_index]
 
-                if max(range(1, int(round)+1)) == trick_round and max(self.dealt_cards) != round:
+                if max(range(1, int(round)+1)) == trick_round and len(self.dealt_cards) != round:
                     try:
                         self.playing_order[str(int(round) + 1)][1] = new_order
                     except KeyError:
