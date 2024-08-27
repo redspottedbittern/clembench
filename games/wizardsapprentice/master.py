@@ -532,7 +532,6 @@ class WizardsApprenticeGameMaster(GameMaster):
                 self.predictions[round][str(receiver.player)] = prediction
 
             if invalid_answer:
-                print("hier")
                 break
 
             # START trick round
