@@ -82,8 +82,6 @@ class Apprentice(Player):
                 lower_bound = int(num_cards / 2) - 1
                 upper_bound = num_cards + 1
 
-                guess = random.randint(lower_bound, num_cards)
-
                 # Adjust guess based on Z or J
                 z_in_hand = [x for x in player_cards if "Z" in x]
                 j_in_hand = [x for x in player_cards if "J" in x]
@@ -91,10 +89,15 @@ class Apprentice(Player):
                 lower_bound += len(z_in_hand)
                 upper_bound -= len(j_in_hand)
 
-                # make sure the lower bound is never lower than 0
-                lower_bound = 0 if lower_bound < 0 else lower_bound
+                # Fix cases in which the bounds are out of range
+                if lower_bound > num_cards:
+                    lower_bound -= 1
+                elif upper_bound == lower_bound:
+                    lower_bound -= 1
+                elif lower_bound < 0:
+                    lower_bound = 0
 
-                guess = random.choice(range(lower_bound, upper_bound+1))
+                guess = random.choice(range(lower_bound, upper_bound))
 
             return "PREDICTION: " + str(guess)
                 
