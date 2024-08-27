@@ -6,10 +6,18 @@ WIZARDS = [
     'Gandalf',
     'Oz',
     'Merlin',
-    'Harry Potter',
-    'Uri Geller',
-    'Elminster Aumar'
 ]
+
+# HEY! Use this longer list if calculate_points_for... is not so specific
+# anymore
+# WIZARDS = [
+#     'Gandalf',
+#     'Oz',
+#     'Merlin',
+#     'Harry Potter',
+#     'Houdini',
+#     'Elminster Aumar'
+# ]
 
 def convert_keys_to_int(d):
     """
