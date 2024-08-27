@@ -94,7 +94,7 @@ class Apprentice(Player):
                 # make sure the lower bound is never lower than 0
                 lower_bound = 0 if lower_bound < 0 else lower_bound
 
-                guess = random.choice(range(lower_bound, upper_bound))
+                guess = random.choice(range(lower_bound, upper_bound+1))
 
             return "PREDICTION: " + str(guess)
                 
