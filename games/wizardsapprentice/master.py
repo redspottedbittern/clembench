@@ -40,7 +40,6 @@ class WizardsApprenticeGameMaster(GameMaster):
 
         # Initialise attributes that will be used for the evaluation scores
         self.aborted: int = 0
-        self.lose: int = 0
         self.last_round_played = 0
         self.request_counts = 0
         self.parsed_request_counts = 0
@@ -626,7 +625,6 @@ class WizardsApprenticeGameMaster(GameMaster):
         self.log_key('error_card_not_comprehensible', self.error_card_not_comprehensible)
         self.log_key('error_prediction_int_not_possible', self.error_prediction_int_not_possible)
         self.log_key('forced_card', self.forced_cards)
-        self.log_key(ms.METRIC_LOSE, self.lose)
         self.log_key(ms.METRIC_ABORTED, self.aborted)
         self.log_key(ms.METRIC_REQUEST_COUNT, self.request_counts) # TODO: Add
         self.log_key(ms.METRIC_REQUEST_COUNT_PARSED, self.parsed_request_counts)
@@ -681,7 +679,9 @@ class WizardsApprenticeScorer(GameScorer):
 
         points = calculate_gandalf_points(episode_interactions["points"])
         # TODO: Make this dynamic as we will have more than 3 players (see calculate_merlin_points())
-        lose = 1 if ((points < calculate_merlin_points(episode_interactions["points"])) and (points < calculate_oz_points(episode_interactions["points"]))) else 0
+        lose = 1 if ((points <
+                      calculate_merlin_points(episode_interactions["points"]))
+                     or (points < calculate_oz_points(episode_interactions["points"]))) else 0
         success = 1 - lose if not aborted else 0
 
         rounds = len(episode_interactions['points'])
