@@ -681,7 +681,7 @@ class WizardsApprenticeScorer(GameScorer):
         # TODO: Make this dynamic as we will have more than 3 players (see calculate_merlin_points())
         lose = 1 if ((points <
                       calculate_merlin_points(episode_interactions["points"]))
-                     or (points < calculate_oz_points(episode_interactions["points"]))) else 0
+                     and (points < calculate_oz_points(episode_interactions["points"]))) else 0
         success = 1 - lose if not aborted else 0
 
         rounds = len(episode_interactions['points'])
