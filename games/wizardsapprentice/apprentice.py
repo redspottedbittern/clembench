@@ -90,12 +90,15 @@ class Apprentice(Player):
                 upper_bound -= len(j_in_hand)
 
                 # Fix cases in which the bounds are out of range
-                if lower_bound > num_cards:
+                if lower_bound < 0:
+                    lower_bound = 0
+                elif lower_bound > num_cards:
                     lower_bound -= 1
                 elif upper_bound == lower_bound:
                     lower_bound -= 1
-                elif lower_bound < 0:
-                    lower_bound = 0
+
+                if upper_bound == 0:
+                    upper_bound = 1
 
                 guess = random.choice(range(lower_bound, upper_bound))
 
