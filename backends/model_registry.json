@@ -20,8 +20,8 @@
     "backend": "openai_compatible"
   },
   {
-    "model_name": "Llama-3-70B-Together.ai",
-    "model_id": "meta-llama/Meta-Llama-3-70B-Instruct-Lite",
+    "model_name": "Meta-Llama-3.1-70B-Instruct-Turbo",
+    "model_id": "meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo",
     "backend": "openai_compatible"
   },
   {
@@ -780,5 +780,40 @@
     "eos_to_cull": "<end_of_utterance>",
     "output_split_prefix": "Assistant:",
     "supports_multiple_images": true
+  },
+  {
+    "model_name": "Meta-Llama-3.1-8B-Instruct-Turbo",
+    "model_id": "meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo",
+    "backend": "openai_compatible"
+  },
+  {
+    "model_name": "Meta-Llama-3.1-70B-Instruct-Turbo",
+    "model_id": "meta-llama/Meta-Llama-3.1-70B-Instruct-Turbo",
+    "backend": "openai_compatible"
+  },
+  {
+    "model_name": "Qwen2-72B-Instruct",
+    "model_id": "Qwen/Qwen2-72B-Instruct",
+    "backend": "openai_compatible"
+  },
+	{
+    "model_name": "gemma-2-9b-it",
+    "model_id": "google/gemma-2-9b-it",
+    "backend": "openai_compatible"
+  },
+  {
+    "model_name": "gemma-2-27b-it",
+    "model_id": "google/gemma-2-27b-it",
+    "backend": "openai_compatible"
+  },
+  {
+    "model_name": "Mistral-7B-Instruct-v0.3",
+    "model_id": "mistralai/Mistral-7B-Instruct-v0.3",
+    "backend": "openai_compatible"
+  },
+  {
+    "model_name": "dolphin-2.5-mixtral-8x7b",
+    "model_id": "cognitivecomputations/dolphin-2.5-mixtral-8x7b",
+    "backend": "openai_compatible"
   }
 ]
