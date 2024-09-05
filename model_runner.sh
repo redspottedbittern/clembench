@@ -1,11 +1,11 @@
 #!/bin/bash
 
 MODELS=(
+        "gemini-1.0-pro-latest"
 	"Meta-Llama-3.1-70B-Instruct-Turbo"
 	"Qwen2-72B-Instruct"
 	"gemma-2-27b-it"
 	"Mixtral-8x22B-Instruct-v0.1"
-	"gemini-1.0-pro-002"
 	"claude-3-5-sonnet-20240620"
 )
 
@@ -28,13 +28,13 @@ function make_run_with_models() {
   for model in "${MODELS[@]}"; do
     # first make the single run with the programmatic player
 	echo "Make programmatic run with: $model"
-    # python3 scripts/cli.py run -g wizardsapprentice -e full_programmatic2 -m "$model" programmatic programmatic
+        python3 -u scripts/cli.py run -g wizardsapprentice -e full_programmatic2 -m "$model" programmatic programmatic
   
     # next: start a loop over all experiments
     for experiment in "${EXPERIMENTS[@]}"; do
 	  	# now make a run for each experiment with the custom player
 		echo "Make custom run with: $model for $experiment."
-      	# python3 scripts/cli.py run -g wizardsapprentice -e $experiment -m $model custom custom
+      	        python3 -u scripts/cli.py run -g wizardsapprentice -e $experiment -m $model custom custom
       
     done
   done
