@@ -1,11 +1,11 @@
 #!/bin/bash
 
 MODELS=(
-        "gemini-1.0-pro-latest"
-	"Meta-Llama-3.1-70B-Instruct-Turbo"
+	"Mixtral-8x7B-Instruct-v0.1"
+	"Meta-Llama-3-70B-Instruct-Lite"
 	"Qwen2-72B-Instruct"
 	"gemma-2-27b-it"
-	"Mixtral-8x22B-Instruct-v0.1"
+	"gemini-1.0-pro-latest"
 	"claude-3-5-sonnet-20240620"
 )
 
