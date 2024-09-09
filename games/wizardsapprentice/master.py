@@ -330,9 +330,10 @@ class WizardsApprenticeGameMaster(GameMaster):
         # create player: Gandalf is the model, the rest gets random names
         names = self.seating_order.copy()
         names.remove('Gandalf')
+        self.npc_names = names
 
         for idx, model in enumerate(self.player_backends):
-            if idx == 0:
+            if idx == self.game_instance["player_position"]:
                 self.add_player(model, "Gandalf")
             else:
                 self.add_player(model, names.pop(0))
@@ -629,27 +630,16 @@ class WizardsApprenticeGameMaster(GameMaster):
         self.log_key(ms.METRIC_REQUEST_COUNT, self.request_counts) # TODO: Add
         self.log_key(ms.METRIC_REQUEST_COUNT_PARSED, self.parsed_request_counts)
 
-def calculate_gandalf_points(data):
-    total_points = 0
-    for key in data:
-        if 'Gandalf' in data[key]:
-            total_points += data[key]['Gandalf']
-    return total_points
 
 # TODO: Make this dynamic as we will have more than 3 players (see compute_scores())
-def calculate_merlin_points(data):
+
+def calculate_player_points(data, player_name):
     total_points = 0
     for key in data:
-        if 'Merlin' in data[key]:
-            total_points += data[key]['Merlin']
+        if player_name in data[key]:
+            total_points += data[key][player_name]
     return total_points
 
-def calculate_oz_points(data):
-    total_points = 0
-    for key in data:
-        if 'Oz' in data[key]:
-            total_points += data[key]['Oz']
-    return total_points
 
 def transform_clemscore(points, rounds):
     """Transform the points to a value between 0 and 100 for the clemscore."""
@@ -677,11 +667,18 @@ class WizardsApprenticeScorer(GameScorer):
         else:
             request_success_rate = 0
 
-        points = calculate_gandalf_points(episode_interactions["points"])
+        points = calculate_player_points(episode_interactions["points"], "Gandalf")
         # TODO: Make this dynamic as we will have more than 3 players (see calculate_merlin_points())
-        lose = 1 if ((points <
-                      calculate_merlin_points(episode_interactions["points"]))
-                     or (points < calculate_oz_points(episode_interactions["points"]))) else 0
+        lose = 0
+        for player in self.npc_names:
+            if calculate_player_points(episode_interactions["points"], player) > points:
+                lose = 1
+                break
+            
+        
+        # lose = 1 if ((points <
+        #               calculate_player_points(episode_interactions["points"], "Merlin"))
+        #              or (points < calculate_player_points(episode_interactions["points"], "Oz"))) else 0
         success = 1 - lose if not aborted else 0
 
         rounds = len(episode_interactions['points'])

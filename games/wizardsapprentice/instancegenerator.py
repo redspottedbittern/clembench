@@ -233,6 +233,7 @@ class WizardsApprenticeInstanceGenerator(GameInstanceGenerator):
 
                 dealt_cards, trump_cards = self.deal_cards(settings, deck, seating_order, end_round)
 
+                game_instance["player_position"] = settings['PLAYER_POSITION']
                 game_instance['seating_order'] = seating_order
                 game_instance['dealt_cards'] = dealt_cards
                 game_instance['trump_cards'] = trump_cards
