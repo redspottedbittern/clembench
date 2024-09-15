@@ -83,7 +83,7 @@ class AnthropicModel(backends.Model):
 
         return encoded_messages, system_message
 
-    @retry(tries=3, delay=0, logger=logger)
+    @retry(tries=10, delay=1, logger=logger)
     @ensure_messages_format
     def generate_response(self, messages: List[Dict]) -> Tuple[str, Any, str]:
         """

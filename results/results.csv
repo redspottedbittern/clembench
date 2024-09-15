@@ -1,0 +1,11 @@
+,"-, clemscore","all, Average % Played","all, Average Quality Score","wizardsapprentice, % Played","wizardsapprentice, Quality Score","wizardsapprentice, Quality Score (std)"
+Meta-Llama-3-70B-Instruct-Lite-t0.0--custom-t0.0--custom-t0.0,29.25,85.19,34.33,85.19,34.33,15.93
+Meta-Llama-3-70B-Instruct-Lite-t0.0--programmatic-t0.0--programmatic-t0.0,39.57,100.0,39.57,100.0,39.57,1.54
+Mixtral-8x7B-Instruct-v0.1-t0.0--custom-t0.0--custom-t0.0,0.0,0.0,0.0,0.0,0.0,0.0
+Mixtral-8x7B-Instruct-v0.1-t0.0--programmatic-t0.0--programmatic-t0.0,0.0,0.0,0.0,0.0,0.0,0.0
+Qwen2-72B-Instruct-t0.0--custom-t0.0--custom-t0.0,31.42,88.89,35.35,88.89,35.35,13.76
+Qwen2-72B-Instruct-t0.0--programmatic-t0.0--programmatic-t0.0,41.16,100.0,41.16,100.0,41.16,1.41
+gemini-1.0-pro-latest-t0.0--custom-t0.0--custom-t0.0,11.91,55.56,21.43,55.56,21.43,19.77
+gemini-1.0-pro-latest-t0.0--programmatic-t0.0--programmatic-t0.0,1.05,16.67,6.27,16.67,6.27,15.35
+gemma-2-27b-it-t0.0--custom-t0.0--custom-t0.0,28.88,85.19,33.9,85.19,33.9,15.95
+gemma-2-27b-it-t0.0--programmatic-t0.0--programmatic-t0.0,29.5,83.33,35.4,83.33,35.4,17.36

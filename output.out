@@ -1,4 +1,4 @@
-Make programmatic run with: Mixtral-8x7B-Instruct-v0.1
+Make custom run with: Qwen2-72B-Instruct for short_pos1_hard.
 
       _                _                     _     
      | |              | |                   | |    
@@ -7,7 +7,94 @@ Make programmatic run with: Mixtral-8x7B-Instruct-v0.1
 | (__| |  __/ | | | | | |_) |  __/ | | | (__| | | |
  \___|_|\___|_| |_| |_|_.__/ \___|_| |_|\___|_| |_|
 
-2024-09-05 20:32:57,497 - benchmark.run - INFO - Skip experiment 1 of 10: full_game
-2024-09-05 20:32:57,497 - benchmark.run - INFO - Skip experiment 2 of 10: full_no_special_cards
-2024-09-05 20:32:57,497 - benchmark.run - INFO - Run experiment 3 of 10: full_programmatic2
-Playing games:   0%|          | 0/6 [00:00<?, ?it/s]Playing games:  17%|█▋        | 1/6 [00:10<00:53, 10.75s/it]
+2024-09-15 13:25:54,892 - benchmark.run - INFO - Skip experiment 1 of 10: full_game
+2024-09-15 13:25:54,892 - benchmark.run - INFO - Skip experiment 2 of 10: full_no_special_cards
+2024-09-15 13:25:54,892 - benchmark.run - INFO - Skip experiment 3 of 10: full_programmatic2
+2024-09-15 13:25:54,892 - benchmark.run - INFO - Skip experiment 4 of 10: short_no_reprompting
+2024-09-15 13:25:54,892 - benchmark.run - INFO - Skip experiment 5 of 10: short_pos1_easy
+2024-09-15 13:25:54,892 - benchmark.run - INFO - Run experiment 6 of 10: short_pos1_hard
+Playing games:   0%|          | 0/6 [00:00<?, ?it/s]Playing games:  17%|█▋        | 1/6 [01:05<05:25, 65.12s/it]Playing games:  33%|███▎      | 2/6 [02:24<04:53, 73.45s/it]Playing games:  50%|█████     | 3/6 [03:45<03:50, 76.92s/it]Playing games:  67%|██████▋   | 4/6 [05:03<02:34, 77.20s/it]Playing games:  83%|████████▎ | 5/6 [09:21<02:22, 142.38s/it]Playing games: 100%|██████████| 6/6 [11:13<00:00, 132.07s/it]Playing games: 100%|██████████| 6/6 [11:13<00:00, 112.18s/it]
+2024-09-15 13:37:07,992 - benchmark.run - INFO - Skip experiment 7 of 10: short_pos2_easy
+2024-09-15 13:37:07,992 - benchmark.run - INFO - Skip experiment 8 of 10: short_pos2_hard
+2024-09-15 13:37:07,992 - benchmark.run - INFO - Skip experiment 9 of 10: short_pos3_easy
+2024-09-15 13:37:07,992 - benchmark.run - INFO - Skip experiment 10 of 10: short_pos3_hard
+Make custom run with: Qwen2-72B-Instruct for short_pos2_easy.
+
+      _                _                     _     
+     | |              | |                   | |    
+  ___| | ___ _ __ ___ | |__   ___ _ __   ___| |__  
+ / __| |/ _ \ '_ ` _ \| '_ \ / _ \ '_ \ / __| '_ \ 
+| (__| |  __/ | | | | | |_) |  __/ | | | (__| | | |
+ \___|_|\___|_| |_| |_|_.__/ \___|_| |_|\___|_| |_|
+
+2024-09-15 13:37:10,133 - benchmark.run - INFO - Skip experiment 1 of 10: full_game
+2024-09-15 13:37:10,133 - benchmark.run - INFO - Skip experiment 2 of 10: full_no_special_cards
+2024-09-15 13:37:10,133 - benchmark.run - INFO - Skip experiment 3 of 10: full_programmatic2
+2024-09-15 13:37:10,133 - benchmark.run - INFO - Skip experiment 4 of 10: short_no_reprompting
+2024-09-15 13:37:10,134 - benchmark.run - INFO - Skip experiment 5 of 10: short_pos1_easy
+2024-09-15 13:37:10,134 - benchmark.run - INFO - Skip experiment 6 of 10: short_pos1_hard
+2024-09-15 13:37:10,134 - benchmark.run - INFO - Run experiment 7 of 10: short_pos2_easy
+Playing games:   0%|          | 0/6 [00:00<?, ?it/s]Playing games:  17%|█▋        | 1/6 [01:16<06:21, 76.30s/it]Playing games:  33%|███▎      | 2/6 [03:10<06:35, 98.85s/it]Playing games:  50%|█████     | 3/6 [04:24<04:21, 87.10s/it]Playing games:  67%|██████▋   | 4/6 [06:03<03:03, 91.94s/it]Playing games:  83%|████████▎ | 5/6 [08:14<01:46, 106.09s/it]Playing games: 100%|██████████| 6/6 [10:07<00:00, 108.39s/it]Playing games: 100%|██████████| 6/6 [10:07<00:00, 101.24s/it]
+2024-09-15 13:47:17,576 - benchmark.run - INFO - Skip experiment 8 of 10: short_pos2_hard
+2024-09-15 13:47:17,576 - benchmark.run - INFO - Skip experiment 9 of 10: short_pos3_easy
+2024-09-15 13:47:17,576 - benchmark.run - INFO - Skip experiment 10 of 10: short_pos3_hard
+Make custom run with: Qwen2-72B-Instruct for short_pos2_hard.
+
+      _                _                     _     
+     | |              | |                   | |    
+  ___| | ___ _ __ ___ | |__   ___ _ __   ___| |__  
+ / __| |/ _ \ '_ ` _ \| '_ \ / _ \ '_ \ / __| '_ \ 
+| (__| |  __/ | | | | | |_) |  __/ | | | (__| | | |
+ \___|_|\___|_| |_| |_|_.__/ \___|_| |_|\___|_| |_|
+
+2024-09-15 13:47:19,686 - benchmark.run - INFO - Skip experiment 1 of 10: full_game
+2024-09-15 13:47:19,686 - benchmark.run - INFO - Skip experiment 2 of 10: full_no_special_cards
+2024-09-15 13:47:19,686 - benchmark.run - INFO - Skip experiment 3 of 10: full_programmatic2
+2024-09-15 13:47:19,686 - benchmark.run - INFO - Skip experiment 4 of 10: short_no_reprompting
+2024-09-15 13:47:19,686 - benchmark.run - INFO - Skip experiment 5 of 10: short_pos1_easy
+2024-09-15 13:47:19,686 - benchmark.run - INFO - Skip experiment 6 of 10: short_pos1_hard
+2024-09-15 13:47:19,686 - benchmark.run - INFO - Skip experiment 7 of 10: short_pos2_easy
+2024-09-15 13:47:19,686 - benchmark.run - INFO - Run experiment 8 of 10: short_pos2_hard
+Playing games:   0%|          | 0/6 [00:00<?, ?it/s]Playing games:  17%|█▋        | 1/6 [01:26<07:11, 86.36s/it]Playing games:  33%|███▎      | 2/6 [02:35<05:03, 75.95s/it]Playing games:  50%|█████     | 3/6 [04:05<04:07, 82.37s/it]Playing games:  67%|██████▋   | 4/6 [05:40<02:54, 87.49s/it]Playing games:  83%|████████▎ | 5/6 [07:04<01:26, 86.40s/it]Playing games: 100%|██████████| 6/6 [08:50<00:00, 92.84s/it]Playing games: 100%|██████████| 6/6 [08:50<00:00, 88.37s/it]
+2024-09-15 13:56:09,879 - benchmark.run - INFO - Skip experiment 9 of 10: short_pos3_easy
+2024-09-15 13:56:09,880 - benchmark.run - INFO - Skip experiment 10 of 10: short_pos3_hard
+Make custom run with: Qwen2-72B-Instruct for short_pos3_easy.
+
+      _                _                     _     
+     | |              | |                   | |    
+  ___| | ___ _ __ ___ | |__   ___ _ __   ___| |__  
+ / __| |/ _ \ '_ ` _ \| '_ \ / _ \ '_ \ / __| '_ \ 
+| (__| |  __/ | | | | | |_) |  __/ | | | (__| | | |
+ \___|_|\___|_| |_| |_|_.__/ \___|_| |_|\___|_| |_|
+
+2024-09-15 13:56:12,031 - benchmark.run - INFO - Skip experiment 1 of 10: full_game
+2024-09-15 13:56:12,031 - benchmark.run - INFO - Skip experiment 2 of 10: full_no_special_cards
+2024-09-15 13:56:12,031 - benchmark.run - INFO - Skip experiment 3 of 10: full_programmatic2
+2024-09-15 13:56:12,031 - benchmark.run - INFO - Skip experiment 4 of 10: short_no_reprompting
+2024-09-15 13:56:12,031 - benchmark.run - INFO - Skip experiment 5 of 10: short_pos1_easy
+2024-09-15 13:56:12,031 - benchmark.run - INFO - Skip experiment 6 of 10: short_pos1_hard
+2024-09-15 13:56:12,031 - benchmark.run - INFO - Skip experiment 7 of 10: short_pos2_easy
+2024-09-15 13:56:12,031 - benchmark.run - INFO - Skip experiment 8 of 10: short_pos2_hard
+2024-09-15 13:56:12,031 - benchmark.run - INFO - Run experiment 9 of 10: short_pos3_easy
+Playing games:   0%|          | 0/6 [00:00<?, ?it/s]Playing games:  17%|█▋        | 1/6 [01:41<08:28, 101.64s/it]Playing games:  33%|███▎      | 2/6 [03:02<05:58, 89.51s/it] Playing games:  50%|█████     | 3/6 [04:34<04:31, 90.55s/it]Playing games:  67%|██████▋   | 4/6 [05:52<02:50, 85.47s/it]Playing games:  83%|████████▎ | 5/6 [07:27<01:29, 89.14s/it]Playing games: 100%|██████████| 6/6 [08:43<00:00, 84.49s/it]Playing games: 100%|██████████| 6/6 [08:43<00:00, 87.20s/it]
+2024-09-15 14:04:55,260 - benchmark.run - INFO - Skip experiment 10 of 10: short_pos3_hard
+Make custom run with: Qwen2-72B-Instruct for short_pos3_hard.
+
+      _                _                     _     
+     | |              | |                   | |    
+  ___| | ___ _ __ ___ | |__   ___ _ __   ___| |__  
+ / __| |/ _ \ '_ ` _ \| '_ \ / _ \ '_ \ / __| '_ \ 
+| (__| |  __/ | | | | | |_) |  __/ | | | (__| | | |
+ \___|_|\___|_| |_| |_|_.__/ \___|_| |_|\___|_| |_|
+
+2024-09-15 14:04:57,496 - benchmark.run - INFO - Skip experiment 1 of 10: full_game
+2024-09-15 14:04:57,496 - benchmark.run - INFO - Skip experiment 2 of 10: full_no_special_cards
+2024-09-15 14:04:57,496 - benchmark.run - INFO - Skip experiment 3 of 10: full_programmatic2
+2024-09-15 14:04:57,496 - benchmark.run - INFO - Skip experiment 4 of 10: short_no_reprompting
+2024-09-15 14:04:57,496 - benchmark.run - INFO - Skip experiment 5 of 10: short_pos1_easy
+2024-09-15 14:04:57,496 - benchmark.run - INFO - Skip experiment 6 of 10: short_pos1_hard
+2024-09-15 14:04:57,496 - benchmark.run - INFO - Skip experiment 7 of 10: short_pos2_easy
+2024-09-15 14:04:57,496 - benchmark.run - INFO - Skip experiment 8 of 10: short_pos2_hard
+2024-09-15 14:04:57,496 - benchmark.run - INFO - Skip experiment 9 of 10: short_pos3_easy
+2024-09-15 14:04:57,496 - benchmark.run - INFO - Run experiment 10 of 10: short_pos3_hard
+Playing games:   0%|          | 0/6 [00:00<?, ?it/s]Playing games:  17%|█▋        | 1/6 [01:09<05:49, 69.86s/it]Playing games:  33%|███▎      | 2/6 [02:14<04:27, 67.00s/it]Playing games:  50%|█████     | 3/6 [03:25<03:25, 68.53s/it]Playing games:  67%|██████▋   | 4/6 [04:37<02:19, 69.93s/it]Playing games:  83%|████████▎ | 5/6 [05:49<01:10, 70.69s/it]Playing games: 100%|██████████| 6/6 [06:58<00:00, 70.01s/it]Playing games: 100%|██████████| 6/6 [06:58<00:00, 69.67s/it]

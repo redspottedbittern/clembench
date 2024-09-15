@@ -110,7 +110,7 @@ class GoogleModel(backends.Model):
             encoded_messages_for_logging.append(m_for_logging)
         return encoded_messages, encoded_messages_for_logging
 
-    @retry(tries=10, delay=120, logger=logger)
+    @retry(tries=1000, delay=130, logger=logger)
     @ensure_messages_format
     def generate_response(self, messages: List[Dict]) -> Tuple[str, Any, str]:
         """
