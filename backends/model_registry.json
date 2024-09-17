@@ -5,6 +5,11 @@
     "backend": "openai_compatible"
   },
   {
+    "model_name": "Mixtral-8x22B-Instruct-v0.1",
+    "model_id": "open-mixtral-8x22b",
+    "backend": "mistral"
+  },
+  {
     "model_name": "Qwen2-72B-Instruct",
     "model_id": "Qwen/Qwen2-72B-Instruct",
     "backend": "openai_compatible"
