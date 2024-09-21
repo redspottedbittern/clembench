@@ -1,5 +1,6 @@
 ,"-, clemscore","all, Average % Played","all, Average Quality Score","wizardsapprentice, % Played","wizardsapprentice, Quality Score","wizardsapprentice, Quality Score (std)"
 Meta-Llama-3-70B-Instruct-Lite-t0.0--custom-t0.0--custom-t0.0,30.2,86.67,34.85,86.67,34.85,15.19
+Mistral-Nemo-t0.0--custom-t0.0--custom-t0.0,14.54,63.33,22.96,63.33,22.96,18.07
 Mixtral-8x22B-Instruct-v0.1-t0.0--custom-t0.0--custom-t0.0,14.94,61.67,24.22,61.67,24.22,20.11
 Mixtral-8x7B-Instruct-v0.1-t0.0--custom-t0.0--custom-t0.0,0.0,0.0,0.0,0.0,0.0,0.0
 Qwen2-72B-Instruct-t0.0--custom-t0.0--custom-t0.0,32.34,90.0,35.93,90.0,35.93,13.17

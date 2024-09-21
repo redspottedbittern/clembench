@@ -22,6 +22,8 @@ Thumbs.db
 
 # Large media files
 *.mp4
+*.tex
+*.html
 *.tiff
 *.avi
 *.flv

@@ -1,0 +1,120 @@
+game,model,metric,mean,std,var,median,max,min,skew
+wizardsapprentice,Meta-Llama-3-70B-Instruct-Lite-t0.0--custom-t0.0--custom-t0.0,Aborted,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+wizardsapprentice,Meta-Llama-3-70B-Instruct-Lite-t0.0--custom-t0.0--custom-t0.0,Lose,0.16666666666666666,0.408248290463863,0.16666666666666669,0.0,1.0,0.0,2.449489742783178
+wizardsapprentice,Meta-Llama-3-70B-Instruct-Lite-t0.0--custom-t0.0--custom-t0.0,Main Score,45.03623188405797,5.780183647547013,33.410522999369896,42.82608695652174,55.21739130434783,40.43478260869565,1.322088747285651
+wizardsapprentice,Meta-Llama-3-70B-Instruct-Lite-t0.0--custom-t0.0--custom-t0.0,Parsed Request Count,230.0,0.0,0.0,230.0,230.0,230.0,0.0
+wizardsapprentice,Meta-Llama-3-70B-Instruct-Lite-t0.0--custom-t0.0--custom-t0.0,Played,1.0,0.0,0.0,1.0,1.0,1.0,0.0
+wizardsapprentice,Meta-Llama-3-70B-Instruct-Lite-t0.0--custom-t0.0--custom-t0.0,Request Count,269.6666666666667,3.7771241264574105,14.266666666666657,269.0,275.0,265.0,0.35382702643246716
+wizardsapprentice,Meta-Llama-3-70B-Instruct-Lite-t0.0--custom-t0.0--custom-t0.0,Request Success Ratio,0.8530438392009801,0.011910861519149942,0.00014186862212836685,0.8550304035378662,0.8679245283018868,0.8363636363636363,-0.3189656758523255
+wizardsapprentice,Meta-Llama-3-70B-Instruct-Lite-t0.0--custom-t0.0--custom-t0.0,Success,0.8333333333333334,0.408248290463863,0.16666666666666669,1.0,1.0,0.0,-2.449489742783178
+wizardsapprentice,Meta-Llama-3-70B-Instruct-Lite-t0.0--custom-t0.0--custom-t0.0,Violated Request Count,39.666666666666664,3.777124126457411,14.26666666666666,39.0,45.0,35.0,0.35382702643249253
+wizardsapprentice,Meta-Llama-3-70B-Instruct-Lite-t0.0--custom-t0.0--custom-t0.0,error_card_doesnt_follow_suit,5.333333333333333,2.875181153713043,8.266666666666666,6.0,9.0,1.0,-0.499267278903084
+wizardsapprentice,Meta-Llama-3-70B-Instruct-Lite-t0.0--custom-t0.0--custom-t0.0,error_card_not_comprehensible,0.16666666666666666,0.408248290463863,0.16666666666666669,0.0,1.0,0.0,2.449489742783178
+wizardsapprentice,Meta-Llama-3-70B-Instruct-Lite-t0.0--custom-t0.0--custom-t0.0,error_card_not_in_hand,34.166666666666664,4.578937285731993,20.966666666666672,36.0,39.0,26.0,-1.3231942591332493
+wizardsapprentice,Meta-Llama-3-70B-Instruct-Lite-t0.0--custom-t0.0--custom-t0.0,error_prediction_int_not_possible,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+wizardsapprentice,Meta-Llama-3-70B-Instruct-Lite-t0.0--custom-t0.0--custom-t0.0,forced_card,29.166666666666668,3.1251666622224596,9.76666666666667,29.0,34.0,26.0,0.536217136303704
+wizardsapprentice,Meta-Llama-3-70B-Instruct-Lite-t0.0--custom-t0.0--custom-t0.0,last_round,20.0,0.0,0.0,20.0,20.0,20.0,0.0
+wizardsapprentice,Meta-Llama-3-70B-Instruct-Lite-t0.0--custom-t0.0--custom-t0.0,semantics_errors,39.5,3.7815340802378064,14.299999999999994,38.5,45.0,35.0,0.5492276501690199
+wizardsapprentice,Meta-Llama-3-70B-Instruct-Lite-t0.0--custom-t0.0--custom-t0.0,syntax_errors,0.16666666666666666,0.408248290463863,0.16666666666666669,0.0,1.0,0.0,2.449489742783178
+wizardsapprentice,Mistral-Nemo-t0.0--custom-t0.0--custom-t0.0,Aborted,0.8333333333333334,0.408248290463863,0.16666666666666669,1.0,1.0,0.0,-2.449489742783178
+wizardsapprentice,Mistral-Nemo-t0.0--custom-t0.0--custom-t0.0,Lose,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+wizardsapprentice,Mistral-Nemo-t0.0--custom-t0.0--custom-t0.0,Main Score,6.956521739130435,17.039928645448196,290.359168241966,0.0,41.73913043478261,0.0,2.449489742783178
+wizardsapprentice,Mistral-Nemo-t0.0--custom-t0.0--custom-t0.0,Parsed Request Count,127.5,63.97108721914925,4092.3,109.5,230.0,57.0,0.8115058203230386
+wizardsapprentice,Mistral-Nemo-t0.0--custom-t0.0--custom-t0.0,Played,0.16666666666666666,0.408248290463863,0.16666666666666669,0.0,1.0,0.0,2.449489742783178
+wizardsapprentice,Mistral-Nemo-t0.0--custom-t0.0--custom-t0.0,Request Count,161.66666666666666,78.92190232544237,6228.666666666667,141.0,279.0,70.0,0.56012380977155
+wizardsapprentice,Mistral-Nemo-t0.0--custom-t0.0--custom-t0.0,Request Success Ratio,0.7884522228749734,0.027139213002532938,0.0007365368823968529,0.7848232848232848,0.8243727598566308,0.7587719298245614,0.298151385118958
+wizardsapprentice,Mistral-Nemo-t0.0--custom-t0.0--custom-t0.0,Success,0.16666666666666666,0.408248290463863,0.16666666666666669,0.0,1.0,0.0,2.449489742783178
+wizardsapprentice,Mistral-Nemo-t0.0--custom-t0.0--custom-t0.0,Violated Request Count,34.166666666666664,16.203908993408554,262.56666666666666,32.0,55.0,13.0,0.07858933059395028
+wizardsapprentice,Mistral-Nemo-t0.0--custom-t0.0--custom-t0.0,error_card_doesnt_follow_suit,33.666666666666664,15.692885861646563,246.2666666666666,32.0,55.0,13.0,0.1052277120934979
+wizardsapprentice,Mistral-Nemo-t0.0--custom-t0.0--custom-t0.0,error_card_not_comprehensible,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+wizardsapprentice,Mistral-Nemo-t0.0--custom-t0.0--custom-t0.0,error_card_not_in_hand,0.5,1.224744871391589,1.5,0.0,3.0,0.0,2.449489742783178
+wizardsapprentice,Mistral-Nemo-t0.0--custom-t0.0--custom-t0.0,error_prediction_int_not_possible,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+wizardsapprentice,Mistral-Nemo-t0.0--custom-t0.0--custom-t0.0,forced_card,21.333333333333332,9.179687721631202,84.26666666666665,19.5,35.0,12.0,0.5935469827070434
+wizardsapprentice,Mistral-Nemo-t0.0--custom-t0.0--custom-t0.0,last_round,14.666666666666666,3.777124126457412,14.266666666666666,14.0,20.0,10.0,0.35382702643249037
+wizardsapprentice,Mistral-Nemo-t0.0--custom-t0.0--custom-t0.0,semantics_errors,34.166666666666664,16.203908993408554,262.56666666666666,32.0,55.0,13.0,0.07858933059395028
+wizardsapprentice,Mistral-Nemo-t0.0--custom-t0.0--custom-t0.0,syntax_errors,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+wizardsapprentice,Mixtral-8x22B-Instruct-v0.1-t0.0--custom-t0.0--custom-t0.0,Aborted,1.0,0.0,0.0,1.0,1.0,1.0,0.0
+wizardsapprentice,Mixtral-8x22B-Instruct-v0.1-t0.0--custom-t0.0--custom-t0.0,Lose,0.3333333333333333,0.5163977794943223,0.2666666666666667,0.0,1.0,0.0,0.9682458365518546
+wizardsapprentice,Mixtral-8x22B-Instruct-v0.1-t0.0--custom-t0.0--custom-t0.0,Main Score,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+wizardsapprentice,Mixtral-8x22B-Instruct-v0.1-t0.0--custom-t0.0--custom-t0.0,Parsed Request Count,149.33333333333334,60.062189992262745,3607.466666666667,139.5,217.0,91.0,0.2225661636398666
+wizardsapprentice,Mixtral-8x22B-Instruct-v0.1-t0.0--custom-t0.0--custom-t0.0,Played,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+wizardsapprentice,Mixtral-8x22B-Instruct-v0.1-t0.0--custom-t0.0--custom-t0.0,Request Count,177.83333333333334,71.02511292962981,5044.5666666666675,163.5,260.0,111.0,0.263203248564856
+wizardsapprentice,Mixtral-8x22B-Instruct-v0.1-t0.0--custom-t0.0--custom-t0.0,Request Success Ratio,0.8385567984231583,0.01885747555261414,0.00035560438421744,0.8407939189189189,0.8617886178861789,0.8053097345132744,-1.0415094886795082
+wizardsapprentice,Mixtral-8x22B-Instruct-v0.1-t0.0--custom-t0.0--custom-t0.0,Success,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+wizardsapprentice,Mixtral-8x22B-Instruct-v0.1-t0.0--custom-t0.0--custom-t0.0,Violated Request Count,28.5,11.256109452204168,126.7,26.5,43.0,17.0,0.34330212116317754
+wizardsapprentice,Mixtral-8x22B-Instruct-v0.1-t0.0--custom-t0.0--custom-t0.0,error_card_doesnt_follow_suit,26.166666666666668,11.889771514485325,141.36666666666667,25.5,43.0,12.0,0.264791806388631
+wizardsapprentice,Mixtral-8x22B-Instruct-v0.1-t0.0--custom-t0.0--custom-t0.0,error_card_not_comprehensible,2.3333333333333335,2.160246899469287,4.666666666666667,1.5,5.0,0.0,0.6083960655648193
+wizardsapprentice,Mixtral-8x22B-Instruct-v0.1-t0.0--custom-t0.0--custom-t0.0,error_card_not_in_hand,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+wizardsapprentice,Mixtral-8x22B-Instruct-v0.1-t0.0--custom-t0.0--custom-t0.0,error_prediction_int_not_possible,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+wizardsapprentice,Mixtral-8x22B-Instruct-v0.1-t0.0--custom-t0.0--custom-t0.0,forced_card,21.666666666666668,5.428320796219275,29.46666666666666,22.0,27.0,14.0,-0.33467846681303276
+wizardsapprentice,Mixtral-8x22B-Instruct-v0.1-t0.0--custom-t0.0--custom-t0.0,last_round,16.333333333333332,3.3862466931200785,11.466666666666669,16.0,20.0,13.0,0.1270529282505183
+wizardsapprentice,Mixtral-8x22B-Instruct-v0.1-t0.0--custom-t0.0--custom-t0.0,semantics_errors,26.166666666666668,11.889771514485325,141.36666666666667,25.5,43.0,12.0,0.264791806388631
+wizardsapprentice,Mixtral-8x22B-Instruct-v0.1-t0.0--custom-t0.0--custom-t0.0,syntax_errors,2.3333333333333335,2.160246899469287,4.666666666666667,1.5,5.0,0.0,0.6083960655648193
+wizardsapprentice,Mixtral-8x7B-Instruct-v0.1-t0.0--custom-t0.0--custom-t0.0,Aborted,1.0,0.0,0.0,1.0,1.0,1.0,0.0
+wizardsapprentice,Mixtral-8x7B-Instruct-v0.1-t0.0--custom-t0.0--custom-t0.0,Lose,0.16666666666666666,0.408248290463863,0.16666666666666669,0.0,1.0,0.0,2.449489742783178
+wizardsapprentice,Mixtral-8x7B-Instruct-v0.1-t0.0--custom-t0.0--custom-t0.0,Main Score,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+wizardsapprentice,Mixtral-8x7B-Instruct-v0.1-t0.0--custom-t0.0--custom-t0.0,Parsed Request Count,5.333333333333333,3.6147844564602556,13.066666666666666,3.0,10.0,3.0,0.9682458365518546
+wizardsapprentice,Mixtral-8x7B-Instruct-v0.1-t0.0--custom-t0.0--custom-t0.0,Played,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+wizardsapprentice,Mixtral-8x7B-Instruct-v0.1-t0.0--custom-t0.0--custom-t0.0,Request Count,12.5,5.504543577809154,30.3,9.0,21.0,9.0,1.0954047115922538
+wizardsapprentice,Mixtral-8x7B-Instruct-v0.1-t0.0--custom-t0.0--custom-t0.0,Request Success Ratio,0.3941798941798942,0.09754696870078891,0.00951541110271269,0.3333333333333333,0.5555555555555556,0.3333333333333333,1.2453314291799502
+wizardsapprentice,Mixtral-8x7B-Instruct-v0.1-t0.0--custom-t0.0--custom-t0.0,Success,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+wizardsapprentice,Mixtral-8x7B-Instruct-v0.1-t0.0--custom-t0.0--custom-t0.0,Violated Request Count,7.166666666666667,2.0412414523193148,4.166666666666666,6.0,11.0,6.0,1.7832285327461537
+wizardsapprentice,Mixtral-8x7B-Instruct-v0.1-t0.0--custom-t0.0--custom-t0.0,error_card_doesnt_follow_suit,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+wizardsapprentice,Mixtral-8x7B-Instruct-v0.1-t0.0--custom-t0.0--custom-t0.0,error_card_not_comprehensible,7.166666666666667,2.0412414523193148,4.166666666666666,6.0,11.0,6.0,1.7832285327461537
+wizardsapprentice,Mixtral-8x7B-Instruct-v0.1-t0.0--custom-t0.0--custom-t0.0,error_card_not_in_hand,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+wizardsapprentice,Mixtral-8x7B-Instruct-v0.1-t0.0--custom-t0.0--custom-t0.0,error_prediction_int_not_possible,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+wizardsapprentice,Mixtral-8x7B-Instruct-v0.1-t0.0--custom-t0.0--custom-t0.0,forced_card,2.0,1.6733200530681511,2.8,1.0,5.0,1.0,1.536722497715649
+wizardsapprentice,Mixtral-8x7B-Instruct-v0.1-t0.0--custom-t0.0--custom-t0.0,last_round,2.6666666666666665,1.0327955589886446,1.0666666666666669,2.0,4.0,2.0,0.9682458365518546
+wizardsapprentice,Mixtral-8x7B-Instruct-v0.1-t0.0--custom-t0.0--custom-t0.0,semantics_errors,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+wizardsapprentice,Mixtral-8x7B-Instruct-v0.1-t0.0--custom-t0.0--custom-t0.0,syntax_errors,7.166666666666667,2.0412414523193148,4.166666666666666,6.0,11.0,6.0,1.7832285327461537
+wizardsapprentice,Qwen2-72B-Instruct-t0.0--custom-t0.0--custom-t0.0,Aborted,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+wizardsapprentice,Qwen2-72B-Instruct-t0.0--custom-t0.0--custom-t0.0,Lose,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+wizardsapprentice,Qwen2-72B-Instruct-t0.0--custom-t0.0--custom-t0.0,Main Score,43.65942028985507,3.9976757582599096,15.981411468178942,43.69565217391305,48.04347826086956,37.82608695652174,-0.2979209833256469
+wizardsapprentice,Qwen2-72B-Instruct-t0.0--custom-t0.0--custom-t0.0,Parsed Request Count,230.0,0.0,0.0,230.0,230.0,230.0,0.0
+wizardsapprentice,Qwen2-72B-Instruct-t0.0--custom-t0.0--custom-t0.0,Played,1.0,0.0,0.0,1.0,1.0,1.0,0.0
+wizardsapprentice,Qwen2-72B-Instruct-t0.0--custom-t0.0--custom-t0.0,Request Count,256.5,6.123724356957942,37.49999999999996,257.5,266.0,248.0,0.2077167301880135
+wizardsapprentice,Qwen2-72B-Instruct-t0.0--custom-t0.0--custom-t0.0,Request Success Ratio,0.8971111320579691,0.021367297734615605,0.0004565614124797091,0.8932072512291498,0.9274193548387096,0.8646616541353384,-0.08945909627287779
+wizardsapprentice,Qwen2-72B-Instruct-t0.0--custom-t0.0--custom-t0.0,Success,1.0,0.0,0.0,1.0,1.0,1.0,0.0
+wizardsapprentice,Qwen2-72B-Instruct-t0.0--custom-t0.0--custom-t0.0,Violated Request Count,26.5,6.123724356957944,37.49999999999999,27.5,36.0,18.0,0.2077167301880135
+wizardsapprentice,Qwen2-72B-Instruct-t0.0--custom-t0.0--custom-t0.0,error_card_doesnt_follow_suit,15.666666666666666,5.085928299402841,25.866666666666674,15.5,24.0,10.0,0.7013489178951205
+wizardsapprentice,Qwen2-72B-Instruct-t0.0--custom-t0.0--custom-t0.0,error_card_not_comprehensible,0.6666666666666666,0.5163977794943223,0.2666666666666667,1.0,1.0,0.0,-0.968245836551854
+wizardsapprentice,Qwen2-72B-Instruct-t0.0--custom-t0.0--custom-t0.0,error_card_not_in_hand,10.166666666666666,1.7224014243685082,2.966666666666666,10.0,13.0,8.0,0.6784361121108141
+wizardsapprentice,Qwen2-72B-Instruct-t0.0--custom-t0.0--custom-t0.0,error_prediction_int_not_possible,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+wizardsapprentice,Qwen2-72B-Instruct-t0.0--custom-t0.0--custom-t0.0,forced_card,34.833333333333336,2.8577380332470423,8.166666666666673,34.5,39.0,31.0,0.24994793293705536
+wizardsapprentice,Qwen2-72B-Instruct-t0.0--custom-t0.0--custom-t0.0,last_round,20.0,0.0,0.0,20.0,20.0,20.0,0.0
+wizardsapprentice,Qwen2-72B-Instruct-t0.0--custom-t0.0--custom-t0.0,semantics_errors,25.833333333333332,5.913261931173579,34.966666666666676,26.5,35.0,18.0,0.2734155703767196
+wizardsapprentice,Qwen2-72B-Instruct-t0.0--custom-t0.0--custom-t0.0,syntax_errors,0.6666666666666666,0.5163977794943223,0.2666666666666667,1.0,1.0,0.0,-0.968245836551854
+wizardsapprentice,gemini-1.0-pro-latest-t0.0--custom-t0.0--custom-t0.0,Aborted,1.0,0.0,0.0,1.0,1.0,1.0,0.0
+wizardsapprentice,gemini-1.0-pro-latest-t0.0--custom-t0.0--custom-t0.0,Lose,0.3333333333333333,0.5163977794943222,0.26666666666666666,0.0,1.0,0.0,0.9682458365518548
+wizardsapprentice,gemini-1.0-pro-latest-t0.0--custom-t0.0--custom-t0.0,Main Score,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+wizardsapprentice,gemini-1.0-pro-latest-t0.0--custom-t0.0--custom-t0.0,Parsed Request Count,137.0,56.526100166206405,3195.2,143.0,215.0,57.0,-0.14542539590689935
+wizardsapprentice,gemini-1.0-pro-latest-t0.0--custom-t0.0--custom-t0.0,Played,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+wizardsapprentice,gemini-1.0-pro-latest-t0.0--custom-t0.0--custom-t0.0,Request Count,189.83333333333334,80.21824397645878,6434.966666666666,189.5,307.0,83.0,0.16734181420668148
+wizardsapprentice,gemini-1.0-pro-latest-t0.0--custom-t0.0--custom-t0.0,Request Success Ratio,0.7212785315720454,0.02841448614967444,0.0008073830231500404,0.7156193078324226,0.7580645161290323,0.6867469879518072,0.3217753516982892
+wizardsapprentice,gemini-1.0-pro-latest-t0.0--custom-t0.0--custom-t0.0,Success,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+wizardsapprentice,gemini-1.0-pro-latest-t0.0--custom-t0.0--custom-t0.0,Violated Request Count,52.833333333333336,24.44108562782485,597.3666666666666,46.5,92.0,26.0,0.8320200117347666
+wizardsapprentice,gemini-1.0-pro-latest-t0.0--custom-t0.0--custom-t0.0,error_card_doesnt_follow_suit,52.666666666666664,24.295404229332483,590.2666666666667,46.5,92.0,26.0,0.8583548170826985
+wizardsapprentice,gemini-1.0-pro-latest-t0.0--custom-t0.0--custom-t0.0,error_card_not_comprehensible,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+wizardsapprentice,gemini-1.0-pro-latest-t0.0--custom-t0.0--custom-t0.0,error_card_not_in_hand,0.16666666666666666,0.408248290463863,0.16666666666666669,0.0,1.0,0.0,2.449489742783178
+wizardsapprentice,gemini-1.0-pro-latest-t0.0--custom-t0.0--custom-t0.0,error_prediction_int_not_possible,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+wizardsapprentice,gemini-1.0-pro-latest-t0.0--custom-t0.0--custom-t0.0,forced_card,21.333333333333332,4.1311822359545785,17.06666666666667,21.5,27.0,15.0,-0.2789380095535114
+wizardsapprentice,gemini-1.0-pro-latest-t0.0--custom-t0.0--custom-t0.0,last_round,15.5,3.5637059362410923,12.7,16.0,20.0,10.0,-0.4971379723815772
+wizardsapprentice,gemini-1.0-pro-latest-t0.0--custom-t0.0--custom-t0.0,semantics_errors,52.833333333333336,24.44108562782485,597.3666666666666,46.5,92.0,26.0,0.8320200117347666
+wizardsapprentice,gemini-1.0-pro-latest-t0.0--custom-t0.0--custom-t0.0,syntax_errors,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+wizardsapprentice,gemma-2-27b-it-t0.0--custom-t0.0--custom-t0.0,Aborted,0.3333333333333333,0.5163977794943223,0.2666666666666667,0.0,1.0,0.0,0.9682458365518546
+wizardsapprentice,gemma-2-27b-it-t0.0--custom-t0.0--custom-t0.0,Lose,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+wizardsapprentice,gemma-2-27b-it-t0.0--custom-t0.0--custom-t0.0,Main Score,27.644927536231886,21.46849657767418,460.89634530560807,40.108695652173914,43.26086956521739,0.0,-0.946513364945168
+wizardsapprentice,gemma-2-27b-it-t0.0--custom-t0.0--custom-t0.0,Parsed Request Count,190.5,78.80038070974022,6209.5,230.0,230.0,33.0,-2.2442568852014353
+wizardsapprentice,gemma-2-27b-it-t0.0--custom-t0.0--custom-t0.0,Played,0.6666666666666666,0.5163977794943223,0.2666666666666667,1.0,1.0,0.0,-0.968245836551854
+wizardsapprentice,gemma-2-27b-it-t0.0--custom-t0.0--custom-t0.0,Request Count,230.0,94.1764301723101,8869.2,273.5,282.0,41.0,-2.2799996702572467
+wizardsapprentice,gemma-2-27b-it-t0.0--custom-t0.0--custom-t0.0,Request Success Ratio,0.8246219837694699,0.016029250662820377,0.0002569368768115275,0.824468085106383,0.8455882352941176,0.8048780487804879,0.07566345355007145
+wizardsapprentice,gemma-2-27b-it-t0.0--custom-t0.0--custom-t0.0,Success,0.6666666666666666,0.5163977794943223,0.2666666666666667,1.0,1.0,0.0,-0.968245836551854
+wizardsapprentice,gemma-2-27b-it-t0.0--custom-t0.0--custom-t0.0,Violated Request Count,39.5,15.795568998931314,249.5,44.5,52.0,8.0,-2.1889145179221123
+wizardsapprentice,gemma-2-27b-it-t0.0--custom-t0.0--custom-t0.0,error_card_doesnt_follow_suit,37.666666666666664,17.40881003017342,303.0666666666667,44.0,51.0,3.0,-2.182689119572922
+wizardsapprentice,gemma-2-27b-it-t0.0--custom-t0.0--custom-t0.0,error_card_not_comprehensible,1.3333333333333333,1.9663841605003503,3.866666666666667,0.5,5.0,0.0,1.6746999464427776
+wizardsapprentice,gemma-2-27b-it-t0.0--custom-t0.0--custom-t0.0,error_card_not_in_hand,0.5,0.5477225575051661,0.3,0.5,1.0,0.0,0.0
+wizardsapprentice,gemma-2-27b-it-t0.0--custom-t0.0--custom-t0.0,error_prediction_int_not_possible,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+wizardsapprentice,gemma-2-27b-it-t0.0--custom-t0.0--custom-t0.0,forced_card,25.833333333333332,8.886319072972041,78.96666666666667,29.0,31.0,8.0,-2.270791573679134
+wizardsapprentice,gemma-2-27b-it-t0.0--custom-t0.0--custom-t0.0,last_round,17.666666666666668,5.240865068542279,27.46666666666666,20.0,20.0,7.0,-2.4184475493620803
+wizardsapprentice,gemma-2-27b-it-t0.0--custom-t0.0--custom-t0.0,semantics_errors,38.166666666666664,17.656915547928143,311.76666666666665,44.5,52.0,3.0,-2.1799250002648045
+wizardsapprentice,gemma-2-27b-it-t0.0--custom-t0.0--custom-t0.0,syntax_errors,1.3333333333333333,1.9663841605003503,3.866666666666667,0.5,5.0,0.0,1.6746999464427776

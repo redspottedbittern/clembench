@@ -66,10 +66,12 @@ TEX_HEADER = '''
 '''
 
 TEX_BUBBLE_PARAMS = {
-    "a-gm": ("0.8,1,0.9", "A$\\rangle$GM", "&", "& &", 4, 0.6),
-    "b-gm": ("1,0.85,0.72", "GM$\\langle$B", "& & &", "", 4, 0.6),
-    "gm-a": ("0.9,0.9,0.9", "A$\\langle$GM", "& &", "&", 4, 0.6),
-    "gm-b": ("0.9,0.9,0.9", "GM$\\rangle$B", "& &", "&", 4, 0.6),
+    "gandalf-gm": ("0.8,1,0.9", "A$\\rangle$GM", "&", "& &", 4, 0.6),
+    "merlin-gm": ("1,0.85,0.72", "GM$\\langle$B", "& & &", "", 4, 0.6),
+    "oz-gm": ("1,0.85,0.72", "GM$\\langle$B", "& & &", "", 4, 0.6),
+    "gm-gandalf": ("0.9,0.9,0.9", "A$\\langle$GM", "& &", "&", 4, 0.6),
+    "gm-merlin": ("0.9,0.9,0.9", "GM$\\rangle$B", "& &", "&", 4, 0.6),
+    "gm-oz": ("0.9,0.9,0.9", "GM$\\rangle$B", "& &", "&", 4, 0.6),
     "gm-gm": ("0.95,0.95,0.95", "GM$|$GM", "& & &", "& &", 2, 0.3)
 }
 
@@ -88,17 +90,20 @@ TEX_FOOTER = '''
 
 
 def _get_class_name(event):
-    if event['from'] == 'GM' and event['to'] == 'Player 1':
-        return "gm-a"
-    if event['from'] == 'GM' and event['to'] == 'Player 2':
-        return "gm-b"
-    if event['from'] == 'Player 1' and event['to'] == 'GM':
-        return "a-gm"
-    if event['from'] == 'Player 2' and event['to'] == 'GM':
-        return "b-gm"
+    if event['from'] == 'GM' and event['to'] == 'Gandalf':
+        return "gm-gandalf"
+    if event['from'] == 'GM' and event['to'] == 'Merlin':
+        return "gm-merlin"
+    if event['from'] == 'GM' and event['to'] == 'Oz':
+        return "gm-oz"
+    if event['from'] == 'Gandalf' and event['to'] == 'GM':
+        return "gandalf-gm"
+    if event['from'] == 'Merlin' and event['to'] == 'GM':
+        return "merlin-gm"
+    if event['from'] == 'Oz' and event['to'] == 'GM':
+        return "oz-gm"
     if event['from'] == 'GM' and event['to'] == 'GM':
         return "gm-gm"
-
 
 def build_transcript(interactions: Dict, experiment_config: Dict, game_instance: Dict, dialogue_pair: str):
     """Create an html with the interaction transcript."""
