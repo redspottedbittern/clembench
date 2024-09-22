@@ -72,10 +72,10 @@ def plot_individual_csv(csv_file_path, output_dir):
     df['Average Points'] = df[['episode_1 Points', 'episode_2 Points', 'episode_3 Points', 
                                'episode_4 Points', 'episode_5 Points']].mean(axis=1)
 
-    #df_filtered = df[(df['Round'] >= 1) & (df['Round'] <= 12)].sort_values(by='Round')
+    df_filtered = df[(df['Round'] >= 1) & (df['Round'] <= 15)].sort_values(by='Round')
 
     plt.figure(figsize=(10, 6))
-    plt.plot(df['Round'], df['Average Points'], marker='o')
+    plt.plot(df_filtered['Round'], df_filtered['Average Points'], marker='o')
     plt.xlabel('Round')
     plt.ylabel('Average Points')
     plt.title(f'Average Points per Round - {os.path.basename(output_dir)}')
@@ -98,9 +98,9 @@ def plot_average_points(root_dir):
             df['Average Points'] = df[['episode_1 Points', 'episode_2 Points', 'episode_3 Points', 
                                        'episode_4 Points', 'episode_5 Points']].mean(axis=1)
 
-            #df_filtered = df[(df['Round'] >= 1) & (df['Round'] <= 12)]
+            df_filtered = df[(df['Round'] >= 1) & (df['Round'] <= 15)]
             
-            all_data = pd.concat([all_data, df])
+            all_data = pd.concat([all_data, df_filtered])
 
     overall_avg_points = all_data.groupby('Round')['Average Points'].mean().reset_index()
 

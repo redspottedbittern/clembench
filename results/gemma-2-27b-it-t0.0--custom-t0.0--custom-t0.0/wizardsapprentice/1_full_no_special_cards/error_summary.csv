@@ -1,0 +1,7 @@
+Episode,error_card_not_in_hand,error_card_doesnt_follow_suit,error_card_not_comprehensible,error_prediction_int_not_possible,last_round
+episode_0,0,43,0,0,17
+episode_1,0,40,1,0,17
+episode_2,0,47,0,0,17
+episode_3,0,41,0,0,17
+episode_4,0,51,0,0,17
+episode_5,0,59,1,0,17

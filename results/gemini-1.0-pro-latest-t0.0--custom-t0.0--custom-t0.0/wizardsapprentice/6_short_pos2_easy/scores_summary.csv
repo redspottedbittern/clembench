@@ -1,0 +1,7 @@
+Episode,Request Count,Parsed Request Count,Violated Request Count
+episode_0,55,40,15
+episode_1,60,54,6
+episode_2,65,54,11
+episode_3,46,38,8
+episode_4,54,54,0
+episode_5,59,54,5

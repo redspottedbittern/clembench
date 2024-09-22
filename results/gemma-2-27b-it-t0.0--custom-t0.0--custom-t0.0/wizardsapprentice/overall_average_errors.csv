@@ -1,0 +1,6 @@
+Error Type,Average Count
+error_card_not_in_hand,0.06666666666666667
+error_card_doesnt_follow_suit,18.05
+error_card_not_comprehensible,0.16666666666666666
+error_prediction_int_not_possible,0.0
+last_round,11.166666666666666
