@@ -91,6 +91,49 @@ class WizardsApprenticeInstanceGenerator(GameInstanceGenerator):
         }
 
         return rules_template.substitute(subs)
+    
+    def get_color_number_regex(self, settings):
+        # get regex strings for the numbers for the colors
+        if settings['CARDS_PER_COLOR'] < 10:
+            part_1 = list(map(str, range(1, settings['CARDS_PER_COLOR']+1)))
+            cards_per_color = "[" + "".join(part_1) + "]"
+        elif settings['CARDS_PER_COLOR'] < 20:
+            part_1 = list(map(str, range(1, 10)))
+            part_2 = list(map(str, range(settings['CARDS_PER_COLOR']-9)))
+            cards_per_color = "[" + "".join(part_1) + "]|1[" +\
+                "".join(part_2) + "]"
+        return cards_per_color
+
+    def special_card_regex(self, settings):
+        # only get regex for special cards if there are more than 0 in the deck
+        if settings['SPECIAL_CARDS_NUM'] > 0:
+            # get regex strings for the special cards
+            s_cards = "ZJ"
+            s_cards = "|[" + s_cards + "]"
+
+            # get regex string for the number of special cards
+            num_s_cards = list(map(str, range(settings['SPECIAL_CARDS_NUM']+1)))
+            num_s_cards = "[" + "".join(num_s_cards) + "]"
+        else:
+            s_cards = ""
+            num_s_cards = ""
+        return s_cards, num_s_cards
+    
+    def letters_for_special_cards(settings, regex):
+        # determine the right letters for the special cards
+        regex['wizard'] = ""
+        regex['jester'] = ""
+        for letter in settings['SPECIAL_CARDS']:
+            if letter == "Z":
+                regex['wizard'] = "Z"
+            elif letter == "W":
+                regex['wizard'] = "W"
+            elif letter == "J":
+                regex['jester'] = "J"
+        return regex
+        
+        
+        
 
     def prepare_regex(self, settings):
         """
@@ -107,60 +150,69 @@ class WizardsApprenticeInstanceGenerator(GameInstanceGenerator):
         # get regex strings for the colors
         colors = "".join(settings['COLORS'])
 
-        # get regex strings for the numbers for the colors
-        if settings['CARDS_PER_COLOR'] < 10:
-            part_1 = list(map(str, range(1, settings['CARDS_PER_COLOR']+1)))
-            cards_per_color = "[" + "".join(part_1) + "]"
-        elif settings['CARDS_PER_COLOR'] < 20:
-            part_1 = list(map(str, range(1, 10)))
-            part_2 = list(map(str, range(settings['CARDS_PER_COLOR']-9)))
-            cards_per_color = "[" + "".join(part_1) + "]|1[" +\
-                "".join(part_2) + "]"
-
-        # only get regex for special cards if there are more than 0 in the deck
-        if settings['SPECIAL_CARDS_NUM'] > 0:
-            # get regex strings for the special cards
-            s_cards = "ZJ"
-            s_cards = "|[" + s_cards + "]"
-
-            # get regex string for the number of special cards
-            num_s_cards = list(map(str, range(settings['SPECIAL_CARDS_NUM']+1)))
-            num_s_cards = "[" + "".join(num_s_cards) + "]"
-        else:
-            s_cards = ""
-            num_s_cards = ""
+        cards_per_color = self.get_color_number_regex(settings)
+        
+        s_cards, num_s_cards = self.special_card_regex(settings)
 
         # finally fill all string together in the full regex
         regex['card_played'] = f"^I PLAY: ([{colors}]({cards_per_color}){s_cards}{num_s_cards})$"
 
-        # determine the right letters for the special cards
-        regex['wizard'] = ""
-        regex['jester'] = ""
-        for letter in settings['SPECIAL_CARDS']:
-            if letter == "Z":
-                regex['wizard'] = "Z"
-            elif letter == "W":
-                regex['wizard'] = "W"
-            elif letter == "J":
-                regex['jester'] = "J"
+        regex = self.letters_for_special_cards(settings, regex)
 
         # prepare the regex for the prediction prompt
         regex['prediction'] = "PREDICTION: ([0-9]{1,2})$"
 
         return regex
+    
+    def prepare_experiment(self, settings, name):
+        experiment = self.add_experiment(name)
+         # load prompts and regex
+        experiment.update(self.load_prompts(settings))
+        experiment['regex'] = self.prepare_regex(settings)
+        # fill general info about remprompting
+        experiment['liberal_mode'] = settings['LIBERAL_MODE']
+        experiment['attempts'] = settings['ATTEMPTS']
+        return experiment
+    
+    def create_game_instance(self, name, instance_number, experiment):
+        # create instance with id
+        game_id = str(name) + '_i' + str(instance_number)
+        game_instance = self.add_game_instance(experiment, game_id)
+        return game_instance
+
+    def prepare_seating_order(self, settings):
+        # create a seating order for this instance
+        n_players = settings['PLAYERS']
+        position = settings['PLAYER_POSITION']
+        return create_seating_order(n_players, position)
+    
+    def deal_cards(self, settings, deck, seating_order, end_round):
+        # for every round deal cards to each player
+        dealt_cards = {}
+        trump_cards = {}
+        card_difficulty = ""
+        if settings['DIFFICULTY'] == "easy":
+            card_difficulty = "good_cards"
+        elif settings["DIFFICULTY"] == "hard":
+            card_difficulty = "bad_cards"
+        else:
+            card_difficulty = "random"
+        for round in range(settings['START_ROUND'], end_round + 1):
+            dealt_cards[round], trump_cards[round] = (
+                deal_cards_for_round(round, deck, seating_order, card_difficulty)
+                )
+        return dealt_cards, trump_cards
+        
+    
+        
+        
 
     def on_generate(self):
         """We have to build this method ourselves."""
         # load all experiment settings and create the experiment for each
         for name, settings in self.load_experiments().items():
-
-            experiment = self.add_experiment(name)
-            # load prompts and regex
-            experiment.update(self.load_prompts(settings))
-            experiment['regex'] = self.prepare_regex(settings)
-            # fill general info about remprompting
-            experiment['liberal_mode'] = settings['LIBERAL_MODE']
-            experiment['attempts'] = settings['ATTEMPTS']
+            
+            experiment = self.prepare_experiment(settings, name)
 
             # create deck and check number of rounds
             deck = create_deck(settings['COLORS'],
@@ -170,33 +222,18 @@ class WizardsApprenticeInstanceGenerator(GameInstanceGenerator):
             end_round = self.rounds_to_be_played(len(deck),
                                                  settings['PLAYERS'],
                                                  settings['END_ROUND'])
+            
 
             # create the target number of instances
             for n in range(settings['N_INSTANCES']):
                 # create instance with id
-                game_id = str(name) + '_i' + str(n)
-                game_instance = self.add_game_instance(experiment, game_id)
+                game_instance = self.create_game_instance(name, n, experiment)
 
-                # create a seating order for this instance
-                n_players = settings['PLAYERS']
-                position = settings['PLAYER_POSITION']
-                seating_order = create_seating_order(n_players, position)
+                seating_order = self.prepare_seating_order(settings)
 
-                # for every round deal cards to each player
-                dealt_cards = {}
-                trump_cards = {}
-                card_difficulty = ""
-                if settings['DIFFICULTY'] == "easy":
-                    card_difficulty = "good_cards"
-                elif settings["DIFFICULTY"] == "hard":
-                    card_difficulty = "bad_cards"
-                else:
-                    card_difficulty = "random"
-                for round in range(settings['START_ROUND'], end_round + 1):
-                    dealt_cards[round], trump_cards[round] = (
-                        deal_cards_for_round(round, deck, seating_order, card_difficulty)
-                    )
+                dealt_cards, trump_cards = self.deal_cards(settings, deck, seating_order, end_round)
 
+                game_instance["player_position"] = settings['PLAYER_POSITION']
                 game_instance['seating_order'] = seating_order
                 game_instance['dealt_cards'] = dealt_cards
                 game_instance['trump_cards'] = trump_cards
