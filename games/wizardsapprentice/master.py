@@ -333,7 +333,7 @@ class WizardsApprenticeGameMaster(GameMaster):
         self.npc_names = names
 
         for idx, model in enumerate(self.player_backends):
-            if idx == self.game_instance["player_position"]:
+            if idx == 0:
                 self.add_player(model, "Gandalf")
             else:
                 self.add_player(model, names.pop(0))
