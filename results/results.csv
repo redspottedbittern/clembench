@@ -6,3 +6,4 @@ Mixtral-8x7B-Instruct-v0.1-t0.0--custom-t0.0--custom-t0.0,0.0,0.0,0.0,0.0,0.0,0.
 Qwen2-72B-Instruct-t0.0--custom-t0.0--custom-t0.0,32.34,90.0,35.93,90.0,35.93,13.17
 gemini-1.0-pro-latest-t0.0--custom-t0.0--custom-t0.0,10.29,51.67,19.92,51.67,19.92,19.8
 gemma-2-27b-it-t0.0--custom-t0.0--custom-t0.0,28.94,85.0,34.05,85.0,34.05,15.95
+local-llama-70b-t0.0--custom-t0.0--custom-t0.0,34.1,100.0,34.1,100.0,34.1,2.15

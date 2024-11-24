@@ -1,224 +1,0 @@
-Make custom run with: Mixtral-8x22B-Instruct-v0.1 for full_no_special_cards.
-
-      _                _                     _     
-     | |              | |                   | |    
-  ___| | ___ _ __ ___ | |__   ___ _ __   ___| |__  
- / __| |/ _ \ '_ ` _ \| '_ \ / _ \ '_ \ / __| '_ \ 
-| (__| |  __/ | | | | | |_) |  __/ | | | (__| | | |
- \___|_|\___|_| |_| |_|_.__/ \___|_| |_|\___|_| |_|
-
-2024-09-17 10:42:22,479 - benchmark.run - INFO - Skip experiment 1 of 10: full_game
-2024-09-17 10:42:22,479 - benchmark.run - INFO - Run experiment 2 of 10: full_no_special_cards
-Playing games:   0%|          | 0/6 [00:00<?, ?it/s]Playing games:  17%|█▋        | 1/6 [03:14<16:14, 194.84s/it]Playing games:  33%|███▎      | 2/6 [12:03<26:05, 391.44s/it]Playing games:  50%|█████     | 3/6 [21:34<23:39, 473.06s/it]Playing games:  67%|██████▋   | 4/6 [30:07<16:18, 489.14s/it]Playing games:  83%|████████▎ | 5/6 [31:22<05:39, 339.55s/it]Playing games: 100%|██████████| 6/6 [33:38<00:00, 270.45s/it]Playing games: 100%|██████████| 6/6 [33:38<00:00, 336.42s/it]
-2024-09-17 11:16:01,008 - benchmark.run - INFO - Skip experiment 3 of 10: full_programmatic2
-2024-09-17 11:16:01,008 - benchmark.run - INFO - Skip experiment 4 of 10: short_no_reprompting
-2024-09-17 11:16:01,008 - benchmark.run - INFO - Skip experiment 5 of 10: short_pos1_easy
-2024-09-17 11:16:01,008 - benchmark.run - INFO - Skip experiment 6 of 10: short_pos1_hard
-2024-09-17 11:16:01,008 - benchmark.run - INFO - Skip experiment 7 of 10: short_pos2_easy
-2024-09-17 11:16:01,008 - benchmark.run - INFO - Skip experiment 8 of 10: short_pos2_hard
-2024-09-17 11:16:01,008 - benchmark.run - INFO - Skip experiment 9 of 10: short_pos3_easy
-2024-09-17 11:16:01,008 - benchmark.run - INFO - Skip experiment 10 of 10: short_pos3_hard
-Exception ignored in: <function MistralClient.__del__ at 0x7ff111f43d90>
-Traceback (most recent call last):
-  File "/data/clembench/venv/lib/python3.10/site-packages/mistralai/client.py", line 46, in __del__
-  File "/data/clembench/venv/lib/python3.10/site-packages/httpx/_client.py", line 1258, in close
-  File "/data/clembench/venv/lib/python3.10/site-packages/httpx/_transports/default.py", line 240, in close
-  File "/data/clembench/venv/lib/python3.10/site-packages/httpcore/_sync/connection_pool.py", line 313, in close
-  File "/data/clembench/venv/lib/python3.10/site-packages/httpcore/_sync/connection_pool.py", line 303, in _close_connections
-TypeError: 'NoneType' object is not callable
-Make custom run with: Mixtral-8x22B-Instruct-v0.1 for short_no_reprompting.
-
-      _                _                     _     
-     | |              | |                   | |    
-  ___| | ___ _ __ ___ | |__   ___ _ __   ___| |__  
- / __| |/ _ \ '_ ` _ \| '_ \ / _ \ '_ \ / __| '_ \ 
-| (__| |  __/ | | | | | |_) |  __/ | | | (__| | | |
- \___|_|\___|_| |_| |_|_.__/ \___|_| |_|\___|_| |_|
-
-2024-09-17 11:16:03,688 - benchmark.run - INFO - Skip experiment 1 of 10: full_game
-2024-09-17 11:16:03,688 - benchmark.run - INFO - Skip experiment 2 of 10: full_no_special_cards
-2024-09-17 11:16:03,688 - benchmark.run - INFO - Skip experiment 3 of 10: full_programmatic2
-2024-09-17 11:16:03,688 - benchmark.run - INFO - Run experiment 4 of 10: short_no_reprompting
-Playing games:   0%|          | 0/6 [00:00<?, ?it/s]Playing games:  17%|█▋        | 1/6 [01:09<05:45, 69.16s/it]Playing games:  33%|███▎      | 2/6 [01:48<03:27, 51.77s/it]Playing games:  50%|█████     | 3/6 [02:07<01:50, 36.70s/it]Playing games:  67%|██████▋   | 4/6 [02:22<00:55, 27.97s/it]Playing games:  83%|████████▎ | 5/6 [02:51<00:28, 28.31s/it]Playing games: 100%|██████████| 6/6 [03:05<00:00, 23.47s/it]Playing games: 100%|██████████| 6/6 [03:05<00:00, 30.85s/it]
-2024-09-17 11:19:08,779 - benchmark.run - INFO - Skip experiment 5 of 10: short_pos1_easy
-2024-09-17 11:19:08,779 - benchmark.run - INFO - Skip experiment 6 of 10: short_pos1_hard
-2024-09-17 11:19:08,779 - benchmark.run - INFO - Skip experiment 7 of 10: short_pos2_easy
-2024-09-17 11:19:08,779 - benchmark.run - INFO - Skip experiment 8 of 10: short_pos2_hard
-2024-09-17 11:19:08,779 - benchmark.run - INFO - Skip experiment 9 of 10: short_pos3_easy
-2024-09-17 11:19:08,779 - benchmark.run - INFO - Skip experiment 10 of 10: short_pos3_hard
-Exception ignored in: <function MistralClient.__del__ at 0x7f8aff317d90>
-Traceback (most recent call last):
-  File "/data/clembench/venv/lib/python3.10/site-packages/mistralai/client.py", line 46, in __del__
-  File "/data/clembench/venv/lib/python3.10/site-packages/httpx/_client.py", line 1258, in close
-  File "/data/clembench/venv/lib/python3.10/site-packages/httpx/_transports/default.py", line 240, in close
-  File "/data/clembench/venv/lib/python3.10/site-packages/httpcore/_sync/connection_pool.py", line 313, in close
-  File "/data/clembench/venv/lib/python3.10/site-packages/httpcore/_sync/connection_pool.py", line 303, in _close_connections
-TypeError: 'NoneType' object is not callable
-Make custom run with: Mixtral-8x22B-Instruct-v0.1 for short_pos1_easy.
-
-      _                _                     _     
-     | |              | |                   | |    
-  ___| | ___ _ __ ___ | |__   ___ _ __   ___| |__  
- / __| |/ _ \ '_ ` _ \| '_ \ / _ \ '_ \ / __| '_ \ 
-| (__| |  __/ | | | | | |_) |  __/ | | | (__| | | |
- \___|_|\___|_| |_| |_|_.__/ \___|_| |_|\___|_| |_|
-
-2024-09-17 11:19:11,803 - benchmark.run - INFO - Skip experiment 1 of 10: full_game
-2024-09-17 11:19:11,803 - benchmark.run - INFO - Skip experiment 2 of 10: full_no_special_cards
-2024-09-17 11:19:11,803 - benchmark.run - INFO - Skip experiment 3 of 10: full_programmatic2
-2024-09-17 11:19:11,803 - benchmark.run - INFO - Skip experiment 4 of 10: short_no_reprompting
-2024-09-17 11:19:11,803 - benchmark.run - INFO - Run experiment 5 of 10: short_pos1_easy
-Playing games:   0%|          | 0/6 [00:00<?, ?it/s]Playing games:  17%|█▋        | 1/6 [02:44<13:42, 164.48s/it]Playing games:  33%|███▎      | 2/6 [05:12<10:20, 155.08s/it]Playing games:  50%|█████     | 3/6 [07:38<07:31, 150.54s/it]Playing games:  67%|██████▋   | 4/6 [10:08<05:00, 150.50s/it]Playing games:  83%|████████▎ | 5/6 [12:24<02:25, 145.27s/it]Playing games: 100%|██████████| 6/6 [14:47<00:00, 144.43s/it]Playing games: 100%|██████████| 6/6 [14:47<00:00, 147.89s/it]
-2024-09-17 11:33:59,146 - benchmark.run - INFO - Skip experiment 6 of 10: short_pos1_hard
-2024-09-17 11:33:59,146 - benchmark.run - INFO - Skip experiment 7 of 10: short_pos2_easy
-2024-09-17 11:33:59,147 - benchmark.run - INFO - Skip experiment 8 of 10: short_pos2_hard
-2024-09-17 11:33:59,147 - benchmark.run - INFO - Skip experiment 9 of 10: short_pos3_easy
-2024-09-17 11:33:59,147 - benchmark.run - INFO - Skip experiment 10 of 10: short_pos3_hard
-Exception ignored in: <function MistralClient.__del__ at 0x7f3ce1657d90>
-Traceback (most recent call last):
-  File "/data/clembench/venv/lib/python3.10/site-packages/mistralai/client.py", line 46, in __del__
-  File "/data/clembench/venv/lib/python3.10/site-packages/httpx/_client.py", line 1258, in close
-  File "/data/clembench/venv/lib/python3.10/site-packages/httpx/_transports/default.py", line 240, in close
-  File "/data/clembench/venv/lib/python3.10/site-packages/httpcore/_sync/connection_pool.py", line 313, in close
-  File "/data/clembench/venv/lib/python3.10/site-packages/httpcore/_sync/connection_pool.py", line 303, in _close_connections
-TypeError: 'NoneType' object is not callable
-Make custom run with: Mixtral-8x22B-Instruct-v0.1 for short_pos1_hard.
-
-      _                _                     _     
-     | |              | |                   | |    
-  ___| | ___ _ __ ___ | |__   ___ _ __   ___| |__  
- / __| |/ _ \ '_ ` _ \| '_ \ / _ \ '_ \ / __| '_ \ 
-| (__| |  __/ | | | | | |_) |  __/ | | | (__| | | |
- \___|_|\___|_| |_| |_|_.__/ \___|_| |_|\___|_| |_|
-
-2024-09-17 11:34:01,848 - benchmark.run - INFO - Skip experiment 1 of 10: full_game
-2024-09-17 11:34:01,848 - benchmark.run - INFO - Skip experiment 2 of 10: full_no_special_cards
-2024-09-17 11:34:01,848 - benchmark.run - INFO - Skip experiment 3 of 10: full_programmatic2
-2024-09-17 11:34:01,848 - benchmark.run - INFO - Skip experiment 4 of 10: short_no_reprompting
-2024-09-17 11:34:01,848 - benchmark.run - INFO - Skip experiment 5 of 10: short_pos1_easy
-2024-09-17 11:34:01,848 - benchmark.run - INFO - Run experiment 6 of 10: short_pos1_hard
-Playing games:   0%|          | 0/6 [00:00<?, ?it/s]Playing games:  17%|█▋        | 1/6 [02:23<11:57, 143.58s/it]Playing games:  33%|███▎      | 2/6 [03:26<06:24, 96.09s/it] Playing games:  50%|█████     | 3/6 [06:13<06:25, 128.41s/it]Playing games:  67%|██████▋   | 4/6 [08:53<04:41, 140.99s/it]Playing games:  83%|████████▎ | 5/6 [11:26<02:25, 145.21s/it]Playing games: 100%|██████████| 6/6 [13:37<00:00, 140.44s/it]Playing games: 100%|██████████| 6/6 [13:37<00:00, 136.24s/it]
-2024-09-17 11:47:39,292 - benchmark.run - INFO - Skip experiment 7 of 10: short_pos2_easy
-2024-09-17 11:47:39,292 - benchmark.run - INFO - Skip experiment 8 of 10: short_pos2_hard
-2024-09-17 11:47:39,292 - benchmark.run - INFO - Skip experiment 9 of 10: short_pos3_easy
-2024-09-17 11:47:39,292 - benchmark.run - INFO - Skip experiment 10 of 10: short_pos3_hard
-Exception ignored in: <function MistralClient.__del__ at 0x7f42c87bbd90>
-Traceback (most recent call last):
-  File "/data/clembench/venv/lib/python3.10/site-packages/mistralai/client.py", line 46, in __del__
-  File "/data/clembench/venv/lib/python3.10/site-packages/httpx/_client.py", line 1258, in close
-  File "/data/clembench/venv/lib/python3.10/site-packages/httpx/_transports/default.py", line 240, in close
-  File "/data/clembench/venv/lib/python3.10/site-packages/httpcore/_sync/connection_pool.py", line 313, in close
-  File "/data/clembench/venv/lib/python3.10/site-packages/httpcore/_sync/connection_pool.py", line 303, in _close_connections
-TypeError: 'NoneType' object is not callable
-Make custom run with: Mixtral-8x22B-Instruct-v0.1 for short_pos2_easy.
-
-      _                _                     _     
-     | |              | |                   | |    
-  ___| | ___ _ __ ___ | |__   ___ _ __   ___| |__  
- / __| |/ _ \ '_ ` _ \| '_ \ / _ \ '_ \ / __| '_ \ 
-| (__| |  __/ | | | | | |_) |  __/ | | | (__| | | |
- \___|_|\___|_| |_| |_|_.__/ \___|_| |_|\___|_| |_|
-
-2024-09-17 11:47:41,861 - benchmark.run - INFO - Skip experiment 1 of 10: full_game
-2024-09-17 11:47:41,861 - benchmark.run - INFO - Skip experiment 2 of 10: full_no_special_cards
-2024-09-17 11:47:41,862 - benchmark.run - INFO - Skip experiment 3 of 10: full_programmatic2
-2024-09-17 11:47:41,862 - benchmark.run - INFO - Skip experiment 4 of 10: short_no_reprompting
-2024-09-17 11:47:41,862 - benchmark.run - INFO - Skip experiment 5 of 10: short_pos1_easy
-2024-09-17 11:47:41,862 - benchmark.run - INFO - Skip experiment 6 of 10: short_pos1_hard
-2024-09-17 11:47:41,862 - benchmark.run - INFO - Run experiment 7 of 10: short_pos2_easy
-Playing games:   0%|          | 0/6 [00:00<?, ?it/s]Playing games:  17%|█▋        | 1/6 [02:16<11:24, 136.99s/it]Playing games:  33%|███▎      | 2/6 [04:41<09:25, 141.50s/it]Playing games:  50%|█████     | 3/6 [06:58<06:57, 139.16s/it]Playing games:  67%|██████▋   | 4/6 [09:04<04:27, 134.00s/it]Playing games:  83%|████████▎ | 5/6 [11:22<02:15, 135.41s/it]Playing games: 100%|██████████| 6/6 [13:46<00:00, 138.41s/it]Playing games: 100%|██████████| 6/6 [13:46<00:00, 137.71s/it]
-2024-09-17 12:01:28,106 - benchmark.run - INFO - Skip experiment 8 of 10: short_pos2_hard
-2024-09-17 12:01:28,106 - benchmark.run - INFO - Skip experiment 9 of 10: short_pos3_easy
-2024-09-17 12:01:28,106 - benchmark.run - INFO - Skip experiment 10 of 10: short_pos3_hard
-Exception ignored in: <function MistralClient.__del__ at 0x7f51c216fd90>
-Traceback (most recent call last):
-  File "/data/clembench/venv/lib/python3.10/site-packages/mistralai/client.py", line 46, in __del__
-  File "/data/clembench/venv/lib/python3.10/site-packages/httpx/_client.py", line 1258, in close
-  File "/data/clembench/venv/lib/python3.10/site-packages/httpx/_transports/default.py", line 240, in close
-  File "/data/clembench/venv/lib/python3.10/site-packages/httpcore/_sync/connection_pool.py", line 313, in close
-  File "/data/clembench/venv/lib/python3.10/site-packages/httpcore/_sync/connection_pool.py", line 303, in _close_connections
-TypeError: 'NoneType' object is not callable
-Make custom run with: Mixtral-8x22B-Instruct-v0.1 for short_pos2_hard.
-
-      _                _                     _     
-     | |              | |                   | |    
-  ___| | ___ _ __ ___ | |__   ___ _ __   ___| |__  
- / __| |/ _ \ '_ ` _ \| '_ \ / _ \ '_ \ / __| '_ \ 
-| (__| |  __/ | | | | | |_) |  __/ | | | (__| | | |
- \___|_|\___|_| |_| |_|_.__/ \___|_| |_|\___|_| |_|
-
-2024-09-17 12:01:30,632 - benchmark.run - INFO - Skip experiment 1 of 10: full_game
-2024-09-17 12:01:30,632 - benchmark.run - INFO - Skip experiment 2 of 10: full_no_special_cards
-2024-09-17 12:01:30,632 - benchmark.run - INFO - Skip experiment 3 of 10: full_programmatic2
-2024-09-17 12:01:30,632 - benchmark.run - INFO - Skip experiment 4 of 10: short_no_reprompting
-2024-09-17 12:01:30,632 - benchmark.run - INFO - Skip experiment 5 of 10: short_pos1_easy
-2024-09-17 12:01:30,632 - benchmark.run - INFO - Skip experiment 6 of 10: short_pos1_hard
-2024-09-17 12:01:30,632 - benchmark.run - INFO - Skip experiment 7 of 10: short_pos2_easy
-2024-09-17 12:01:30,632 - benchmark.run - INFO - Run experiment 8 of 10: short_pos2_hard
-Playing games:   0%|          | 0/6 [00:00<?, ?it/s]Playing games:  17%|█▋        | 1/6 [02:16<11:20, 136.15s/it]Playing games:  33%|███▎      | 2/6 [04:46<09:36, 144.21s/it]Playing games:  50%|█████     | 3/6 [05:25<04:49, 96.38s/it] Playing games:  67%|██████▋   | 4/6 [07:54<03:53, 116.99s/it]Playing games:  83%|████████▎ | 5/6 [10:55<02:20, 140.27s/it]Playing games: 100%|██████████| 6/6 [12:49<00:00, 131.26s/it]Playing games: 100%|██████████| 6/6 [12:49<00:00, 128.23s/it]
-2024-09-17 12:14:20,003 - benchmark.run - INFO - Skip experiment 9 of 10: short_pos3_easy
-2024-09-17 12:14:20,003 - benchmark.run - INFO - Skip experiment 10 of 10: short_pos3_hard
-Exception ignored in: <function MistralClient.__del__ at 0x7f6d59d07d90>
-Traceback (most recent call last):
-  File "/data/clembench/venv/lib/python3.10/site-packages/mistralai/client.py", line 46, in __del__
-  File "/data/clembench/venv/lib/python3.10/site-packages/httpx/_client.py", line 1258, in close
-  File "/data/clembench/venv/lib/python3.10/site-packages/httpx/_transports/default.py", line 240, in close
-  File "/data/clembench/venv/lib/python3.10/site-packages/httpcore/_sync/connection_pool.py", line 313, in close
-  File "/data/clembench/venv/lib/python3.10/site-packages/httpcore/_sync/connection_pool.py", line 303, in _close_connections
-TypeError: 'NoneType' object is not callable
-Make custom run with: Mixtral-8x22B-Instruct-v0.1 for short_pos3_easy.
-
-      _                _                     _     
-     | |              | |                   | |    
-  ___| | ___ _ __ ___ | |__   ___ _ __   ___| |__  
- / __| |/ _ \ '_ ` _ \| '_ \ / _ \ '_ \ / __| '_ \ 
-| (__| |  __/ | | | | | |_) |  __/ | | | (__| | | |
- \___|_|\___|_| |_| |_|_.__/ \___|_| |_|\___|_| |_|
-
-2024-09-17 12:14:23,110 - benchmark.run - INFO - Skip experiment 1 of 10: full_game
-2024-09-17 12:14:23,110 - benchmark.run - INFO - Skip experiment 2 of 10: full_no_special_cards
-2024-09-17 12:14:23,110 - benchmark.run - INFO - Skip experiment 3 of 10: full_programmatic2
-2024-09-17 12:14:23,110 - benchmark.run - INFO - Skip experiment 4 of 10: short_no_reprompting
-2024-09-17 12:14:23,110 - benchmark.run - INFO - Skip experiment 5 of 10: short_pos1_easy
-2024-09-17 12:14:23,111 - benchmark.run - INFO - Skip experiment 6 of 10: short_pos1_hard
-2024-09-17 12:14:23,111 - benchmark.run - INFO - Skip experiment 7 of 10: short_pos2_easy
-2024-09-17 12:14:23,111 - benchmark.run - INFO - Skip experiment 8 of 10: short_pos2_hard
-2024-09-17 12:14:23,111 - benchmark.run - INFO - Run experiment 9 of 10: short_pos3_easy
-Playing games:   0%|          | 0/6 [00:00<?, ?it/s]Playing games:  17%|█▋        | 1/6 [01:59<09:55, 119.10s/it]Playing games:  33%|███▎      | 2/6 [04:22<08:54, 133.65s/it]Playing games:  50%|█████     | 3/6 [06:14<06:10, 123.53s/it]Playing games:  67%|██████▋   | 4/6 [08:08<03:59, 119.87s/it]Playing games:  83%|████████▎ | 5/6 [10:24<02:05, 125.71s/it]Playing games: 100%|██████████| 6/6 [12:19<00:00, 122.12s/it]Playing games: 100%|██████████| 6/6 [12:19<00:00, 123.31s/it]
-2024-09-17 12:26:43,005 - benchmark.run - INFO - Skip experiment 10 of 10: short_pos3_hard
-Exception ignored in: <function MistralClient.__del__ at 0x7fb9ebf3bd90>
-Traceback (most recent call last):
-  File "/data/clembench/venv/lib/python3.10/site-packages/mistralai/client.py", line 46, in __del__
-  File "/data/clembench/venv/lib/python3.10/site-packages/httpx/_client.py", line 1258, in close
-  File "/data/clembench/venv/lib/python3.10/site-packages/httpx/_transports/default.py", line 240, in close
-  File "/data/clembench/venv/lib/python3.10/site-packages/httpcore/_sync/connection_pool.py", line 313, in close
-  File "/data/clembench/venv/lib/python3.10/site-packages/httpcore/_sync/connection_pool.py", line 303, in _close_connections
-TypeError: 'NoneType' object is not callable
-Make custom run with: Mixtral-8x22B-Instruct-v0.1 for short_pos3_hard.
-
-      _                _                     _     
-     | |              | |                   | |    
-  ___| | ___ _ __ ___ | |__   ___ _ __   ___| |__  
- / __| |/ _ \ '_ ` _ \| '_ \ / _ \ '_ \ / __| '_ \ 
-| (__| |  __/ | | | | | |_) |  __/ | | | (__| | | |
- \___|_|\___|_| |_| |_|_.__/ \___|_| |_|\___|_| |_|
-
-2024-09-17 12:26:45,755 - benchmark.run - INFO - Skip experiment 1 of 10: full_game
-2024-09-17 12:26:45,755 - benchmark.run - INFO - Skip experiment 2 of 10: full_no_special_cards
-2024-09-17 12:26:45,755 - benchmark.run - INFO - Skip experiment 3 of 10: full_programmatic2
-2024-09-17 12:26:45,755 - benchmark.run - INFO - Skip experiment 4 of 10: short_no_reprompting
-2024-09-17 12:26:45,755 - benchmark.run - INFO - Skip experiment 5 of 10: short_pos1_easy
-2024-09-17 12:26:45,755 - benchmark.run - INFO - Skip experiment 6 of 10: short_pos1_hard
-2024-09-17 12:26:45,756 - benchmark.run - INFO - Skip experiment 7 of 10: short_pos2_easy
-2024-09-17 12:26:45,756 - benchmark.run - INFO - Skip experiment 8 of 10: short_pos2_hard
-2024-09-17 12:26:45,756 - benchmark.run - INFO - Skip experiment 9 of 10: short_pos3_easy
-2024-09-17 12:26:45,756 - benchmark.run - INFO - Run experiment 10 of 10: short_pos3_hard
-Playing games:   0%|          | 0/6 [00:00<?, ?it/s]Playing games:  17%|█▋        | 1/6 [02:06<10:33, 126.64s/it]Playing games:  33%|███▎      | 2/6 [04:21<08:45, 131.45s/it]Playing games:  50%|█████     | 3/6 [07:06<07:20, 146.68s/it]Playing games:  67%|██████▋   | 4/6 [10:03<05:17, 158.76s/it]Playing games:  83%|████████▎ | 5/6 [13:03<02:46, 166.55s/it]Playing games: 100%|██████████| 6/6 [15:36<00:00, 161.77s/it]Playing games: 100%|██████████| 6/6 [15:36<00:00, 156.06s/it]
-Exception ignored in: <function MistralClient.__del__ at 0x7fd14d9bfd90>
-Traceback (most recent call last):
-  File "/data/clembench/venv/lib/python3.10/site-packages/mistralai/client.py", line 46, in __del__
-  File "/data/clembench/venv/lib/python3.10/site-packages/httpx/_client.py", line 1258, in close
-  File "/data/clembench/venv/lib/python3.10/site-packages/httpx/_transports/default.py", line 240, in close
-  File "/data/clembench/venv/lib/python3.10/site-packages/httpcore/_sync/connection_pool.py", line 313, in close
-  File "/data/clembench/venv/lib/python3.10/site-packages/httpcore/_sync/connection_pool.py", line 303, in _close_connections
-TypeError: 'NoneType' object is not callable

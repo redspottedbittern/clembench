@@ -667,10 +667,14 @@ class WizardsApprenticeScorer(GameScorer):
         else:
             request_success_rate = 0
 
+        names = self.game_instance['seating_order']
+        names.remove('Gandalf')
+        npc_names = names
+
         points = calculate_player_points(episode_interactions["points"], "Gandalf")
         # TODO: Make this dynamic as we will have more than 3 players (see calculate_merlin_points())
         lose = 0
-        for player in self.npc_names:
+        for player in npc_names:
             if calculate_player_points(episode_interactions["points"], player) > points:
                 lose = 1
                 break

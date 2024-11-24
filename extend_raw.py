@@ -169,10 +169,9 @@ def main():
     # Process JSON files and update CSV data
     empty_csv = []
     process_model_folder(results_path, empty_csv)
-    print(len(csv_data))
-    print(len(empty_csv))
+    print('Original length', len(csv_data))
     csv_data = csv_data + empty_csv
-    print(len(csv_data))
+    print('New length:', len(csv_data))
 
     write_csv(output_csv, csv_data)
 
